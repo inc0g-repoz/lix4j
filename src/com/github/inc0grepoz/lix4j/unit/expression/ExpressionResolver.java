@@ -109,11 +109,11 @@ public class ExpressionResolver
 
         if (xcsVar == null)
         {
-            if (modifiers.isEmpty())
+            if (!modifiers.contains(Modifier.STATIC))
             {
                 varpool.set(token, xcsVar = AccessorVariableStack.of(token));
             }
-            else if (modifiers.contains(Modifier.STATIC))
+            else
             {
                 varpool.set(token, xcsVar = AccessorVariableStatic.of(token));
             }
