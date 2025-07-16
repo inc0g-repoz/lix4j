@@ -1,9 +1,9 @@
-package com.github.inc0grepoz.lix4j.ctx;
+package com.github.inc0grepoz.lix4j.value;
 
 public class Variable
 {
 
-    private static final Object UNASSIGNED = new Object() {
+    static final Object UNASSIGNED = new Object() {
 
         @Override
         public String toString()

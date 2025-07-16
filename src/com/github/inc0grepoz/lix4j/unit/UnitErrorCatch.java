@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
@@ -11,23 +10,23 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 public class UnitErrorCatch extends UnitSection
 {
 
-    static UnitErrorCatch compile(Script script, ASTNode node, UnitSection section)
+    static UnitErrorCatch compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         LinkedList<String> tokens = node.getTokens();
         tokens.poll(); // catch
 
         LinkedList<String> errorTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
-        Accessor error = ExpressionResolver.resolve(script, section, errorTokens);
+        Accessor error = ExpressionResolver.resolve(ctx, section, errorTokens);
 
         UnitErrorCatch unit = new UnitErrorCatch(section, error);
 
         if (tokens.isEmpty())
         {
-            ScriptCompiler.appendSectionUnits(script, node, unit);
+            ScriptCompiler.appendSectionUnits(ctx, node, unit);
         }
         else
         {
-            ScriptCompiler.compileUnit_r(script, node, unit);
+            ScriptCompiler.compileUnit_r(ctx, node, unit);
         }
 
         return unit;

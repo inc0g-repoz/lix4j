@@ -4,14 +4,12 @@ import java.util.LinkedList;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.ctx.VarpoolStatic;
 import com.github.inc0grepoz.lix4j.util.FlowControl;
 
 public class UnitSection extends Unit
 {
 
     final LinkedList<Unit> childs = new LinkedList<>();
-    final VarpoolStatic varpoolStatic = new VarpoolStatic(this);
 
     UnitSection(UnitSection parent, boolean add)
     {
@@ -42,13 +40,21 @@ public class UnitSection extends Unit
     }
 
     @Override
-    Object execute(ExecutionContext context)
+    Object execute(ExecutionContext ctx)
+    {
+        ctx.getVarpool().enterSection();
+        Object rv = executeChilds(ctx);
+        ctx.getVarpool().exitSection();
+        return rv;
+    }
+
+    Object executeChilds(ExecutionContext ctx)
     {
         Object rv;
 
         for (Unit unit: childs)
         {
-            rv = unit.execute(context);
+            rv = unit.execute(ctx);
 
             if (rv != FlowControl.KEEP_EXECUTING)
             {
@@ -57,11 +63,6 @@ public class UnitSection extends Unit
         }
 
         return FlowControl.KEEP_EXECUTING;
-    }
-
-    public VarpoolStatic getVarpool()
-    {
-        return varpoolStatic;
     }
 
 }

@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
@@ -11,14 +10,14 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 public class UnitFlowReturn extends Unit
 {
 
-    static UnitFlowReturn compile(Script script, ASTNode node, UnitSection parent)
+    static UnitFlowReturn compile(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         LinkedList<String> tokens = node.getTokens();
         tokens.poll(); // return
 
         Accessor rva = tokens.isEmpty()
                 ? Accessor.VOID
-                : ExpressionResolver.resolve(script, parent, tokens);
+                : ExpressionResolver.resolve(ctx, parent, tokens);
 
         return new UnitFlowReturn(parent, rva);
     }

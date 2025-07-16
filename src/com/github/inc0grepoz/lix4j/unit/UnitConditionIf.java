@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
@@ -14,22 +13,22 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 public class UnitConditionIf extends UnitSection
 {
 
-    static UnitConditionIf compile(Script script, ASTNode node, UnitSection section)
+    static UnitConditionIf compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         node.getTokens().poll(); // if
 
         LinkedList<String> conditionTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
-        Accessor condition = ExpressionResolver.resolve(script, section, conditionTokens);
+        Accessor condition = ExpressionResolver.resolve(ctx, section, conditionTokens);
 
         UnitConditionIf unit = new UnitConditionIf(section, condition);
-        ScriptCompiler.appendSectionUnits(script, node, unit);
+        ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         LinkedList<ASTNode> parentNodes = node.getParent().getChildNodes();
         if (!parentNodes.isEmpty())
         {
             if (parentNodes.peek().getTokens().peek().equals("else"))
             {
-                unit.otherwise = UnitConditionElse.compile(script, parentNodes.poll(), section);
+                unit.otherwise = UnitConditionElse.compile(ctx, parentNodes.poll(), section);
             }
         }
 

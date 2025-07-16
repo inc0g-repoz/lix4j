@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
+import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
+import com.github.inc0grepoz.lix4j.util.AnsiColor;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 @SuppressWarnings("all")
@@ -28,13 +33,58 @@ class DefaultTestCase {
         EXECUTOR.setLoaderDirectory(LOADER_DIRECTORY = new File("scripts"));
     }
 
+    private static Set<Modifier> readAllModifiers(LinkedList<String> tokens)
+    {
+        Modifier[] values = Modifier.values();
+        Set<Modifier> set = EnumSet.noneOf(Modifier.class);
+
+        outer:
+        while (!tokens.isEmpty())
+        {
+            String token = tokens.peek();
+
+            for (int i = 0; i < values.length; i++)
+            {
+                if (!values[i].getKeyword().equals(token))
+                {
+                    continue;
+                }
+
+                if (!set.add(values[i]))
+                {
+                    throw new SyntaxError("Used `" + values[i] + "` multiple times");
+                }
+
+                tokens.poll(); // consume the token
+                continue outer; // check next token
+            }
+
+            break; // no modifier matches
+        }
+
+        return set;
+    }
+
+    @Disabled
+    @Test
+    void testModifiers()
+    {
+        LinkedList<String> tokens = new LinkedList<>();
+        tokens.add("var");
+        tokens.add("static");
+        tokens.add("a");
+        Set<Modifier> modifiers = readAllModifiers(tokens);
+        System.out.println(modifiers);
+        System.out.println(tokens);
+    }
+
     @Disabled
     @Test
     void testLexer()
     {
         // src/com/github/inc0grepoz/dsl/util/Lexer.java
         // main.script
-        File file = new File(LOADER_DIRECTORY, "main.script");
+        File file = new File(LOADER_DIRECTORY, "main.lix");
 
         try
         {

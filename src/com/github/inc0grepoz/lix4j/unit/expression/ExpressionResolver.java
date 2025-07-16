@@ -1,16 +1,25 @@
 package com.github.inc0grepoz.lix4j.unit.expression;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.unit.CompileTimeContext;
+import com.github.inc0grepoz.lix4j.unit.CompileTimeVarpool;
+import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 import com.github.inc0grepoz.lix4j.value.AccessorBuilder;
 import com.github.inc0grepoz.lix4j.value.AccessorOperator;
 import com.github.inc0grepoz.lix4j.value.AccessorValue;
+import com.github.inc0grepoz.lix4j.value.AccessorVariable;
+import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;
+import com.github.inc0grepoz.lix4j.value.AccessorVariableStatic;
+import com.github.inc0grepoz.lix4j.value.Variable;
 
 public class ExpressionResolver
 {
@@ -22,19 +31,21 @@ public class ExpressionResolver
     private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile("(\\d*\\.\\d+)[Ff]");
     private static final Pattern PATTERN_NUMBER_DOUBLE = Pattern.compile("(\\d*\\.\\d+)[Dd]?");
 
-    public static Accessor resolve(Script script, UnitSection section, LinkedList<String> tokens)
+    public static Accessor resolve(CompileTimeContext ctx, UnitSection section,
+            LinkedList<String> tokens)
     {
         TokenHelper.openParentheses(tokens);
 
         if (tokens.size() == 1)
         {
-            return resolveToken(section, tokens.getFirst());
+            return resolveToken(ctx, section, tokens.getFirst(), Collections.emptySet());
         }
 
-        return resolveOperator(script, section, tokens);
+        return resolveOperator(ctx, section, tokens);
     }
 
-    private static Accessor resolveToken(UnitSection section, String token)
+    private static Accessor resolveToken(CompileTimeContext ctx, UnitSection section,
+            String token, Set<Modifier> modifiers)
     {
         if (token == null)
         {
@@ -93,12 +104,45 @@ public class ExpressionResolver
         }
 
         // Default to variable
-        return section.getVarpool().getOrCreate(token);
+        CompileTimeVarpool varpool = ctx.getVarpool();
+        AccessorVariable xcsVar = varpool.get(token);
+
+        if (xcsVar == null)
+        {
+            if (modifiers.isEmpty())
+            {
+                varpool.set(token, xcsVar = AccessorVariableStack.of(token));
+            }
+            else if (modifiers.contains(Modifier.STATIC))
+            {
+                varpool.set(token, xcsVar = AccessorVariableStatic.of(token));
+            }
+        }
+        else
+        {
+            if (!modifiers.isEmpty())
+            {
+                throw new RuntimeException("Two or more variables of the same name: " + token);
+            }
+
+            if (xcsVar.getClass() == AccessorVariableStack.class)
+            {
+                xcsVar = AccessorVariableStack.of(token);
+            }
+
+            if (xcsVar.getClass() == AccessorVariableStatic.class)
+            {
+                Variable ptr = ((AccessorVariableStatic) xcsVar).getVariable();
+                xcsVar = AccessorVariableStatic.of(ptr);
+            }
+        }
+
+        return xcsVar;
     }
 
-    private static Accessor resolveOperator(Script script, UnitSection section, LinkedList<String> tokens)
+    private static Accessor resolveOperator(CompileTimeContext ctx, UnitSection section, LinkedList<String> tokens)
     {
-        for (Operator operator : script.getOperators())
+        for (Operator operator: ctx.getScript().getOperators())
         {
             switch (operator.getType())
             {
@@ -106,14 +150,14 @@ public class ExpressionResolver
                 if (operator.getName().equals(tokens.peekFirst()))
                 {
                     tokens.pollFirst();
-                    return AccessorOperator.of(operator, resolve(script, section, tokens));
+                    return AccessorOperator.of(operator, resolve(ctx, section, tokens));
                 }
                 break;
             case UNARY_RIGHT:
                 if (operator.getName().equals(tokens.peekLast()))
                 {
                     tokens.pollLast();
-                    return AccessorOperator.of(operator, resolve(script, section, tokens));
+                    return AccessorOperator.of(operator, resolve(ctx, section, tokens));
                 }
                 break;
             case BINARY:
@@ -125,7 +169,7 @@ public class ExpressionResolver
                         Accessor[] operands = new Accessor[separateTokens.size()];
                         for (int i = 0; i < operands.length; i++)
                         {
-                            operands[i] = resolve(script, section, separateTokens.poll());
+                            operands[i] = resolve(ctx, section, separateTokens.poll());
                         }
                         return AccessorOperator.of(operator, operands);
                     }
@@ -141,7 +185,7 @@ public class ExpressionResolver
                         Accessor[] operands = new Accessor[separateTokens.size()];
                         for (int i = 0; i < operands.length; i++)
                         {
-                            operands[i] = resolve(script, section, separateTokens.poll());
+                            operands[i] = resolve(ctx, section, separateTokens.poll());
                         }
                         return AccessorOperator.of(operator, operands);
                     }
@@ -150,10 +194,10 @@ public class ExpressionResolver
             }
         }
 
-        return resolveLinkedAccessor(script, section, tokens);
+        return resolveLinkedAccessor(ctx, section, tokens);
     }
 
-    private static Accessor resolveLinkedAccessor(Script script, UnitSection section,
+    private static Accessor resolveLinkedAccessor(CompileTimeContext ctx, UnitSection section,
             LinkedList<String> tokens)
     {
         LinkedList<LinkedList<String>> splitTokens = TokenHelper.splitTokens(tokens, ".");
@@ -163,31 +207,31 @@ public class ExpressionResolver
         while (!splitTokens.isEmpty())
         {
             LinkedList<String> nextTokenList = splitTokens.poll();
-            index = resolveIndex(script, section, nextTokenList);
+            index = resolveIndex(ctx, section, nextTokenList);
 
             if (isValueToken(nextTokenList))
             {
-                handleValueToken(script, section, builder, nextTokenList, index);
+                handleValueToken(ctx, section, builder, nextTokenList, index);
             }
             else if (isParameterizedToken(nextTokenList))
             {
-                handleParameterizedToken(script, section, builder, nextTokenList, index);
+                handleParameterizedToken(ctx, section, builder, nextTokenList, index);
             }
             else
             {
-                handleFieldToken(section, builder, nextTokenList, index);
+                handleFieldToken(ctx, section, builder, nextTokenList, index);
             }
         }
 
         return builder.build();
     }
 
-    private static Accessor resolveIndex(Script script, UnitSection section,
+    private static Accessor resolveIndex(CompileTimeContext ctx, UnitSection section,
             LinkedList<String> tokens)
     {
         if (tokens.peekLast() != null && tokens.peekLast().equals("]"))
         {
-            return resolve(script, section, TokenHelper.readEnclosedTokensBackwards(tokens, "[", "]"));
+            return resolve(ctx, section, TokenHelper.readEnclosedTokensBackwards(tokens, "[", "]"));
         }
 
         return null;
@@ -203,12 +247,12 @@ public class ExpressionResolver
         return tokens.peekLast() != null && tokens.peekLast().equals(")");
     }
 
-    private static void handleValueToken(Script script, UnitSection section,
+    private static void handleValueToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         if (builder.isEmpty())
         {
-            builder.accessor(resolve(script, section, tokens));
+            builder.accessor(resolve(ctx, section, tokens));
             builder.index(index);
         }
         else
@@ -217,7 +261,7 @@ public class ExpressionResolver
         }
     }
 
-    private static void handleParameterizedToken(Script script, UnitSection section,
+    private static void handleParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         String name = tokens.poll();
@@ -225,7 +269,7 @@ public class ExpressionResolver
 
         Accessor[] accessors = tokens.isEmpty()
                 ? new Accessor[0]
-                : resolveParameters(script, section, TokenHelper.splitTokens(tokens, ","));
+                : resolveParameters(ctx, section, TokenHelper.splitTokens(tokens, ","));
 
         if (builder.isEmpty())
         {
@@ -239,22 +283,24 @@ public class ExpressionResolver
         }
     }
 
-    private static Accessor[] resolveParameters(Script script, UnitSection section,
+    private static Accessor[] resolveParameters(CompileTimeContext ctx, UnitSection section,
             LinkedList<LinkedList<String>> paramList)
     {
         Accessor[] accessors = new Accessor[paramList.size()];
 
         for (int i = 0; i < accessors.length; i++)
         {
-            accessors[i] = resolve(script, section, paramList.poll());
+            accessors[i] = resolve(ctx, section, paramList.poll());
         }
 
         return accessors;
     }
 
-    private static void handleFieldToken(UnitSection section, AccessorBuilder builder,
-            LinkedList<String> tokens, Accessor index)
+    private static void handleFieldToken(CompileTimeContext ctx, UnitSection section,
+            AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
+        Set<Modifier> modifiers = readAllModifiers(tokens);
+
         if (tokens.size() > 1)
         {
             throw new SyntaxError("Unresolved expression: " + String.join(" ", tokens));
@@ -262,7 +308,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.accessor(resolveToken(section, tokens.poll()));
+            builder.accessor(resolveToken(ctx, section, tokens.poll(), modifiers));
             builder.index(index);
         }
         else
@@ -270,6 +316,38 @@ public class ExpressionResolver
             builder.field(tokens.poll());
             builder.index(index);
         }
+    }
+
+    private static Set<Modifier> readAllModifiers(LinkedList<String> tokens)
+    {
+        Modifier[] values = Modifier.values();
+        Set<Modifier> set = EnumSet.noneOf(Modifier.class);
+
+        outer:
+        while (!tokens.isEmpty())
+        {
+            String token = tokens.peek();
+
+            for (int i = 0; i < values.length; i++)
+            {
+                if (!values[i].getKeyword().equals(token))
+                {
+                    continue;
+                }
+
+                if (!set.add(values[i]))
+                {
+                    throw new SyntaxError("Used `" + values[i] + "` multiple times");
+                }
+
+                tokens.poll(); // consume the token
+                continue outer; // check next token
+            }
+
+            break; // no modifier matches
+        }
+
+        return set; 
     }
 
     private static boolean isStringToken(String token)

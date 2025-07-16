@@ -1,47 +1,17 @@
-package com.github.inc0grepoz.lix4j.ctx;
+package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
 
-/**
- * Represents a non-static pool for variables.
- * 
- * @author inc0g-repoz
- */
-public class VarpoolStack implements Cloneable
+import com.github.inc0grepoz.lix4j.value.AccessorVariable;
+
+public class CompileTimeVarpool
 {
 
     private static final Object NO_KEY = new Object();
 
-    private final ArrayDeque<Map<String, Object>> stack;
-
-    /**
-     * Creates a new non-static pool.
-     */
-    public VarpoolStack()
-    {
-        this(new ArrayDeque<>());
-    }
-
-    private VarpoolStack(ArrayDeque<Map<String, Object>> stack)
-    {
-        this.stack = stack;
-    }
-
-    @Override
-    public String toString()
-    {
-        StringJoiner joiner = new StringJoiner("\n");
-
-        for (Map<String, Object> layer: stack)
-        {
-            layer.forEach((k, v) -> joiner.add(k + " = " + v));
-        }
-
-        return joiner.toString();
-    }
+    private final ArrayDeque<Map<String, Object>> stack = new ArrayDeque<>();
 
     /**
      * Sets the specified variable in the context section.
@@ -50,7 +20,7 @@ public class VarpoolStack implements Cloneable
      * @param the variable value
      * @return the variable value
      */
-    public Object set(String name, Object value)
+    public Object set(String name, AccessorVariable value)
     {
         if (stack.isEmpty())
         {
@@ -80,7 +50,7 @@ public class VarpoolStack implements Cloneable
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public Object get(String name)
+    public AccessorVariable get(String name)
     {
         Object o;
 
@@ -89,11 +59,11 @@ public class VarpoolStack implements Cloneable
             // The used map implementation may support null values
             if ((o = layer.getOrDefault(name, NO_KEY)) != NO_KEY)
             {
-                return o;
+                return (AccessorVariable) o;
             }
         }
 
-        throw new RuntimeException("Variable " + name + " is unassigned");
+        return null;
     }
 
     /**
@@ -101,7 +71,7 @@ public class VarpoolStack implements Cloneable
      * 
      * @return this instance
      */
-    public VarpoolStack enterSection()
+    public CompileTimeVarpool enterSection()
     {
         stack.push(new HashMap<>());
         return this;
@@ -112,7 +82,7 @@ public class VarpoolStack implements Cloneable
      * 
      * @return this instance
      */
-    public VarpoolStack exitSection()
+    public CompileTimeVarpool exitSection()
     {
         if (stack.isEmpty())
         {
@@ -121,12 +91,6 @@ public class VarpoolStack implements Cloneable
 
         stack.pop();
         return this;
-    }
-
-    @Override
-    public VarpoolStack clone()
-    {
-        return new VarpoolStack(stack.clone());
     }
 
 }

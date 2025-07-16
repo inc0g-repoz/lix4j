@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.VarpoolStack;
 import com.github.inc0grepoz.lix4j.util.FlowControl;
 
 public class UnitFunction extends UnitSection
@@ -16,7 +16,7 @@ public class UnitFunction extends UnitSection
 
     static final Object[] EMPTY_ARRAY = new Object[0];
 
-    static UnitFunction compile(Script script, ASTNode node, UnitSection section)
+    static UnitFunction compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         LinkedList<String> tokens = node.getTokens();
 
@@ -50,7 +50,7 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        UnitFunction fn = script.getFunction(name, paramNames.size());
+        UnitFunction fn = ctx.getScript().getFunction(name, paramNames.size());
 
         if (fn != null)
         {
@@ -58,7 +58,7 @@ public class UnitFunction extends UnitSection
         }
 
         fn = new UnitFunction(section, name, paramNames);
-        ScriptCompiler.appendSectionUnits(script, node, fn);
+        ScriptCompiler.appendSectionUnits(ctx, node, fn);
 
         return fn;
     }
@@ -121,14 +121,18 @@ public class UnitFunction extends UnitSection
             throw new IllegalArgumentException(desc);
         }
 
-        ExecutionContext context = root.getScript().supplyContext();
+        ExecutionContext ctx = root.getScript().supplyContext();
+        VarpoolStack pool = ctx.getVarpool();
+        pool.enterSection();
 
         for (int i = 0; i < params.length; i++)
         {
-            varpoolStatic.getOrCreate(paramNames.get(i)).mutate(context, null, params[i]);
+//          varpoolStatic.getOrCreate(paramNames.get(i)).mutate(context, null, params[i]);
+            pool.set(paramNames.get(i), params[i]);
         }
 
-        Object rv = super.execute(context);
+        Object rv = executeChilds(ctx);
+        pool.exitSection();
 
         return rv == FlowControl.KEEP_EXECUTING ? FlowControl.VOID : rv;
     }

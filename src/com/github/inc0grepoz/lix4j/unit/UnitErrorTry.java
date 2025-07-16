@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.util.FlowControl;
@@ -10,19 +9,19 @@ import com.github.inc0grepoz.lix4j.util.FlowControl;
 public class UnitErrorTry extends UnitSection
 {
 
-    static UnitErrorTry compile(Script script, ASTNode node, UnitSection section)
+    static UnitErrorTry compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         node.getTokens().poll(); // try
 
         UnitErrorTry unit = new UnitErrorTry(section);
-        ScriptCompiler.appendSectionUnits(script, node, unit);
+        ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         LinkedList<ASTNode> parentNodes = node.getParent().getChildNodes();
         if (!parentNodes.isEmpty())
         {
             if (parentNodes.peek().getTokens().peek().equals("catch"))
             {
-                unit.otherwise = UnitErrorCatch.compile(script, parentNodes.poll(), section);
+                unit.otherwise = UnitErrorCatch.compile(ctx, parentNodes.poll(), section);
             }
         }
 

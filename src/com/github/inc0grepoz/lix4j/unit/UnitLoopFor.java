@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
@@ -15,7 +14,7 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 public class UnitLoopFor extends UnitSection
 {
 
-    static UnitLoopFor compile(Script script, ASTNode node, UnitSection section)
+    static UnitLoopFor compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         node.getTokens().poll(); // for
 
@@ -29,14 +28,14 @@ public class UnitLoopFor extends UnitSection
         }
 
         Accessor parameter = (tempTokens = split.poll()).isEmpty() ? null
-                : ExpressionResolver.resolve(script, section, tempTokens);
+                : ExpressionResolver.resolve(ctx, section, tempTokens);
         Accessor condition = (tempTokens = split.poll()).isEmpty() ? null
-                : ExpressionResolver.resolve(script, section, tempTokens);
+                : ExpressionResolver.resolve(ctx, section, tempTokens);
         Accessor increment = (tempTokens = split.poll()).isEmpty() ? null
-                : ExpressionResolver.resolve(script, section, tempTokens);
+                : ExpressionResolver.resolve(ctx, section, tempTokens);
 
         UnitLoopFor unit = new UnitLoopFor(section, parameter, condition, increment);
-        ScriptCompiler.appendSectionUnits(script, node, unit);
+        ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         return unit;
     }

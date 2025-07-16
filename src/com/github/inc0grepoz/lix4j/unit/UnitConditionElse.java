@@ -2,13 +2,12 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 
 public class UnitConditionElse extends UnitSection
 {
 
-    static UnitConditionElse compile(Script script, ASTNode node, UnitSection section)
+    static UnitConditionElse compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         LinkedList<String> tokens = node.getTokens();
         tokens.poll(); // else
@@ -17,11 +16,11 @@ public class UnitConditionElse extends UnitSection
 
         if (tokens.isEmpty())
         {
-            ScriptCompiler.appendSectionUnits(script, node, unit);
+            ScriptCompiler.appendSectionUnits(ctx, node, unit);
         }
         else
         {
-            ScriptCompiler.compileUnit_r(script, node, unit);
+            ScriptCompiler.compileUnit_r(ctx, node, unit);
         }
 
         return unit;

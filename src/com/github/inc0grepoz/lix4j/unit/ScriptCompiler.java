@@ -13,60 +13,63 @@ public class ScriptCompiler
 
     public static void compile(AST ast, Script script, UnitRoot root)
     {
-        compileSection_r(script, ast, root);
+        CompileTimeContext ctx = new CompileTimeContext(script);
+        compileSection_r(ctx, ast, root);
     }
 
-    static UnitSection compileSection_r(Script script, ASTNode node, UnitSection parent)
+    static UnitSection compileSection_r(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         LinkedList<ASTNode> childs = node.getChildNodes();
+        ctx.getVarpool().enterSection();
 
         while (!childs.isEmpty())
         {
-            compileUnit_r(script, childs.poll(), parent);
+            compileUnit_r(ctx, childs.poll(), parent);
         }
 
+        ctx.getVarpool().exitSection();
         return parent;
     }
 
-    static Unit compileUnit_r(Script script, ASTNode node, UnitSection parent)
+    static Unit compileUnit_r(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         if (!node.hasTokens())
         {
-            return compileSection_r(script, node, new UnitSection(parent));
+            return compileSection_r(ctx, node, new UnitSection(parent));
         }
 
         switch (node.getTokens().peek())
         {
         case "break":
-            return UnitFlowBreak.compile(script, node, parent);
+            return UnitFlowBreak.compile(ctx, node, parent);
         case "catch":
             throw new SyntaxError("Every \"catch\" statement should have a \"try\" statement before");
         case "continue":
-            return UnitFlowContinue.compile(script, node, parent);
+            return UnitFlowContinue.compile(ctx, node, parent);
         case "else":
             throw new SyntaxError("There can be no \"else\" without an \"if\"");
         case "for":
-            return UnitLoopFor.compile(script, node, parent);
+            return UnitLoopFor.compile(ctx, node, parent);
         case "function":
-            return UnitFunction.compile(script, node, parent);
+            return UnitFunction.compile(ctx, node, parent);
         case "if":
-            return UnitConditionIf.compile(script, node, parent);
+            return UnitConditionIf.compile(ctx, node, parent);
         case "include":
-            return UnitInclude.compile(script, node, parent);
+            return UnitInclude.compile(ctx, node, parent);
         case "return":
-            return UnitFlowReturn.compile(script, node, parent);
+            return UnitFlowReturn.compile(ctx, node, parent);
         case "switch":
             throw new SyntaxError("Switching is not supported");
         case "try":
-            return UnitErrorTry.compile(script, node, parent);
+            return UnitErrorTry.compile(ctx, node, parent);
         case "while":
-            return UnitLoopWhile.compile(script, node, parent);
+            return UnitLoopWhile.compile(ctx, node, parent);
         default:
-            return UnitOperation.compile(script, node, parent);
+            return UnitOperation.compile(ctx, node, parent);
         }
     }
 
-    static void appendSectionUnits(Script script, ASTNode node, Unit parent)
+    static void appendSectionUnits(CompileTimeContext ctx, ASTNode node, Unit parent)
     {
         if (parent instanceof UnitSection)
         {
@@ -75,13 +78,13 @@ public class ScriptCompiler
             if (node.getNodeBreakerType() == NodeBreakerType.BLOCK)
             {
                 ASTNode next = node.getParent().getChildNodes().poll();
-                compileSection_r(script, next, section);
+                compileSection_r(ctx, next, section);
             }
             else
             {
                 if (!node.getTokens().isEmpty())
                 {
-                    compileUnit_r(script, node, section);
+                    compileUnit_r(ctx, node, section);
                 }
             }
         }

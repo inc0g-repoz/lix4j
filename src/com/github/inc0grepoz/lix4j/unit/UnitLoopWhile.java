@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
@@ -14,15 +13,15 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 public class UnitLoopWhile extends UnitSection
 {
 
-    static UnitLoopWhile compile(Script script, ASTNode node, UnitSection section)
+    static UnitLoopWhile compile(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         node.getTokens().poll(); // while
 
         LinkedList<String> conditionTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
-        Accessor condition = ExpressionResolver.resolve(script, section, conditionTokens);
+        Accessor condition = ExpressionResolver.resolve(ctx, section, conditionTokens);
 
         UnitLoopWhile unit = new UnitLoopWhile(section, condition);
-        ScriptCompiler.appendSectionUnits(script, node, unit);
+        ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         return unit;
     }

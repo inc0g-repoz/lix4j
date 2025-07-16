@@ -2,7 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
@@ -11,7 +10,7 @@ import com.github.inc0grepoz.lix4j.util.FlowControl;
 public class UnitFlowContinue extends Unit
 {
 
-    static UnitFlowContinue compile(Script script, ASTNode node, UnitSection parent)
+    static UnitFlowContinue compile(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         LinkedList<String> tokens = node.getTokens();
         tokens.poll(); // continue
