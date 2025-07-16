@@ -2,7 +2,7 @@ include "math.lix";
 include "util.lix";
 
 function test_async() {
-    for (i = 1; i <= 5; i++) {
+    for (static i = 1; i <= 5; i++) {
         println("Hello from a different thread! (x" + i + ")");
     }
 }
@@ -10,4 +10,8 @@ function test_async() {
 function main() {
     async(this::test_async);
     shutdown_execution_service();
+
+    static d = 5;
+    println("Factorial " + d + " = " + factorial_i(d));
+    println("Factorial " + d + " = " + factorial_r(d));
 }
