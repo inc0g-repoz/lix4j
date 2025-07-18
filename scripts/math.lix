@@ -29,7 +29,7 @@ function factorial_i(n) {
  * Gives a stack overflow when used, but it has to do something
  * with the script engine implementation.
  */
-function factorial_r(n) return n == 1 ? 1 : n * factorial_r(--n);
+function factorial_r(n) return n == 1 ? 1 : n * factorial_r(n - 1);
 
 /* 
  * Calculates a factorial of 'n' using the

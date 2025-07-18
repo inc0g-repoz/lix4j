@@ -12,7 +12,16 @@ function test_async() {
     shutdown_execution_service();
 }
 
+function recursive(n) {
+    if (n-- < 1) {
+        return 1;
+    }
+    println("went down to " + n);
+    return recursive(n);
+}
+
 function main() {
-    f = factorial(5);
-    println(f);
+    number = 1;
+    factor = factorial_r(number);
+    println("Recursive factorial of " + number + " is " + factor);
 }
