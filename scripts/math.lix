@@ -1,6 +1,6 @@
 // Calculates a fibbonacci sequence of 'count' numbers.
 function fibbonacci(count) {
-    static n = new_array("java.lang.Integer", count);
+    n = new_array("java.lang.Integer", count);
     n[0] = 0;
     n[1] = 1;
 
@@ -24,14 +24,18 @@ function factorial_i(n) {
     return rv;
 }
 
-// Calculates a factorial of 'n' recursively and returns it.
-function factorial_r(n) return n == 1 ? 1 : n * factorial_i(--n);
+/*
+ * Calculates a factorial of 'n' recursively and returns it.
+ * Gives a stack overflow when used, but it has to do something
+ * with the script engine implementation.
+ */
+function factorial_r(n) return n == 1 ? 1 : n * factorial_r(--n);
 
 /* 
  * Calculates a factorial of 'n' using the
  * preferable method and returns the result.
  */
-function factorial(n) return factorial_r(n);
+function factorial(n) return factorial_i(n);
 
 // Returns the absolute value of 'n'.
 function abs(n) return n < 0 ? -n : n;

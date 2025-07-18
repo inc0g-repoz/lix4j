@@ -54,7 +54,7 @@ public class ExecutionContext implements Cloneable
     @Override
     public ExecutionContext clone()
     {
-        return new ExecutionContext(script, varpool);
+        return new ExecutionContext(script, varpool.clone());
     }
 
 }

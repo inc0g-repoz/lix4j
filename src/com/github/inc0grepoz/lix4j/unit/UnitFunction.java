@@ -127,7 +127,6 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-//          varpoolStatic.getOrCreate(paramNames.get(i)).mutate(context, null, params[i]);
             pool.set(paramNames.get(i), params[i]);
         }
 

@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.CompileTimeContext;
-import com.github.inc0grepoz.lix4j.unit.CompileTimeVarpool;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
@@ -16,10 +16,6 @@ import com.github.inc0grepoz.lix4j.value.Accessor;
 import com.github.inc0grepoz.lix4j.value.AccessorBuilder;
 import com.github.inc0grepoz.lix4j.value.AccessorOperator;
 import com.github.inc0grepoz.lix4j.value.AccessorValue;
-import com.github.inc0grepoz.lix4j.value.AccessorVariable;
-import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;
-import com.github.inc0grepoz.lix4j.value.AccessorVariableStatic;
-import com.github.inc0grepoz.lix4j.value.Variable;
 
 public class ExpressionResolver
 {
@@ -28,8 +24,8 @@ public class ExpressionResolver
 //  private static final Pattern PATTERN_SPECIAL = Pattern.compile("[~!@#$%^&*()-=+\\[\\]{}:;'\"\\|/<>,.?]+");
     private static final Pattern PATTERN_NUMBER_INT = Pattern.compile("\\d+");
     private static final Pattern PATTERN_NUMBER_LONG = Pattern.compile("(\\d+)[Ll]");
-    private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile("(\\d*\\.\\d+)[Ff]");
-    private static final Pattern PATTERN_NUMBER_DOUBLE = Pattern.compile("(\\d*\\.\\d+)[Dd]?");
+    private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile("(\\d*\\.?\\d+)[Ff]");
+    private static final Pattern PATTERN_NUMBER_DOUBLE = Pattern.compile("(\\d*\\.?\\d+)[Dd]?");
 
     public static Accessor resolve(CompileTimeContext ctx, UnitSection section,
             LinkedList<String> tokens)
@@ -85,59 +81,28 @@ public class ExpressionResolver
             return AccessorValue.of(string.charAt(0));
         }
 
+        Matcher matcher;
+
         // Handle numeric tokens
-        if (PATTERN_NUMBER_INT.matcher(token).matches())
+        if ((matcher = PATTERN_NUMBER_INT.matcher(token)).matches())
         {
-            return AccessorValue.of(Integer.parseInt(token));
+            return AccessorValue.of(Integer.parseInt(matcher.group()));
         }
-        if (PATTERN_NUMBER_LONG.matcher(token).matches())
+        if ((matcher = PATTERN_NUMBER_LONG.matcher(token)).matches())
         {
-            return AccessorValue.of(Long.parseLong(token));
+            return AccessorValue.of(Long.parseLong(matcher.group(1)));
         }
-        if (PATTERN_NUMBER_FLOAT.matcher(token).matches())
+        if ((matcher = PATTERN_NUMBER_FLOAT.matcher(token)).matches())
         {
-            return AccessorValue.of(Float.parseFloat(token));
+            return AccessorValue.of(Float.parseFloat(matcher.group(1)));
         }
-        if (PATTERN_NUMBER_DOUBLE.matcher(token).matches())
+        if ((matcher = PATTERN_NUMBER_DOUBLE.matcher(token)).matches())
         {
-            return AccessorValue.of(Double.parseDouble(token));
+            return AccessorValue.of(Double.parseDouble(matcher.group(1)));
         }
 
         // Default to variable
-        CompileTimeVarpool varpool = ctx.getVarpool();
-        AccessorVariable xcsVar = varpool.get(token);
-
-        if (xcsVar == null)
-        {
-            if (!modifiers.contains(Modifier.STATIC))
-            {
-                varpool.set(token, xcsVar = AccessorVariableStack.of(token));
-            }
-            else
-            {
-                varpool.set(token, xcsVar = AccessorVariableStatic.of(token));
-            }
-        }
-        else
-        {
-            if (!modifiers.isEmpty())
-            {
-                throw new RuntimeException("Two or more variables of the same name: " + token);
-            }
-
-            if (xcsVar.getClass() == AccessorVariableStack.class)
-            {
-                xcsVar = AccessorVariableStack.of(token);
-            }
-
-            if (xcsVar.getClass() == AccessorVariableStatic.class)
-            {
-                Variable ptr = ((AccessorVariableStatic) xcsVar).getVariable();
-                xcsVar = AccessorVariableStatic.of(ptr);
-            }
-        }
-
-        return xcsVar;
+        return ctx.getVarpool().handleVariable(token, modifiers);
     }
 
     private static Accessor resolveOperator(CompileTimeContext ctx, UnitSection section, LinkedList<String> tokens)

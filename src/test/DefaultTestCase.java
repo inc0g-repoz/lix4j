@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
+import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
-import com.github.inc0grepoz.lix4j.util.AnsiColor;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 @SuppressWarnings("all")
