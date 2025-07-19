@@ -33,51 +33,6 @@ class DefaultTestCase {
         EXECUTOR.setLoaderDirectory(LOADER_DIRECTORY = new File("scripts"));
     }
 
-    private static Set<Modifier> readAllModifiers(LinkedList<String> tokens)
-    {
-        Modifier[] values = Modifier.values();
-        Set<Modifier> set = EnumSet.noneOf(Modifier.class);
-
-        outer:
-        while (!tokens.isEmpty())
-        {
-            String token = tokens.peek();
-
-            for (int i = 0; i < values.length; i++)
-            {
-                if (!values[i].getKeyword().equals(token))
-                {
-                    continue;
-                }
-
-                if (!set.add(values[i]))
-                {
-                    throw new SyntaxError("Used `" + values[i] + "` multiple times");
-                }
-
-                tokens.poll(); // consume the token
-                continue outer; // check next token
-            }
-
-            break; // no modifier matches
-        }
-
-        return set;
-    }
-
-    @Disabled
-    @Test
-    void testModifiers()
-    {
-        LinkedList<String> tokens = new LinkedList<>();
-        tokens.add("var");
-        tokens.add("static");
-        tokens.add("a");
-        Set<Modifier> modifiers = readAllModifiers(tokens);
-        System.out.println(modifiers);
-        System.out.println(tokens);
-    }
-
     @Disabled
     @Test
     void testLexer()

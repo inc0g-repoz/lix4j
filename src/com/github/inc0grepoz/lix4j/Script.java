@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.unit.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
@@ -37,8 +38,10 @@ public class Script
         // Loading inbuilt functions
         executor.supplyInbuiltFunctions(root);
 
-        // Compiling declared functions
-        ScriptCompiler.compile(ast, this, root);
+        // Compiling declared script members
+        CompileTimeContext ctx = new CompileTimeContext(this);
+        ctx.getVarpool().enterSection();
+        ScriptCompiler.compile(ctx, ast, this, root);
 
         globalContext.getVarpool().enterSection();
         root.init(globalContext);
@@ -93,18 +96,18 @@ public class Script
     }
 
     // Includes code from the file by the specified filepath
-    public void include(String filepath) throws IOException
+    public void include(CompileTimeContext ctx, String filepath) throws IOException
     {
         if (loaderDirectory == null || !loaderDirectory.isDirectory())
         {
-            throw new AssertionError(filepath + " is not a valid filepath");
+            throw new AssertionError("No loader directory provided for including code");
         }
 
         File file = new File(loaderDirectory, filepath);
         LinkedList<String> input = Lexer.readTokens(new FileReader(file));
         AST ast = AST.generateTree(input);
 
-        ScriptCompiler.compile(ast, this, root);
+        ScriptCompiler.compile(ctx, ast, this, root);
     }
 
 }

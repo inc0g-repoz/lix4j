@@ -49,6 +49,7 @@ public class UnitRoot extends UnitSection
 
     public void init(ExecutionContext globalContext)
     {
+        // Functions are expected to be defined globally
         childs.forEach(u -> u.execute(globalContext));
     }
 

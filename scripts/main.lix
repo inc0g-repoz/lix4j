@@ -9,19 +9,12 @@ function multithreadable() {
 
 function test_async() {
     async(this::multithreadable);
-    shutdown_execution_service();
-}
-
-function recursive(n) {
-    if (n-- < 1) {
-        return 1;
-    }
-    println("went down to " + n);
-    return recursive(n);
+    EXECUTOR_SERVICE.shutdown();
 }
 
 function main() {
-    number = 1;
+    number = 5;
     factor = factorial_r(number);
     println("Recursive factorial of " + number + " is " + factor);
+    test_async();
 }

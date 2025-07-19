@@ -42,7 +42,7 @@ public class Variable
     {
         if (instance == UNASSIGNED)
         {
-            throw new RuntimeException(name + " is unassigned");
+            throw new RuntimeException("Static variable " + name + " is unassigned");
         }
 
         return instance;

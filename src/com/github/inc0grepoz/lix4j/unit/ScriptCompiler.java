@@ -11,24 +11,31 @@ import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 public class ScriptCompiler
 {
 
-    public static void compile(AST ast, Script script, UnitRoot root)
+    public static void compile(CompileTimeContext ctx, AST ast, Script script, UnitRoot root)
     {
-        CompileTimeContext ctx = new CompileTimeContext(script);
-        compileSection_r(ctx, ast, root);
+        compileSection_r0(ctx, ast, root);
     }
 
-    static UnitSection compileSection_r(CompileTimeContext ctx, ASTNode node, UnitSection parent)
+    // Compiles, but doesn't enter or leave sections in the compile time varpool
+    static UnitSection compileSection_r0(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         LinkedList<ASTNode> childs = node.getChildNodes();
-        ctx.getVarpool().enterSection();
 
         while (!childs.isEmpty())
         {
-            compileUnit_r(ctx, childs.poll(), parent);
+            compileUnit_r(ctx, childs.poll(), section);
         }
 
-        ctx.getVarpool().exitSection();
-        return parent;
+        return section;
+    }
+
+    static UnitSection compileSection_r(CompileTimeContext ctx, ASTNode node, UnitSection section)
+    {
+        ctx.getVarpool().enterSection();
+        compileSection_r0(ctx, node, section);
+
+        ctx.getVarpool().exitSection(); // also exit
+        return section;
     }
 
     static Unit compileUnit_r(CompileTimeContext ctx, ASTNode node, UnitSection parent)
@@ -69,28 +76,18 @@ public class ScriptCompiler
         }
     }
 
-    static void appendSectionUnits(CompileTimeContext ctx, ASTNode node, Unit parent)
+    static void appendSectionUnits(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
-        if (parent instanceof UnitSection)
+        // Compiling and appending all the node children
+        if (node.getNodeBreakerType() == NodeBreakerType.BLOCK)
         {
-            UnitSection section = (UnitSection) parent;
-
-            if (node.getNodeBreakerType() == NodeBreakerType.BLOCK)
-            {
-                ASTNode next = node.getParent().getChildNodes().poll();
-                compileSection_r(ctx, next, section);
-            }
-            else
-            {
-                if (!node.getTokens().isEmpty())
-                {
-                    compileUnit_r(ctx, node, section);
-                }
-            }
+            ASTNode next = node.getParent().getChildNodes().poll();
+            compileSection_r(ctx, next, section);
         }
-        else
+        // A one-liner as a section element
+        else if (!node.getTokens().isEmpty())
         {
-            throw new IllegalStateException("An unexpected block of code");
+            compileUnit_r(ctx, node, section);
         }
     }
 

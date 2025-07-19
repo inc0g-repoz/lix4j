@@ -169,4 +169,9 @@ public class CompileTimeVarpool
         return this;
     }
 
+    public int getLayersCount()
+    {
+        return stack.size();
+    }
+
 }

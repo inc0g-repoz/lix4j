@@ -26,7 +26,7 @@ public class UnitInclude extends Unit
 
         try
         {
-            ctx.getScript().include(filepath);
+            ctx.getScript().include(ctx, filepath);
         }
         catch (IOException e)
         {

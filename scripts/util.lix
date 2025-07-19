@@ -13,7 +13,3 @@ static EXECUTOR_SERVICE = null;
 function async(fn_ref) {
     EXECUTOR_SERVICE.execute(fn_ref);
 }
-
-function shutdown_execution_service() {
-    EXECUTOR_SERVICE.shutdown();
-}
