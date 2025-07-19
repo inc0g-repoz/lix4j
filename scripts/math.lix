@@ -1,5 +1,3 @@
-static boob = 1;
-
 // Calculates a fibbonacci sequence of 'count' numbers.
 function fibbonacci(count) {
     n = new_array("java.lang.Integer", count);
