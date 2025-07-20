@@ -51,9 +51,12 @@ public class ScriptExecutor
     private final List<Operator> operators = new ArrayList<>();
     private final List<Function<UnitRoot, UnitFunction>> inbuilt = new ArrayList<>();
 
+    // Provided by the application that uses the engine
     private File loaderDirectory = null;
 
     {
+        // The operators implementations are ordered by priority in expression pipelines
+        // Do not change the order, if you don't know what you're doing
         operators.add(new OperatorAssign           ("="));
         operators.add(new OperatorTernary          (null));
         operators.add(new OperatorOr               ("||"));
@@ -162,19 +165,33 @@ public class ScriptExecutor
         this.loaderDirectory = loaderDirectory;
     }
 
-    // Returns the directory to include scripts from
+    /**
+     * Returns the directory to include scripts from, if
+     * provided by the application that uses the engine,
+     * or {@code null} otherwise.
+     * 
+     * @return a {@code File} instance (directory)
+     */
     public File getLoaderDirectory()
     {
         return loaderDirectory;
     }
 
-    // Supplies the default operators to compiled scripts
+    /**
+     * Supplies the default operators to compiled scripts.
+     * 
+     * @return the list of all default operators
+     */
     public List<Operator> getDefaultOperators()
     {
         return operators;
     }
 
-    // Supplies the inbuilt functions to compiled scripts
+    /**
+     * Supplies the inbuilt functions to compiled scripts.
+     * 
+     * @param root the root section-unit of a script
+     */
     public void supplyInbuiltFunctions(UnitRoot root)
     {
         inbuilt.forEach(fs -> fs.apply(root));

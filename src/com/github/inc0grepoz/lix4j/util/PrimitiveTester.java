@@ -1,7 +1,7 @@
 package com.github.inc0grepoz.lix4j.util;
 
 /**
- * An utility to test objects and primitives.
+ * An utility for testing objects and primitives.
  * 
  * @author inc0g-repoz
  */

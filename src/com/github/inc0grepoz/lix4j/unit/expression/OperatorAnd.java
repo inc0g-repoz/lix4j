@@ -4,6 +4,18 @@ import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.util.PrimitiveTester;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 
+/**
+ * Implements the assignment operator with right-to-left evaluation.
+ * Supports chained assignments like.
+ * <p>
+ * Example: 
+ * <blockquote><pre>
+ *     x = 5;      // assigns 5 to x
+ *     y = x = 10; // assigns 10 to x, then x to y
+ * </pre></blockquote>
+ * 
+ * @author inc0g-repoz
+ */
 public class OperatorAnd extends Operator
 {
 
@@ -15,15 +27,19 @@ public class OperatorAnd extends Operator
     @Override
     public Object evaluate(ExecutionContext ctx, Accessor[] operands)
     {
+        // Looking for a "false" value
         for (int i = 0; i < operands.length; i++)
         {
+            // Same as in C++, a value is considered false, if it's not true
+            // when the type is boolean of course, but also if it's a default
+            // value, e.g. "null" for objects or "0" for numbers
             if (PrimitiveTester.isDefaultValue(operands[i].linkedAccess(ctx, null)))
             {
-                return false;
+                return false; // the whole expression is false
             }
         }
 
-        return true;
+        return true; // the whole expression is true
     }
 
 }

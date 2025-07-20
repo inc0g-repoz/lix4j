@@ -24,18 +24,17 @@ import com.github.inc0grepoz.lix4j.util.Lexer;
 public class Script
 {
 
+    private final File loaderDirectory;
     private final List<Operator> operators = new ArrayList<>();
     private final ExecutionContext globalContext = new ExecutionContext(this);
-    private final File loaderDirectory;
     private final UnitRoot root = new UnitRoot(this);
 
-    // A package-private constructor
+    // Should only be instantiated within the executor's code
     Script(ScriptExecutor executor, AST ast)
     {
-        executor.getDefaultOperators().forEach(operators::add);
+        // Configuring and loading inbuilt features
         loaderDirectory = executor.getLoaderDirectory();
-
-        // Loading inbuilt functions
+        executor.getDefaultOperators().forEach(operators::add);
         executor.supplyInbuiltFunctions(root);
 
         // Compiling declared script members
@@ -43,6 +42,7 @@ public class Script
         ctx.getVarpool().enterSection();
         ScriptCompiler.compile(ctx, ast, this, root);
 
+        // Initializing the script (global variables)
         globalContext.getVarpool().enterSection();
         root.init(globalContext);
     }
