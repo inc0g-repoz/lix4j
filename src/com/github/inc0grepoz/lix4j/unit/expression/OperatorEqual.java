@@ -20,7 +20,7 @@ public class OperatorEqual extends Operator
     @Override
     public Object evaluate(ExecutionContext ctx, Accessor[] operands)
     {
-        // The first operator is accessed and evaluated right away, and
+        // The first operand is accessed and evaluated right away, and
         // we consider all of the operands equal in the beginning
         Object scd, fst = operands[0].linkedAccess(ctx, null);
         boolean equal = true;
