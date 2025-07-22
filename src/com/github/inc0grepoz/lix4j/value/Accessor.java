@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.function.Function;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.util.PrimitiveConverter;
 
 /**
@@ -16,7 +16,7 @@ public abstract class Accessor
 {
 
     /** Precached {@code void} return value accessor. **/
-    public static final Accessor VOID = AccessorValue.of(FlowControl.VOID);
+    public static final Accessor VOID = AccessorValue.of(ControlFlow.VOID);
 
     /** Precached {@code null} value accessor. **/
     public static final Accessor NULL = AccessorValue.of(null);

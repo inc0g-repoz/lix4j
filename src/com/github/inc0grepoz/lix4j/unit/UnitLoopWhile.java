@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.util.PrimitiveTester;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
@@ -47,23 +47,23 @@ public class UnitLoopWhile extends UnitSection
         {
             Object rv = super.execute(context);
 
-            if (rv == FlowControl.BREAK)
+            if (rv == ControlFlow.BREAK)
             {
                 break;
             }
 
-            if (rv == FlowControl.CONTINUE)
+            if (rv == ControlFlow.CONTINUE)
             {
                 continue;
             }
 
-            if (rv != FlowControl.KEEP_EXECUTING)
+            if (rv != ControlFlow.KEEP_EXECUTING)
             {
                 return rv;
             }
         }
 
-        return FlowControl.KEEP_EXECUTING;
+        return ControlFlow.KEEP_EXECUTING;
     }
 
     private boolean condition(ExecutionContext context)

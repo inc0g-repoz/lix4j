@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 public class UnitErrorTry extends UnitSection
 {
@@ -52,7 +52,7 @@ public class UnitErrorTry extends UnitSection
         {
             if (otherwise == null)
             {
-                return FlowControl.KEEP_EXECUTING;
+                return ControlFlow.KEEP_EXECUTING;
             }
 
             otherwise.getError().mutate(context, null, t);

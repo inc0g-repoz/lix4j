@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.util.PrimitiveTester;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
@@ -55,7 +55,7 @@ public class UnitConditionIf extends UnitSection
     Object execute(ExecutionContext context)
     {
         return PrimitiveTester.isDefaultValue(condition.linkedAccess(context, null))
-                ? (otherwise == null ? FlowControl.KEEP_EXECUTING : otherwise.execute(context))
+                ? (otherwise == null ? ControlFlow.KEEP_EXECUTING : otherwise.execute(context))
                 : super.execute(context);
     }
 

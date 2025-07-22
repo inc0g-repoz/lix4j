@@ -9,7 +9,7 @@ import java.util.List;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.VarpoolStack;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 public class UnitFunction extends UnitSection
 {
@@ -98,12 +98,12 @@ public class UnitFunction extends UnitSection
     @Override
     Object execute(ExecutionContext context)
     {
-        return FlowControl.KEEP_EXECUTING;
+        return ControlFlow.KEEP_EXECUTING;
     }
 
     /**
      * Calls this function and returns an object, if has to,
-     * or {@link FlowControl#VOID VOID} otherwise.
+     * or {@link ControlFlow#VOID VOID} otherwise.
      * 
      * @param params the function parameters
      * @return an object instance
@@ -133,7 +133,7 @@ public class UnitFunction extends UnitSection
         Object rv = executeChilds(ctx);
         pool.exitSection();
 
-        return rv == FlowControl.KEEP_EXECUTING ? FlowControl.VOID : rv;
+        return rv == ControlFlow.KEEP_EXECUTING ? ControlFlow.VOID : rv;
     }
 
     /**

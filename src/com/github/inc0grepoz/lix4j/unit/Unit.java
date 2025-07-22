@@ -53,7 +53,7 @@ public abstract class Unit
     /**
      * Executes this unit with all of it's child units (if
      * it is a section) once and returns an object, if has
-     * to, or {@link FlowControl#VOID VOID} otherwise.
+     * to, or {@link ControlFlow#VOID VOID} otherwise.
      * 
      * @param context the current context of execution
      * @return an object instance

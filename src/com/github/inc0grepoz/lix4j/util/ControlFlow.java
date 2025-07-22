@@ -5,7 +5,7 @@ package com.github.inc0grepoz.lix4j.util;
  * 
  * @author inc0g-repoz
  */
-public enum FlowControl
+public enum ControlFlow
 {
 
     /**

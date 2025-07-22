@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 public class UnitFlowContinue extends Unit
 {
@@ -37,7 +37,7 @@ public class UnitFlowContinue extends Unit
     @Override
     Object execute(ExecutionContext context)
     {
-        return FlowControl.CONTINUE;
+        return ControlFlow.CONTINUE;
     }
 
 }

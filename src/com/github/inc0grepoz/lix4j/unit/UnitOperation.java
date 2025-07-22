@@ -3,7 +3,7 @@ package com.github.inc0grepoz.lix4j.unit;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 
 public class UnitOperation extends Unit
@@ -31,7 +31,7 @@ public class UnitOperation extends Unit
     Object execute(ExecutionContext context)
     {
         accessor.linkedAccess(context, null);
-        return FlowControl.KEEP_EXECUTING;
+        return ControlFlow.KEEP_EXECUTING;
     }
 
 }

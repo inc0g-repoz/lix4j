@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 public class InBuiltSleep extends UnitFunction
 {
@@ -26,7 +26,7 @@ public class InBuiltSleep extends UnitFunction
             throw new RuntimeException(e);
         }
 
-        return FlowControl.VOID;
+        return ControlFlow.VOID;
     }
 
 }

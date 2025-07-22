@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.util.FlowControl;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 public class UnitSection extends Unit
 {
@@ -56,13 +56,13 @@ public class UnitSection extends Unit
         {
             rv = unit.execute(ctx);
 
-            if (rv != FlowControl.KEEP_EXECUTING)
+            if (rv != ControlFlow.KEEP_EXECUTING)
             {
                 return rv;
             }
         }
 
-        return FlowControl.KEEP_EXECUTING;
+        return ControlFlow.KEEP_EXECUTING;
     }
 
 }
