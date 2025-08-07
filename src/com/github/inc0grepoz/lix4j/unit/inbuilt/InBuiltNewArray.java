@@ -5,13 +5,14 @@ import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltNewArray extends UnitFunction
 {
 
     public InBuiltNewArray(UnitSection parent)
     {
-        super(parent, "new_array", Arrays.asList("class", "length"));
+        super(parent, Namespace.GLOBAL, "new_array", Arrays.asList("class", "length"));
     }
 
     @Override

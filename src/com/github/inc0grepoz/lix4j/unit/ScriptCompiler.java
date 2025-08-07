@@ -63,6 +63,8 @@ public class ScriptCompiler
             return UnitConditionIf.compile(ctx, node, parent);
         case "include":
             return UnitInclude.compile(ctx, node, parent);
+        case "namespace":
+            return UnitNamespace.compile(ctx, node, parent);
         case "return":
             return UnitFlowReturn.compile(ctx, node, parent);
         case "switch":

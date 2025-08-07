@@ -5,7 +5,13 @@ import com.github.inc0grepoz.lix4j.util.PrimitiveTester;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 
 /**
- * Implements a logical summation operator.
+ * Implements a logical summation operator with left-to-right evaluation.
+ * Supports chained execution.
+ * <p>
+ * Example: 
+ * <blockquote><pre>
+ *     a || b && c || !d
+ * </pre></blockquote>
  * 
  * @author inc0g-repoz
  */

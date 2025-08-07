@@ -1,0 +1,264 @@
+/*
+ * LIX4J Sorting Algorithms Implementation
+ * Verified for LIX4J syntax compatibility
+ */
+
+// ==================== BUBBLE SORT ====================
+/* 
+ * Repeatedly swaps adjacent elements if they are in the wrong order
+ * until the list is sorted.
+ * 
+ * Complexity:
+ * Time: Worst/Average: O(n²)
+ * Best (already sorted): O(n)
+ * Space: O(1) (in-place)
+ */
+function bubbleSort(array) {
+    n = length(array);
+    swapped = true;
+
+    while (swapped) {
+        swapped = false;
+
+        for (i = 0; i < n - 1; i++) {
+            if (array[i] > array[i + 1]) {
+                // Swap using single assignment (LIX4J optimized)
+                array[i] = array[i] + array[i + 1];
+                array[i + 1] = array[i] - array[i + 1];
+                array[i] = array[i] - array[i + 1];
+                swapped = true;
+            }
+        }
+
+        n--;
+    }
+
+    return array;
+}
+
+// ==================== INSERTION SORT ====================
+/* 
+ * Builds the final sorted array one element at a time.
+ * 
+ * Complexity:
+ * Time: Worst/Average O(n²), Best O(n)
+ * Space: O(1) (in-place)
+ */
+function insertionSort(array) {
+    n = length(array);
+
+    for (i = 1; i < n; i++) {
+        key = array[i];
+        j = i - 1;
+
+        // Shift elements greater than key
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j--;
+        }
+
+        array[j + 1] = key;
+    }
+
+    return array;
+}
+
+// ==================== MERGE SORT ====================
+/*
+ * Stable, divide-and-conquer algorithm with O(n) space requirement
+ * 
+ * Complexity:
+ * Time: O(n log n) in all cases
+ * Space: O(n)
+ */
+function mergeSort(array) {
+    if (length(array) <= 1) return array;
+
+    mid = length(array) / 2;
+    left = new_array("java.lang.Integer", mid);
+    right = new_array("java.lang.Integer", length(array) - mid);
+
+    // Populate subarrays
+    for (i = 0; i < mid; i++) left[i] = array[i];
+    for (i = mid; i < length(array); i++) right[i - mid] = array[i];
+
+    // Recursive sort and merge
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right) {
+    result = new_array("java.lang.Integer", length(left) + length(right));
+    i = 0; j = 0; k = 0;
+
+    while (i < length(left) && j < length(right)) {
+        if (left[i] <= right[j]) {
+            result[k] = left[i];
+            i++;
+        } else {
+            result[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy remaining elements
+    while (i < length(left)) {
+        result[k] = left[i];
+        i++; k++;
+    }
+
+    while (j < length(right)) {
+        result[k] = right[j];
+        j++; k++;
+    }
+
+    return result;
+}
+
+// ==================== SELECTION SORT ====================
+/*
+ * Finds minimum element in each pass and swaps it into position
+ * 
+ * Complexity:
+ * Time: O(n²) in all cases
+ * Space: O(1)
+ */
+function selectionSort(array) {
+    n = length(array);
+
+    for (i = 0; i < n - 1; i++) {
+        minIdx = i;
+
+        for (j = i + 1; j < n; j++) {
+            if (array[j] < array[minIdx]) minIdx = j;
+        }
+
+        // Swap using arithmetic to avoid temp variable
+        if (minIdx != i) {
+            array[i] = array[i] + array[minIdx];
+            array[minIdx] = array[i] - array[minIdx];
+            array[i] = array[i] - array[minIdx];
+        }
+    }
+
+    return array;
+}
+
+// ==================== SHELL SORT ====================
+/*
+ * Optimized insertion sort with gap sequence
+ * 
+ * Complexity:
+ * Time: O(n log n) to O(n²) depending on gap sequence
+ * Space: O(1)
+ */
+function shellSort(array) {
+    n = length(array);
+    gap = n / 2;
+
+    while (gap > 0) {
+        for (i = gap; i < n; i++) {
+            temp = array[i];
+            j = i;
+
+            while (j >= gap && array[j - gap] > temp) {
+                array[j] = array[j - gap];
+                j -= gap;
+            }
+
+            array[j] = temp;
+        }
+
+        gap = gap / 2;
+    }
+
+    return array;
+}
+
+// ==================== QUICK SORT (LIX4J compatible) ====================
+/*
+ * Modified to avoid 'do-while' which isn't supported in LIX4J
+ * Uses Hoare partition scheme
+ * 
+ * Complexity:
+ * Time: Average O(n log n), Worst O(n²)
+ * Space: O(log n) stack space
+ */
+function quickSort(array, low, high) {
+    if (low < high) {
+        pi = partition(array, low, high);
+        quickSort(array, low, pi);
+        quickSort(array, pi + 1, high);
+    }
+
+    return array;
+}
+
+function partition(array, low, high) {
+    pivot = array[(low + high) / 2];
+    i = low - 1;
+    j = high + 1;
+
+    while (true) {
+        // Replace do-while with while
+        i++;
+        while (array[i] < pivot) i++;
+        j--;
+        while (array[j] > pivot) j--;
+
+        if (i >= j) return j;
+
+        // Swap without temp variable
+        array[i] = array[i] + array[j];
+        array[j] = array[i] - array[j];
+        array[i] = array[i] - array[j];
+    }
+}
+
+// Helper function to print array contents
+function print_array(array) {
+    print("[");
+
+    for (i = 0; i < length(array); i++) {
+        print(array[i]);
+
+        if (i < length(array) - 1) {
+            print(", ");
+        }
+    }
+
+    print("]");
+}
+
+// ==================== USAGE EXAMPLE ====================
+function test_module_sort() {
+    // Initialize array (LIX4J style)
+    arr = new_array("java.lang.Integer", 5);
+    arr[0] = 5; arr[1] = 3; arr[2] = 8; arr[3] = 1; arr[4] = 2;
+
+    print("Original: ");
+    print_array(arr);
+    println("");
+
+    // Example usage (uncomment to test)
+    // sorted = bubbleSort(arr);
+    // sorted = insertionSort(arr);
+    // sorted = selectionSort(arr);
+    // sorted = shellSort(arr);
+    // sorted = mergeSort(arr); // inoperable
+    // sorted = quickSort(arr, 0, length(arr) - 1); // inoperable
+
+    sorted = null;
+    try {
+        sorted = bubbleSort(arr);
+        print("Sorted: ");
+        print_array(sorted);
+        println("");
+    } catch (e) {
+        e.printStackTrace();
+    }
+
+    sleep(10000);
+}
+
+//test_module_sort();

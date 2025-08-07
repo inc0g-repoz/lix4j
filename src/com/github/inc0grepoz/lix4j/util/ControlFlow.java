@@ -17,11 +17,10 @@ public enum ControlFlow
      */
     CONTINUE,
     /**
-     * Used by script units to continue executing, if one
+     * Used by script units to continue executing, if none
      * of the units returns a value.
      */
     KEEP_EXECUTING,
-
     /**
      * Used as a return value by functions, when a return
      * statement is not followed by any values.

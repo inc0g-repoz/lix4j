@@ -15,6 +15,7 @@ import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.expression.Operator;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 /**
  * Represents a compiled script.
@@ -39,7 +40,7 @@ public class Script
 
         // Compiling declared script members
         CompileTimeContext ctx = new CompileTimeContext(this);
-        ctx.getVarpool().enterSection();
+        ctx.getVarpool().enterSection(); // for global variables
         ScriptCompiler.compile(ctx, ast, this, root);
 
         // Initializing the script (global variables)
@@ -103,11 +104,16 @@ public class Script
             throw new AssertionError("No loader directory provided for including code");
         }
 
+        // Lexing the input and generating a syntax tree
         File file = new File(loaderDirectory, filepath);
         LinkedList<String> input = Lexer.readTokens(new FileReader(file));
         AST ast = AST.generateTree(input);
 
+        // Compiling into the global namespace by default
+        String namespace = ctx.getNamespace();
+        ctx.setNamespace(Namespace.GLOBAL);
         ScriptCompiler.compile(ctx, ast, this, root);
+        ctx.setNamespace(namespace);
     }
 
 }

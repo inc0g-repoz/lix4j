@@ -5,13 +5,12 @@ import com.github.inc0grepoz.lix4j.util.PrimitiveTester;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 
 /**
- * Implements the assignment operator with right-to-left evaluation.
- * Supports chained assignments like.
+ * Implements a logical multiplication operator with left-to-right evaluation.
+ * Supports chained execution.
  * <p>
  * Example: 
  * <blockquote><pre>
- *     x = 5;      // assigns 5 to x
- *     y = x = 10; // assigns 10 to x, then x to y
+ *     a && (b || c) && !d
  * </pre></blockquote>
  * 
  * @author inc0g-repoz

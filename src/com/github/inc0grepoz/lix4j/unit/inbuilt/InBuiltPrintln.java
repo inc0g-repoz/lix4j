@@ -4,13 +4,14 @@ import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltPrintln extends UnitFunction
 {
 
     public InBuiltPrintln(UnitSection parent)
     {
-        super(parent, "println", Arrays.asList("object"));
+        super(parent, Namespace.GLOBAL, "println", Arrays.asList("object"));
     }
 
     @Override

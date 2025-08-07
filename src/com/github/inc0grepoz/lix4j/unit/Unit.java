@@ -1,6 +1,7 @@
 package com.github.inc0grepoz.lix4j.unit;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
 /**
  * Represents a callable unit of scripted logic that can be
@@ -37,6 +38,17 @@ public abstract class Unit
     public UnitSection getParent()
     {
         return parent;
+    }
+
+    /**
+     * Returns {@code true}, if this unit is the script root,
+     * or {@code false} otherwise.
+     * 
+     * @return a {@code boolean} value
+     */
+    public boolean isRoot()
+    {
+        return parent == null;
     }
 
     /**

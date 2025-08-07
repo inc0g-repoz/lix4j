@@ -5,13 +5,14 @@ import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltLength extends UnitFunction
 {
 
     public InBuiltLength(UnitSection parent)
     {
-        super(parent, "length", Arrays.asList("array"));
+        super(parent, Namespace.GLOBAL, "length", Arrays.asList("array"));
     }
 
     @Override

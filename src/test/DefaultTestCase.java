@@ -74,25 +74,6 @@ class DefaultTestCase {
         Object rv = time("Executed", () -> fn.call());
     }
 
-    @Disabled
-    @Test
-    void testReflection()
-    {
-        try
-        {
-            Object string = "value";
-            Object[] args = { "a", "4" };
-            Method m = string.getClass().getMethod("replace", CharSequence.class, CharSequence.class);
-            Object rv = m.invoke(string, args);
-            System.out.println(rv);
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            throw new AssertionError(t);
-        }
-    }
-
     private static <T> T time(Supplier<T> lambda)
     {
         return time(null, lambda);

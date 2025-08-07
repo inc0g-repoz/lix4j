@@ -21,6 +21,11 @@ public class UnitInclude extends Unit
             throw new SyntaxError("Include statements should be followed by valid filepaths");
         }
 
+        if (!parent.isRoot())
+        {
+            throw new SyntaxError("Cannot include source files inside a section");
+        }
+
         Accessor fpa = ExpressionResolver.resolve(ctx, parent, tokens);
         String filepath = (String) fpa.linkedAccess(null, null);
 

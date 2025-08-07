@@ -57,19 +57,20 @@ public class UnitFunction extends UnitSection
             throw new RuntimeException("Function overloading is not supported (duplicate function " + fn.getSignature() + ")");
         }
 
-        fn = new UnitFunction(section, name, paramNames);
+        fn = new UnitFunction(section, ctx.getNamespace(), name, paramNames);
         ScriptCompiler.appendSectionUnits(ctx, node, fn);
 
         return fn;
     }
 
-    final String name;
+    final String namespace, name;
     final List<String> paramNames;
     final UnitRoot root;
 
-    protected UnitFunction(UnitSection parent, String name, List<String> paramNames)
+    protected UnitFunction(UnitSection parent, String namespace, String name, List<String> paramNames)
     {
         super(parent);
+        this.namespace = namespace;
         this.name = name;
         this.paramNames = paramNames;
         root = root();
