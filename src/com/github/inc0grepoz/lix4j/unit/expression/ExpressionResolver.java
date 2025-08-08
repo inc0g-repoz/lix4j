@@ -58,8 +58,6 @@ public class ExpressionResolver
                 return Accessor.TRUE;
             case "false":
                 return Accessor.FALSE;
-            case "this":
-                return Accessor.THIS;
         }
 
         // Handle string tokens
@@ -301,6 +299,11 @@ public class ExpressionResolver
         {
             namespace = tokens.poll();
             tokens.poll();
+
+            if (namespace.equals("this"))
+            {
+                return ctx.getNamespace();
+            }
         }
         else
         {

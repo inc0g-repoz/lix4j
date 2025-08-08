@@ -30,23 +30,6 @@ public abstract class Accessor
     /** Precached {@code false} value accessor. **/
     public static final Accessor FALSE = AccessorValue.of(false);
 
-    /** Precached {@code this} return value accessor. **/
-    public static final Accessor THIS = new AccessorValue(null) {
-
-        @Override
-        public String toString()
-        {
-            return "this";
-        }
-
-        @Override
-        public Object access(ExecutionContext ctx, Object src)
-        {
-            throw new UnsupportedOperationException("Only use \"this\" for function references");
-        }
-
-    };
-
     /**
      * Creates a new {@code AccessorBuilder} with an empty
      * access chain.
