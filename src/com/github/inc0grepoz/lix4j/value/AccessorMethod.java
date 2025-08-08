@@ -57,10 +57,10 @@ class AccessorMethod extends AccessorNamed
     throws Throwable
     {
         boolean accessible = method.isAccessible();
-        Object rv = null;
-
         method.setAccessible(true);
-        rv = method.invoke(src, params);
+
+        src = unwrapSource(src);
+        Object rv = method.invoke(src, params);
 
         if (!accessible)
         {
@@ -104,8 +104,8 @@ class AccessorMethod extends AccessorNamed
         }
         else
         {
-            List<Object>   paramList = new ArrayList<>();
-            List<Class<?>> classList = new ArrayList<>();
+            List<Object>   paramList  = new ArrayList<>();
+            List<Class<?>> classList  = new ArrayList<>();
             Object puw;
 
             for (int i = 0; i < params.length; i++)
@@ -115,11 +115,9 @@ class AccessorMethod extends AccessorNamed
                     paramList.add(null);
                     classList.add(Object.class);
                 }
-                else
-                {
-                    paramList.add(puw = params[i].linkedAccess(ctx, null));
-                    classList.add(puw.getClass());
-                }
+
+                paramList.add(puw = params[i].linkedAccess(ctx, null));
+                classList.add(puw.getClass());
             }
 
             paramList.toArray(paramArr = new Object[paramList.size()]);
@@ -141,47 +139,33 @@ class AccessorMethod extends AccessorNamed
     private void handleFunctionReferences(Method method, ExecutionContext ctx,
             Object[] paramArray, Class<?>[] classArray)
     {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+
         for (int i = 0; i < paramArray.length; i++)
         {
-            if (paramArray[i] == null)
+            if (paramArray[i].getClass() != AccessorUnassigned.class)
             {
                 continue;
             }
 
-            if (paramArray[i].getClass() == AccessorFunctionProxy.class)
+            if (!Reflection.isFunctionalInterface(parameterTypes[i]))
             {
-                AccessorFunctionProxy accessor = (AccessorFunctionProxy) paramArray[i];
-                Class<?> parameterType = method.getParameterTypes()[i];
-
-                if (Reflection.isFunctionalInterface(parameterType))
-                {
-                    String fnName = accessor.getName();
-                    int paramCount = parameterType.getTypeParameters().length;
-                    UnitFunction fn = ctx.getScript().getFunction(fnName, paramCount);
-
-                    if (fn == null)
-                    {
-                        throw new RuntimeException("Unknown function " + fnName + " with " + paramCount + " parameter(-s)");
-                    }
-
-                    Object proxy = accessor.initProxy(fn, parameterType);
-
-                    // Writing function cache
-                    params[i] = new AccessorValue(proxy)
-                    {
-
-                        @Override
-                        public String toString()
-                        {
-                            return accessor.toString();
-                        }
-
-                    };
-
-                    paramArray[i] = proxy;
-                    classArray[i] = parameterType;
-                }
+                continue;
             }
+
+            AccessorUnassigned unassigned = (AccessorUnassigned) paramArray[i];
+            String fnNs = unassigned.getNamespace();
+            String fnName = unassigned.getName();
+            int paramCount = parameterTypes[i].getTypeParameters().length;
+            UnitFunction fn = ctx.getScript().getFunction(fnNs, fnName, paramCount);
+
+            if (fn == null)
+            {
+                unassigned.throwUnassigned();
+            }
+
+            // Writing function cache
+            params[i] = new AccessorValue(paramArray[i] = unassigned.initProxy(fn, classArray[i] = parameterTypes[i]));
         }
     }
 

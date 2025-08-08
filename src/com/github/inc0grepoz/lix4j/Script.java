@@ -48,6 +48,24 @@ public class Script
         root.init(globalContext);
     }
 
+    @Override
+    public String toString() {
+        return root.toString();
+    }
+
+    /**
+     * Returns the function by the specified name and parameters
+     * count, if exists, or {@code null} otherwise.
+     * 
+     * @param namespace  the function namespace
+     * @param name       the function name
+     * @param paramCount the parameters count
+     * @return a function
+     */
+    public UnitFunction getFunction(String namespace, String name, int paramCount) {
+        return root.getFunction(namespace, name, paramCount);
+    }
+
     /**
      * Returns the function by the specified name and parameters
      * count, if exists, or {@code null} otherwise.
@@ -58,7 +76,23 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.getFunction(name, paramCount);
+        return root.getFunction(Namespace.GLOBAL, name, paramCount);
+    }
+
+    /**
+     * Calls the function with the specified name and parameters
+     * count, if exists.
+     * 
+     * @param namespace  the function namespace
+     * @param name   the function name
+     * @param params the parameters
+     * @return the function return value
+     * @throws IllegalArgumentException
+     *         if no function has the same name and parameters count
+     */
+    public Object callFunction(String namespace, String name, Object... params)
+    {
+        return root.getFunction(namespace, name, params.length).call(params);
     }
 
     /**
@@ -73,7 +107,7 @@ public class Script
      */
     public Object callFunction(String name, Object... params)
     {
-        return root.getFunction(name, params.length).call(params);
+        return root.getFunction(Namespace.GLOBAL, name, params.length).call(params);
     }
 
     /**

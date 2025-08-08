@@ -11,6 +11,7 @@ import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 import com.github.inc0grepoz.lix4j.value.AccessorBuilder;
@@ -34,14 +35,14 @@ public class ExpressionResolver
 
         if (tokens.size() == 1)
         {
-            return resolveToken(ctx, section, tokens.getFirst(), Collections.emptySet());
+            return resolveToken(ctx, section, ctx.getNamespace(), tokens.getFirst(), Collections.emptySet());
         }
 
         return resolveOperator(ctx, section, tokens);
     }
 
     private static Accessor resolveToken(CompileTimeContext ctx, UnitSection section,
-            String token, Set<Modifier> modifiers)
+            String namespace, String token, Set<Modifier> modifiers)
     {
         if (token == null)
         {
@@ -102,7 +103,7 @@ public class ExpressionResolver
         }
 
         // Default to variable
-        return ctx.getVarpool().handleVariable(token, modifiers);
+        return ctx.getVarpool().handleVariable(namespace, token, modifiers);
     }
 
     private static Accessor resolveOperator(CompileTimeContext ctx, UnitSection section, LinkedList<String> tokens)
@@ -229,6 +230,7 @@ public class ExpressionResolver
     private static void handleParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
+        String namespace = handleNamespace(ctx, tokens);
         String name = tokens.poll();
         TokenHelper.openParentheses(tokens);
 
@@ -238,7 +240,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.function(name, accessors);
+            builder.function(namespace, name, accessors);
             builder.index(index);
         }
         else
@@ -265,22 +267,47 @@ public class ExpressionResolver
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         Set<Modifier> modifiers = readAllModifiers(tokens);
+        String namespace = handleNamespace(ctx, tokens);
 
         if (tokens.size() > 1)
         {
             throw new SyntaxError("Unresolved expression: " + String.join(" ", tokens));
         }
 
+        String name = tokens.poll();
+
         if (builder.isEmpty())
         {
-            builder.accessor(resolveToken(ctx, section, tokens.poll(), modifiers));
+            builder.accessor(resolveToken(ctx, section, namespace, name, modifiers));
             builder.index(index);
         }
         else
         {
-            builder.field(tokens.poll());
+            builder.field(name);
             builder.index(index);
         }
+    }
+
+    private static String handleNamespace(CompileTimeContext ctx, LinkedList<String> tokens)
+    {
+        String namespace;
+
+        if (tokens.size() > 1 && tokens.get(0).equals("::"))
+        {
+            tokens.poll();
+            return Namespace.GLOBAL;
+        }
+        else if (tokens.size() > 2 && tokens.get(1).equals("::"))
+        {
+            namespace = tokens.poll();
+            tokens.poll();
+        }
+        else
+        {
+            namespace = ctx.getNamespace();
+        }
+
+        return namespace.isEmpty() ? ctx.getNamespace() : namespace;
     }
 
     private static Set<Modifier> readAllModifiers(LinkedList<String> tokens)

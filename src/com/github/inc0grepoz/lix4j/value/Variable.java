@@ -3,29 +3,27 @@ package com.github.inc0grepoz.lix4j.value;
 public class Variable
 {
 
-    static final Object UNASSIGNED = new Object() {
+    private final String namespace, name;
 
-        @Override
-        public String toString()
-        {
-            return "unassigned";
-        }
+    private Object instance;
 
-    };
-
-    private final String name;
-
-    private Object instance = UNASSIGNED;
-
-    Variable(String name)
+    Variable(String namespace, String name)
     {
+        this.namespace = namespace;
         this.name = name;
+
+        instance = new AccessorUnassigned(namespace, name);
     }
 
     @Override
     public String toString()
     {
         return name;
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
     }
 
     public String getName()
@@ -40,11 +38,6 @@ public class Variable
 
     public Object get()
     {
-        if (instance == UNASSIGNED)
-        {
-            throw new RuntimeException("Static variable " + name + " is unassigned");
-        }
-
         return instance;
     }
 

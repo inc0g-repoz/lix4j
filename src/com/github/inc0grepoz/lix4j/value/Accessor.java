@@ -67,6 +67,13 @@ public abstract class Accessor
                 : rv;
     }
 
+    static Object unwrapSource(Object src)
+    {
+        return src == null ? null
+             : src.getClass() == AccessorUnassigned.class ? ((AccessorUnassigned) src).access(null, null)
+             : src;
+    }
+
     Accessor next, elementIndex;
 
     /**

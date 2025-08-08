@@ -3,6 +3,8 @@
  * Verified for LIX4J syntax compatibility
  */
 
+namespace sort;
+
 // ==================== BUBBLE SORT ====================
 /* 
  * Repeatedly swaps adjacent elements if they are in the wrong order

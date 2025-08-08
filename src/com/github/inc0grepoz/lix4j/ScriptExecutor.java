@@ -21,7 +21,6 @@ import com.github.inc0grepoz.lix4j.unit.expression.OperatorAssignMutateUnary;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorComparator;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorDivide;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorEqual;
-import com.github.inc0grepoz.lix4j.unit.expression.OperatorFunctionProxy;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorMultiply;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorNot;
 import com.github.inc0grepoz.lix4j.unit.expression.OperatorNotEqual;
@@ -36,6 +35,7 @@ import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltNewInstance;
 import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltNoInstance;
 import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrint;
 import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrintln;
+import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrintlnEmpty;
 import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltSleep;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
@@ -80,7 +80,6 @@ public class ScriptExecutor
         operators.add(new OperatorAssignMutateUnary("--", OperatorType.UNARY_LEFT,  (n) -> n.doubleValue() - 1));
         operators.add(new OperatorAssignMutateUnary("++", OperatorType.UNARY_RIGHT, (n) -> n.doubleValue() + 1));
         operators.add(new OperatorAssignMutateUnary("--", OperatorType.UNARY_RIGHT, (n) -> n.doubleValue() - 1));
-        operators.add(new OperatorFunctionProxy    ("::"));
 
         inbuilt.add(InBuiltClassForName::new);
         inbuilt.add(InBuiltLength::new);
@@ -89,6 +88,7 @@ public class ScriptExecutor
         inbuilt.add(InBuiltNoInstance::new);
         inbuilt.add(InBuiltPrint::new);
         inbuilt.add(InBuiltPrintln::new);
+        inbuilt.add(InBuiltPrintlnEmpty::new);
         inbuilt.add(InBuiltSleep::new);
     }
 

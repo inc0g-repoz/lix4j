@@ -1,20 +1,41 @@
 include "math.lix";
 include "util.lix";
+include "sort.lix";
 
-function multithreadable() {
+// Lambda-function for invocation by Java.
+function hello() {
     for (static i = 1; i <= 5; i++) {
         println("Hello from a different thread! (x" + i + ")");
     }
 }
 
+// Lambda-function for invocation by Java.
+function each(string) {
+    println(string);
+}
+
 function test_async() {
-    async(this::multithreadable);
+    async(hello);
     EXECUTOR_SERVICE.shutdown();
+}
+
+static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
+
+function test_list() {
+    list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
+    list.add("1");
+    list.add("2");
+    list.forEach(each);
+}
+
+function test_unassigned(ref) {
+    println(ref);
 }
 
 function main() {
     number = 5;
-    factor = factorial_r(number);
+    factor = math::factorial_r(number);
     println("Recursive factorial of " + number + " is " + factor);
     test_async();
+    test_list();
 }

@@ -29,29 +29,35 @@ public class AccessorVariableStatic extends AccessorVariable
      * @param name the variable name
      * @return a new {@code AccessorVariableStatic}
      */
-    public static AccessorVariableStatic of(String name)
+    public static AccessorVariableStatic of(String namespace, String name)
     {
-        return of(new Variable(name));
+        return of(new Variable(namespace, name));
     }
 
     private final Variable variable;
 
     AccessorVariableStatic(Variable var)
     {
-        super(var.getName());
+        super(var.getNamespace(), var.getName());
         variable = var;
     }
 
     @Override
     public String toString()
     {
-        return "!static$" + name + (next == null ? "" : "." + next);
+        return "static->" + super.toString();
     }
 
     @Override
-    public Object access(ExecutionContext ctx, Object src) {
+    public Object access(ExecutionContext ctx, Object src)
+    {
+        if (src != null && src.getClass() == AccessorUnassigned.class)
+        {
+            src = ((AccessorUnassigned) src).access(null, null);
+        }
+
         Object rv = variable.get();
-        return elementIndex == null ? rv : accessElement(ctx, rv);
+        return elementIndex == null ? rv : accessElement(ctx, unwrapSource(rv));
     }
 
     @Override

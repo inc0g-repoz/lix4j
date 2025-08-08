@@ -15,29 +15,25 @@ public class AccessorVariableStack extends AccessorVariable
      * Creates and returns a new accessor for a variable
      * with a specified name.
      * 
-     * @param name the variable name
+     * @param namespace the variable namespace
+     * @param name      the variable name
      * @return a new {@code AccessorVariable}
      */
-    public static AccessorVariableStack of(String name)
+    public static AccessorVariableStack of(String namespace, String name)
     {
-        return new AccessorVariableStack(name);
+        return new AccessorVariableStack(namespace, name);
     }
 
-    AccessorVariableStack(String name)
+    AccessorVariableStack(String namespace, String name)
     {
-        super(name);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "$" + name + (next == null ? "" : "." + next);
+        super(namespace, name);
     }
 
     @Override
-    public Object access(ExecutionContext ctx, Object src) {
-        Object rv = ctx.getVarpool().get(name);
-        return elementIndex == null ? rv : accessElement(ctx, rv);
+    public Object access(ExecutionContext ctx, Object src)
+    {
+        Object rv = ctx.getVarpool().get(namespace, name);
+        return elementIndex == null ? rv : accessElement(ctx, unwrapSource(rv));
     }
 
     @Override
@@ -46,11 +42,11 @@ public class AccessorVariableStack extends AccessorVariable
         if (elementIndex == null)
         {
             return next == null
-                    ? ctx.getVarpool().set(name, val)
-                    : next.mutate(ctx, ctx.getVarpool().get(name), val);
+                    ? ctx.getVarpool().set(namespace, name, val)
+                    : next.mutate(ctx, ctx.getVarpool().get(namespace, name), val);
         }
 
-        return mutateElement(ctx, ctx.getVarpool().get(name), val);
+        return mutateElement(ctx, ctx.getVarpool().get(namespace, name), val);
     }
 
 }

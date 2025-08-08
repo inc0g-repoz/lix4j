@@ -1,22 +1,20 @@
 package com.github.inc0grepoz.lix4j.value;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 
-class AccessorFunction extends AccessorNamed
+class AccessorFunction extends AccessorNamespaced
 {
 
     private final Accessor[] params;
 
     private UnitFunction cachedFunction;
 
-    AccessorFunction(String name, Accessor[] params)
+    AccessorFunction(String namespace, String name, Accessor[] params)
     {
-        super(name);
+        super(namespace, name);
         this.params = params;
     }
 
@@ -30,7 +28,7 @@ class AccessorFunction extends AccessorNamed
             joiner.add(params[i].toString());
         }
 
-        return name + joiner.toString() + (next == null ? "" : "." + next);
+        return (namespace == null ? "" : namespace + "::") + name + joiner.toString() + (next == null ? "" : "." + next);
     }
 
     @Override
@@ -44,24 +42,34 @@ class AccessorFunction extends AccessorNamed
         }
         else
         {
-            List<Object> paramList = new ArrayList<>();
+            paramArr = new Object[params.length];
 
             for (int i = 0; i < params.length; i++)
             {
-                if (params[i] == null)
+                if (params[i] == Accessor.NULL)
                 {
+                    paramArr[i] = null;
                     continue;
                 }
 
-                paramList.add(params[i].linkedAccess(ctx, null));
-            }
+                if (params[i].getClass() == AccessorUnassigned.class)
+                {
+                    // Must be a function reference, resolved below.
+                    // Function proxies require the amount of arguments,
+                    // so they have to be resolved after compilation.
+                    AccessorNamespaced namespaced = (AccessorNamespaced) params[i];
+                    String fnNs = namespaced.getNamespace();
+                    String fnName = namespaced.getName();
+                    paramArr[i] = params[i] = new AccessorUnassigned(fnNs, fnName);
+                }
 
-            paramList.toArray(paramArr = new Object[paramList.size()]);
+                paramArr[i] = params[i].linkedAccess(ctx, null);
+            }
         }
 
         if (cachedFunction == null)
         {
-            cachedFunction = ctx.getScript().getFunction(name, paramArr.length);
+            cachedFunction = ctx.getScript().getFunction(namespace, name, paramArr.length);
         }
 
         try

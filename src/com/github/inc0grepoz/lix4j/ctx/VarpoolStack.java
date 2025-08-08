@@ -1,21 +1,19 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
+
+import com.github.inc0grepoz.lix4j.value.AccessorUnassigned;
 
 /**
  * Represents a non-static pool for variables.
  * 
  * @author inc0g-repoz
  */
-public class VarpoolStack implements Cloneable
+public class VarpoolStack extends Varpool implements Cloneable
 {
 
     private static final Object NO_KEY = new Object();
-
-    private final ArrayDeque<Map<String, Object>> stack;
 
     /**
      * Creates a new non-static pool.
@@ -27,100 +25,65 @@ public class VarpoolStack implements Cloneable
 
     private VarpoolStack(ArrayDeque<Map<String, Object>> stack)
     {
-        this.stack = stack;
-    }
-
-    @Override
-    public String toString()
-    {
-        StringJoiner joiner = new StringJoiner("\n");
-
-        for (Map<String, Object> layer: stack)
-        {
-            layer.forEach((k, v) -> joiner.add(k + " = " + v));
-        }
-
-        return joiner.toString();
+        super(stack);
     }
 
     /**
      * Sets the specified variable in the context section.
      * 
+     * @param the variable namespace
      * @param the variable name
      * @param the variable value
      * @return the variable value
      */
-    public Object set(String name, Object value)
+    public Object set(String namespace, String name, Object value)
     {
         if (stack.isEmpty())
         {
             throw new IllegalStateException("No active section to set variable in");
         }
 
+        String namespaced = toNamespaced(namespace, name);
+
         // Redefining in another layer, if defined
         for (Map<String, Object> layer: stack)
         {
-            if (layer.containsKey(name))
+            if (layer.containsKey(namespaced))
             {
-                layer.put(name, value);
+                layer.put(namespaced, value);
                 return value;
             }
         }
 
         // Define at the last layer
-        stack.peek().put(name, value);
+        stack.peek().put(namespaced, value);
         return value;
     }
 
     /**
      * Returns the variable by the specified name, if exists.
      * 
-     * @param the variable name
+     * @param namespace the variable namespace
+     * @param name the variable name
      * @return the variable value
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public Object get(String name)
+    public Object get(String namespace, String name)
     {
         Object o;
+        String namespaced = toNamespaced(namespace, name);
 
         for (Map<String, Object> layer: stack)
         {
             // The used map implementation may support null values
-            if ((o = layer.getOrDefault(name, NO_KEY)) != NO_KEY)
+            if ((o = layer.getOrDefault(namespaced, NO_KEY)) != NO_KEY)
             {
                 return o;
             }
         }
 
-        throw new RuntimeException("Variable " + name + " is unassigned");
-    }
-
-    /**
-     * Enters a new context section and returns this instance.
-     * 
-     * @return this instance
-     */
-    public VarpoolStack enterSection()
-    {
-        stack.push(new HashMap<>());
-        return this;
-    }
-
-    /**
-     * Exits the current context section and returns this instance.
-     * 
-     * @return this instance
-     */
-    public VarpoolStack exitSection()
-    {
-        if (stack.isEmpty())
-        {
-            throw new IllegalStateException("No active section to exit");
-        }
-
-        stack.pop();
-        return this;
+        return new AccessorUnassigned(namespace, name);
     }
 
     @Override

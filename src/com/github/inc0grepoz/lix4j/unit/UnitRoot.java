@@ -4,7 +4,6 @@ import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitRoot extends UnitSection
 {
@@ -44,11 +43,6 @@ public class UnitRoot extends UnitSection
         }
 
         return null;
-    }
-
-    public UnitFunction getFunction(String name, int paramCount)
-    {
-        return getFunction(Namespace.GLOBAL, name, paramCount);
     }
 
     public void init(ExecutionContext globalContext)

@@ -2,39 +2,28 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.ArrayDeque;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
 
+import com.github.inc0grepoz.lix4j.ctx.Varpool;
 import com.github.inc0grepoz.lix4j.value.AccessorVariable;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStatic;
 import com.github.inc0grepoz.lix4j.value.Variable;
 
-public class CompileTimeVarpool
+public class CompileTimeVarpool extends Varpool
 {
 
     private static final Object NO_KEY = new Object();
 
-    private final ArrayDeque<Map<String, Object>> stack = new ArrayDeque<>();
-
-    @Override
-    public String toString()
+    public CompileTimeVarpool()
     {
-        StringJoiner joiner = new StringJoiner("\n");
-
-        for (Map<String, Object> layer: stack)
-        {
-            layer.forEach((k, v) -> joiner.add(k + " = " + v));
-        }
-
-        return joiner.toString();
+        super(new ArrayDeque<>());
     }
 
-    public AccessorVariable handleVariable(String token, Set<Modifier> modifiers)
+    public AccessorVariable handleVariable(String namespace, String name, Set<Modifier> modifiers)
     {
-        AccessorVariable xcsVar = get(token);
+        AccessorVariable xcsVar = get(namespace, name);
 
         // Existing variable
         if (modifiers.isEmpty())
@@ -49,14 +38,14 @@ public class CompileTimeVarpool
 //              System.err.print(" for declaring variables.");
 //              System.err.println();
 
-                return handleVariable(token, EnumSet.of(Modifier.VAR));
+                return handleVariable(namespace, name, EnumSet.of(Modifier.VAR));
             }
 
             Class<? extends AccessorVariable> clazz = xcsVar.getClass();
 
             if (clazz == AccessorVariableStack.class)
             {
-                xcsVar = AccessorVariableStack.of(token);
+                xcsVar = AccessorVariableStack.of(namespace, name);
             }
             else if (clazz == AccessorVariableStatic.class)
             {
@@ -73,16 +62,16 @@ public class CompileTimeVarpool
         {
             if (xcsVar != null)
             {
-                throw new RuntimeException("Two or more variables of the same name: " + token);
+                throw new RuntimeException("Two or more variables of the same name: " + name);
             }
 
             if (modifiers.contains(Modifier.STATIC))
             {
-                set(token, xcsVar = AccessorVariableStatic.of(token));
+                set(namespace, name, xcsVar = AccessorVariableStatic.of(namespace, name));
             }
             else
             {
-                set(token, xcsVar = AccessorVariableStack.of(token));
+                set(namespace, name, xcsVar = AccessorVariableStack.of(namespace, name));
             }
         }
 
@@ -92,11 +81,12 @@ public class CompileTimeVarpool
     /**
      * Sets the specified variable in the context section.
      * 
+     * @param the variable namespace
      * @param the variable name
      * @param the variable value
      * @return the variable value
      */
-    public AccessorVariable set(String name, AccessorVariable value)
+    public AccessorVariable set(String namespace, String name, AccessorVariable value)
     {
         if (stack.isEmpty())
         {
@@ -114,64 +104,34 @@ public class CompileTimeVarpool
         }
 
         // Define at the last layer
-        stack.peek().put(name, value);
+        stack.peek().put(namespace + "::" + name, value);
         return (AccessorVariable) value;
     }
 
     /**
      * Returns the variable by the specified name, if exists.
      * 
+     * @param the variable namespace
      * @param the variable name
      * @return the variable value
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public AccessorVariable get(String name)
+    public AccessorVariable get(String namespace, String name)
     {
         Object o;
+        String fullName = toNamespaced(namespace, name);
 
         for (Map<String, Object> layer: stack)
         {
             // The used map implementation may support null values
-            if ((o = layer.getOrDefault(name, NO_KEY)) != NO_KEY)
+            if ((o = layer.getOrDefault(fullName, NO_KEY)) != NO_KEY)
             {
                 return (AccessorVariable) o;
             }
         }
 
         return null;
-    }
-
-    /**
-     * Enters a new context section and returns this instance.
-     * 
-     * @return this instance
-     */
-    public CompileTimeVarpool enterSection()
-    {
-        stack.push(new HashMap<>());
-        return this;
-    }
-
-    /**
-     * Exits the current context section and returns this instance.
-     * 
-     * @return this instance
-     */
-    public CompileTimeVarpool exitSection()
-    {
-        if (stack.isEmpty())
-        {
-            throw new IllegalStateException("No active section to exit");
-        }
-
-        stack.pop();
-        return this;
-    }
-
-    public int getLayersCount()
-    {
-        return stack.size();
     }
 
 }

@@ -1,3 +1,5 @@
+namespace math;
+
 // Calculates a fibbonacci sequence of 'count' numbers.
 function fibbonacci(count) {
     n = new_array("java.lang.Integer", count);
@@ -17,7 +19,7 @@ function fibbonacci(count) {
  * and returns the result.
  */
 function factorial_i(n) {
-    static rv = 1;
+    rv = 1;
     while (n != 1) {
         rv *= n--;
     }
@@ -38,16 +40,16 @@ function abs(n) return n < 0 ? -n : n;
 
 // Calculates and returns 'n1' to the power of 'n2'.
 function pow(n1, n2) {
-    static rv = 1;
+    rv = 1;
     if (n2 == 0) {
         return rv;
     } else if (n2 > 0) {
-        for (static i = 0; i < n2; i++) {
+        for (i = 0; i < n2; i++) {
             rv *= n1;
         }
     } else if (n2 < 0) {
         n2 = -n2;
-        for (static i = 0; i < n2; i++) {
+        for (i = 0; i < n2; i++) {
             rv *= n1;
         }
         rv = 1 / rv;

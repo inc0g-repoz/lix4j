@@ -10,6 +10,7 @@ import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.VarpoolStack;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitFunction extends UnitSection
 {
@@ -50,7 +51,7 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        UnitFunction fn = ctx.getScript().getFunction(name, paramNames.size());
+        UnitFunction fn = ctx.getScript().getFunction(ctx.getNamespace(), name, paramNames.size());
 
         if (fn != null)
         {
@@ -128,7 +129,7 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-            pool.set(paramNames.get(i), params[i]);
+            pool.set(namespace, paramNames.get(i), params[i]);
         }
 
         Object rv = executeChilds(ctx);
@@ -144,7 +145,7 @@ public class UnitFunction extends UnitSection
      */
     public String getSignature()
     {
-        return name + "(" + String.join(", ", paramNames) + ")";
+        return (namespace == Namespace.GLOBAL ? "" : namespace + "::") + name + "(" + String.join(", ", paramNames) + ")";
     }
 
     /**

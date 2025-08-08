@@ -71,13 +71,14 @@ public class AccessorBuilder
      * Appends the access chain with a specified script function
      * with precached parameters and returns this builder instance.
      * 
-     * @param name   the function name
-     * @param params the precached parameters array
+     * @param namespace the function namespace
+     * @param name      the function name
+     * @param params    the precached parameters array
      * @return this builder instance
      */
-    public AccessorBuilder function(String name, Accessor... params)
+    public AccessorBuilder function(String namespace, String name, Accessor... params)
     {
-        return accessor(new AccessorFunction(name, params));
+        return accessor(new AccessorFunction(namespace, name, params));
     }
 
     /**
