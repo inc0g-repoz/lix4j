@@ -38,4 +38,11 @@ function main() {
     println("Recursive factorial of " + number + " is " + factor);
     //test_async();
     test_list();
+
+    do println("number equals 5");
+    while (number != 5);
+
+    do {
+        println("number equals " + ++number);
+    } while (number != 6);
 }

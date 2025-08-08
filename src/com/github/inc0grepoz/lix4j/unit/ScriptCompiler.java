@@ -53,6 +53,8 @@ public class ScriptCompiler
             throw new SyntaxError("Every \"catch\" statement should have a \"try\" statement before");
         case "continue":
             return UnitFlowContinue.compile(ctx, node, parent);
+        case "do":
+            return UnitLoopDo.compile(ctx, node, parent);
         case "else":
             throw new SyntaxError("There can be no \"else\" without an \"if\"");
         case "for":
