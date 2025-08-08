@@ -11,7 +11,7 @@ function hello() {
 
 // Lambda-function for invocation by Java.
 function each(string) {
-    println(string);
+    println("String value " + string);
 }
 
 function test_async() {
@@ -36,6 +36,6 @@ function main() {
     number = 5;
     factor = math::factorial_r(number);
     println("Recursive factorial of " + number + " is " + factor);
-    test_async();
+    //test_async();
     test_list();
 }
