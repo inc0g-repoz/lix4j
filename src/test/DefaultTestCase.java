@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.EnumSet;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Disabled;
@@ -16,9 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
-import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
@@ -71,7 +67,15 @@ class DefaultTestCase {
         });
 
         UnitFunction fn = script.getFunction("main", 0);
-        Object rv = time("Executed", () -> fn.call());
+
+        PrintStream ps = System.out;
+        PrintStream nps = new PrintStream(new NullOutputStream());
+
+        System.setOut(nps);
+        time("Executed", () -> fn.call());
+
+        System.setOut(ps);
+        time("Executed", () -> fn.call());
     }
 
     private static <T> T time(Supplier<T> lambda)
@@ -81,11 +85,32 @@ class DefaultTestCase {
 
     private static <T> T time(String label, Supplier<T> lambda)
     {
-        long time = System.currentTimeMillis();
+        long time = System.nanoTime();
         T rv = lambda.get();
-        time = System.currentTimeMillis() - time;
-        System.out.println((label == null ? "" : label + " in ") + time + " ms");
+        time = System.nanoTime() - time;
+        double timeMs = (double) time / 1000000;
+        System.out.println((label == null ? "" : label + " in ") + timeMs + " ms");
         return rv;
     }
+
+}
+
+class NullOutputStream extends OutputStream
+{
+
+    @Override
+    public void write(int b) throws IOException {}
+
+    @Override
+    public void write(byte[] b) throws IOException {}
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {}
+
+    @Override
+    public void flush() throws IOException {}
+
+    @Override
+    public void close() throws IOException {}
 
 }
