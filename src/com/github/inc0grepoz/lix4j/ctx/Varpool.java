@@ -5,8 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public abstract class Varpool
+import com.github.inc0grepoz.lix4j.util.Namespace;
+
+/**
+ * Represents an abstract pool for variables. Stores a stack
+ * of scopes with variables in their scopes and lets the engine
+ * navigate through them.
+ * 
+ * @author inc0g-repoz
+ */
+@SuppressWarnings("unchecked")
+public abstract class Varpool<T>
 {
+
+    private static final Object NO_KEY = new Object();
 
     protected final ArrayDeque<Map<String, Object>> stack;
 
@@ -20,12 +32,75 @@ public abstract class Varpool
     {
         StringJoiner joiner = new StringJoiner("\n");
 
-        for (Map<String, Object> layer: stack)
+        for (Map<String, Object> scope: stack)
         {
-            layer.forEach((k, v) -> joiner.add(k + " = " + v));
+            scope.forEach((k, v) -> joiner.add(k + " = " + v));
         }
 
         return joiner.toString();
+    }
+
+    /**
+     * Sets the specified variable in the context section.
+     * 
+     * @param the variable namespace
+     * @param the variable name
+     * @param the variable value
+     * @return the variable value
+     */
+    public T set(String namespace, String name, T value)
+    {
+        if (stack.isEmpty())
+        {
+            throw new IllegalStateException("No active section to set variable in");
+        }
+
+        String id = toNamespaced(namespace, name);
+
+        // Redefining in another layer, if defined
+        for (Map<String, Object> scope: stack)
+        {
+            if (scope.containsKey(id))
+            {
+                scope.put(id, value);
+                return value;
+            }
+        }
+
+        // Define at the last layer
+        stack.peek().put(id, value);
+        return value;
+    }
+
+    /**
+     * Returns the variable by the specified name, if exists.
+     * 
+     * @param namespace the variable namespace
+     * @param name the variable name
+     * @return the variable value
+     * @throws RuntimeException
+     *         if no variable is mapped to the specified name
+     */
+    public T get(String namespace, String name)
+    {
+        Object o;
+        String id = toNamespaced(namespace, name);
+        String gid = toNamespaced(Namespace.GLOBAL, name);
+
+        for (Map<String, Object> scope: stack)
+        {
+            if ((o = scope.getOrDefault(id, NO_KEY)) != NO_KEY)
+            {
+                return (T) o;
+            }
+
+            if ((o = scope.getOrDefault(gid, NO_KEY)) != NO_KEY)
+            {
+                return (T) o;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -33,7 +108,7 @@ public abstract class Varpool
      * 
      * @return this instance
      */
-    public Varpool enterSection()
+    public Varpool<T> enterSection()
     {
         stack.push(new HashMap<>());
         return this;
@@ -44,7 +119,7 @@ public abstract class Varpool
      * 
      * @return this instance
      */
-    public Varpool exitSection()
+    public Varpool<T> exitSection()
     {
         if (stack.isEmpty())
         {

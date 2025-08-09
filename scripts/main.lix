@@ -3,10 +3,14 @@ include "util.lix";
 include "sort.lix";
 
 // Nested namespaces
+static hi = "Hello from a nested namespace!";
+
+// Nested namespaces
 namespace a {
     namespace b {
-        // println(Object) is called from GLOBAL explicitly
-        function c() ::println("Hello from a nested namespace");
+        function c() {
+            println(hi);
+        }
     }
 }
 
@@ -57,5 +61,5 @@ function main() {
     test_static();
 
     a::b::c();
-    //scanLine();
+    scanLine();
 }

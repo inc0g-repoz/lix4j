@@ -1,7 +1,5 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
-import com.github.inc0grepoz.lix4j.util.Namespace;
-
 public class Identifier
 {
 
