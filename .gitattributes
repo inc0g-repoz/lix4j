@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Syntax highlighting for LIX4J
-*.lix linguist-language=JavaScript
+# Syntax highlighting for LIX
+*.lix linguist-language=LIX
