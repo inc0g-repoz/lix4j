@@ -10,7 +10,7 @@ import com.github.inc0grepoz.lix4j.value.AccessorUnassigned;
  * 
  * @author inc0g-repoz
  */
-public class VarpoolStack extends Varpool implements Cloneable
+public class ExecutionVarpool extends Varpool implements Cloneable
 {
 
     private static final Object NO_KEY = new Object();
@@ -18,12 +18,12 @@ public class VarpoolStack extends Varpool implements Cloneable
     /**
      * Creates a new non-static pool.
      */
-    public VarpoolStack()
+    public ExecutionVarpool()
     {
         this(new ArrayDeque<>());
     }
 
-    private VarpoolStack(ArrayDeque<Map<String, Object>> stack)
+    private ExecutionVarpool(ArrayDeque<Map<String, Object>> stack)
     {
         super(stack);
     }
@@ -72,12 +72,12 @@ public class VarpoolStack extends Varpool implements Cloneable
     public Object get(String namespace, String name)
     {
         Object o;
-        String namespaced = toNamespaced(namespace, name);
+        String id = toNamespaced(namespace, name);
 
         for (Map<String, Object> layer: stack)
         {
             // The used map implementation may support null values
-            if ((o = layer.getOrDefault(namespaced, NO_KEY)) != NO_KEY)
+            if ((o = layer.getOrDefault(id, NO_KEY)) != NO_KEY)
             {
                 return o;
             }
@@ -87,9 +87,9 @@ public class VarpoolStack extends Varpool implements Cloneable
     }
 
     @Override
-    public VarpoolStack clone()
+    public ExecutionVarpool clone()
     {
-        return new VarpoolStack(stack.clone());
+        return new ExecutionVarpool(stack.clone());
     }
 
 }

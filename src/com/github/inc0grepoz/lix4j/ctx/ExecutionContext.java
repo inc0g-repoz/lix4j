@@ -12,7 +12,7 @@ public class ExecutionContext implements Cloneable
 {
 
     private final Script script;
-    private final VarpoolStack varpool;
+    private final ExecutionVarpool varpool;
 
     /**
      * Creates a new global context for the specified {@code script}.
@@ -21,10 +21,10 @@ public class ExecutionContext implements Cloneable
      */
     public ExecutionContext(Script script)
     {
-        this(script, new VarpoolStack());
+        this(script, new ExecutionVarpool());
     }
 
-    private ExecutionContext(Script script, VarpoolStack varpool)
+    private ExecutionContext(Script script, ExecutionVarpool varpool)
     {
         this.script = script;
         this.varpool = varpool;
@@ -46,7 +46,7 @@ public class ExecutionContext implements Cloneable
         return script;
     }
 
-    public VarpoolStack getVarpool()
+    public ExecutionVarpool getVarpool()
     {
         return varpool;
     }

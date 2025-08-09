@@ -7,8 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.ctx.VarpoolStack;
+import com.github.inc0grepoz.lix4j.ctx.ExecutionVarpool;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.util.Namespace;
 
@@ -124,7 +125,7 @@ public class UnitFunction extends UnitSection
         }
 
         ExecutionContext ctx = root.getScript().supplyContext();
-        VarpoolStack pool = ctx.getVarpool();
+        ExecutionVarpool pool = ctx.getVarpool();
         pool.enterSection();
 
         for (int i = 0; i < params.length; i++)

@@ -8,8 +8,8 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.unit.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.Namespace;
