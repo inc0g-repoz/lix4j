@@ -13,3 +13,17 @@ static EXECUTOR_SERVICE = null;
 function async(fn_ref) {
     EXECUTOR_SERVICE.execute(fn_ref);
 }
+
+// Makes the current thread wait for a user input
+function scanLine() {
+    params = new_array("java.lang.Object", 1);
+    params[0] = no_instance("java.lang.System").in;
+
+    // Initializing and reading the next token
+    scanner = new_instance("java.util.Scanner", params);
+    println("Press Enter to continue...");
+    next = scanner.nextLine();
+    scanner.close();
+
+    return next;
+}

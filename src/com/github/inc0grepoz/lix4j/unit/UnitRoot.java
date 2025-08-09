@@ -4,6 +4,7 @@ import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitRoot extends UnitSection
 {
@@ -34,8 +35,8 @@ public class UnitRoot extends UnitSection
             {
                 fn = ((UnitFunction) child);
 
-                if (fn.namespace.equals(namespace) && fn.name.equals(name)
-                        && fn.paramNames.size() == paramCount)
+                if ((fn.namespace == Namespace.GLOBAL || fn.namespace.equals(namespace))
+                        && fn.name.equals(name) && fn.paramNames.size() == paramCount)
                 {
                     return fn;
                 }

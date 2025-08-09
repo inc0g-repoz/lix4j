@@ -57,6 +57,5 @@ function main() {
     test_static();
 
     a::b::c();
-
-    //sleep(1000);
+    scanLine();
 }

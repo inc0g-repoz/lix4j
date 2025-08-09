@@ -2,8 +2,6 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.Script;
-import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
@@ -11,38 +9,33 @@ import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 public class ScriptCompiler
 {
 
-    public static void compile(CompileTimeContext ctx, AST ast, Script script, UnitRoot root)
-    {
-        compileSection_r0(ctx, ast, root);
-    }
-
     // Compiles, but doesn't enter or leave sections in the compile time varpool
-    static UnitSection compileSection_r0(CompileTimeContext ctx, ASTNode node, UnitSection section)
+    public static UnitSection compileSection(CompileTimeContext ctx, ASTNode node, UnitSection section)
     {
         LinkedList<ASTNode> childs = node.getChildNodes();
 
         while (!childs.isEmpty())
         {
-            compileUnit_r(ctx, childs.poll(), section);
+            compileUnit(ctx, childs.poll(), section);
         }
 
         return section;
     }
 
-    static UnitSection compileSection_r(CompileTimeContext ctx, ASTNode node, UnitSection section)
+    static UnitSection enterCompileSection(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         ctx.getVarpool().enterSection();
-        compileSection_r0(ctx, node, section);
+        compileSection(ctx, node, parent);
 
         ctx.getVarpool().exitSection(); // also exit
-        return section;
+        return parent;
     }
 
-    static Unit compileUnit_r(CompileTimeContext ctx, ASTNode node, UnitSection parent)
+    static Unit compileUnit(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         if (!node.hasTokens())
         {
-            return compileSection_r(ctx, node, new UnitSection(parent));
+            return enterCompileSection(ctx, node, new UnitSection(parent));
         }
 
         switch (node.getTokens().peek())
@@ -80,18 +73,18 @@ public class ScriptCompiler
         }
     }
 
-    static void appendSectionUnits(CompileTimeContext ctx, ASTNode node, UnitSection section)
+    static void appendSectionUnits(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
         // Compiling and appending all the node children
         if (node.getNodeBreakerType() == NodeBreakerType.BLOCK)
         {
             ASTNode next = node.getParent().getChildNodes().poll();
-            compileSection_r(ctx, next, section);
+            enterCompileSection(ctx, next, parent);
         }
         // A one-liner as a section element
         else if (!node.getTokens().isEmpty())
         {
-            compileUnit_r(ctx, node, section);
+            compileUnit(ctx, node, parent);
         }
     }
 

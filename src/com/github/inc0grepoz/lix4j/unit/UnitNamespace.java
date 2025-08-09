@@ -41,7 +41,7 @@ public class UnitNamespace extends Unit
         else
         {
             ctx.setNamespace(namespace);
-            ScriptCompiler.compileSection_r0(ctx, node.getParent().getChildNodes().poll(), parent);
+            ScriptCompiler.compileSection(ctx, node.getParent().getChildNodes().poll(), parent);
             ctx.setNamespace(current);
         }
 

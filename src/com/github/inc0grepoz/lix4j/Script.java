@@ -41,7 +41,7 @@ public class Script
         // Compiling declared script members
         CompileTimeContext ctx = new CompileTimeContext(this);
         ctx.getVarpool().enterSection(); // for global variables
-        ScriptCompiler.compile(ctx, ast, this, root);
+        ScriptCompiler.compileSection(ctx, ast, root);
 
         // Initializing the script (global variables)
         globalContext.getVarpool().enterSection();
@@ -146,7 +146,7 @@ public class Script
         // Compiling into the global namespace by default
         String namespace = ctx.getNamespace();
         ctx.setNamespace(Namespace.GLOBAL);
-        ScriptCompiler.compile(ctx, ast, this, root);
+        ScriptCompiler.compileSection(ctx, ast, root);
         ctx.setNamespace(namespace);
     }
 
