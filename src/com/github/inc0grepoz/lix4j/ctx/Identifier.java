@@ -1,5 +1,7 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
+import com.github.inc0grepoz.lix4j.util.Namespace;
+
 public class Identifier
 {
 
@@ -27,7 +29,7 @@ public class Identifier
     @Override
     public String toString()
     {
-        return namespace + "::" + name;
+        return namespace == Namespace.GLOBAL ? name : namespace + "::" + name;
     }
 
     @Override
@@ -39,9 +41,16 @@ public class Identifier
     @Override
     public boolean equals(Object obj)
     {
-        return this == obj || obj != null
-                && getClass() == obj.getClass()
-                && ((Identifier) obj).hash == hash;
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Identifier oid = (Identifier) obj;
+        return oid.hash == hash;
     }
 
 }

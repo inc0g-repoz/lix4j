@@ -3,6 +3,7 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.Namespace;
@@ -13,7 +14,7 @@ public class InBuiltNewInstance extends UnitFunction
 
     public InBuiltNewInstance(UnitSection parent)
     {
-        super(parent, Namespace.GLOBAL, "new_instance", Arrays.asList("class", "params"));
+        super(parent, new Identifier(Namespace.GLOBAL, "new_instance"), Arrays.asList("class", "params"));
     }
 
     @Override

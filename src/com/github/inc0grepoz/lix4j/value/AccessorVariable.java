@@ -1,6 +1,6 @@
 package com.github.inc0grepoz.lix4j.value;
 
-import com.github.inc0grepoz.lix4j.util.Namespace;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 
 /**
  * Represents an accessor for variables.
@@ -10,15 +10,15 @@ import com.github.inc0grepoz.lix4j.util.Namespace;
 public abstract class AccessorVariable extends AccessorNamespaced
 {
 
-    AccessorVariable(String namespace, String name)
+    AccessorVariable(Identifier identifier)
     {
-        super(namespace, name);
+        super(identifier);
     }
 
     @Override
     public String toString()
     {
-        return "$" + (namespace == Namespace.GLOBAL ? "" : namespace + "::") + name + (next == null ? "" : "." + next);
+        return next == null ? identifier.toString() : identifier + "." + next;
     }
 
 }

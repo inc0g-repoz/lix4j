@@ -4,7 +4,7 @@ import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.util.Namespace;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 
 public class UnitRoot extends UnitSection
 {
@@ -25,18 +25,19 @@ public class UnitRoot extends UnitSection
         return joiner.toString();
     }
 
-    public UnitFunction getFunction(String namespace, String name, int paramCount)
+    public UnitFunction getFunction(Identifier identifier, int paramCount)
     {
         UnitFunction fn;
+        Identifier fid;
 
         for (Unit child: childs)
         {
             if (child instanceof UnitFunction)
             {
                 fn = ((UnitFunction) child);
+                fid = fn.identifier;
 
-                if ((fn.namespace == Namespace.GLOBAL || fn.namespace.equals(namespace))
-                        && fn.name.equals(name) && fn.paramNames.size() == paramCount)
+                if (fid.equals(identifier) && fn.paramNames.size() == paramCount)
                 {
                     return fn;
                 }

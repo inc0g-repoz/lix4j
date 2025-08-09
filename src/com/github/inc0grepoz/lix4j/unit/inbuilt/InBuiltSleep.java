@@ -2,6 +2,7 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 
 import java.util.Arrays;
 
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
@@ -12,7 +13,7 @@ public class InBuiltSleep extends UnitFunction
 
     public InBuiltSleep(UnitSection parent)
     {
-        super(parent, Namespace.GLOBAL, "sleep", Arrays.asList("time"));
+        super(parent, new Identifier(Namespace.GLOBAL, "sleep"), Arrays.asList("time"));
     }
 
     @Override

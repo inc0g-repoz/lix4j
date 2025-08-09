@@ -1,34 +1,30 @@
 package com.github.inc0grepoz.lix4j.value;
 
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
+
 public class Variable
 {
 
-    private final String namespace, name;
+    private final Identifier identifier;
 
     private Object instance;
 
-    Variable(String namespace, String name)
+    Variable(Identifier identifier)
     {
-        this.namespace = namespace;
-        this.name = name;
+        this.identifier = identifier;
 
-        instance = new AccessorUnassigned(namespace, name);
+        instance = new AccessorUnassigned(identifier);
     }
 
     @Override
     public String toString()
     {
-        return name;
+        return identifier.toString();
     }
 
-    public String getNamespace()
+    public Identifier getIdentifier()
     {
-        return namespace;
-    }
-
-    public String getName()
-    {
-        return name;
+        return identifier;
     }
 
     public Object set(Object instance, boolean declaration)

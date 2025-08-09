@@ -3,6 +3,7 @@ package com.github.inc0grepoz.lix4j.value;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 
 class AccessorFunction extends AccessorNamespaced
@@ -12,9 +13,9 @@ class AccessorFunction extends AccessorNamespaced
 
     private UnitFunction cachedFunction;
 
-    AccessorFunction(String namespace, String name, Accessor[] params)
+    AccessorFunction(Identifier identifier, Accessor[] params)
     {
-        super(namespace, name);
+        super(identifier);
         this.params = params;
     }
 
@@ -28,7 +29,7 @@ class AccessorFunction extends AccessorNamespaced
             joiner.add(params[i].toString());
         }
 
-        return (namespace == null ? "" : namespace + "::") + name + joiner.toString() + (next == null ? "" : "." + next);
+        return identifier + joiner.toString() + (next == null ? "" : "." + next);
     }
 
     @Override
@@ -58,9 +59,7 @@ class AccessorFunction extends AccessorNamespaced
                     // Function proxies require the amount of arguments,
                     // so they have to be resolved after compilation.
                     AccessorNamespaced namespaced = (AccessorNamespaced) params[i];
-                    String fnNs = namespaced.getNamespace();
-                    String fnName = namespaced.getName();
-                    paramArr[i] = params[i] = new AccessorUnassigned(fnNs, fnName);
+                    paramArr[i] = params[i] = new AccessorUnassigned(namespaced.getIdentifier());
                 }
 
                 paramArr[i] = params[i].linkedAccess(ctx, null);
@@ -69,7 +68,7 @@ class AccessorFunction extends AccessorNamespaced
 
         if (cachedFunction == null)
         {
-            cachedFunction = ctx.getScript().getFunction(namespace, name, paramArr.length);
+            cachedFunction = ctx.getScript().getFunction(identifier, paramArr.length);
         }
 
         try
@@ -78,7 +77,7 @@ class AccessorFunction extends AccessorNamespaced
         }
         catch (NullPointerException npe)
         {
-            throw new RuntimeException("Unknown function " + name + " with " + params.length + " parameter(-s)", npe);
+            throw new RuntimeException("Unknown function " + identifier + " with " + params.length + " parameter(-s)", npe);
         }
         catch (Throwable t)
         {

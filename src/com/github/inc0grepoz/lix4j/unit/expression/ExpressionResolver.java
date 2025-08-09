@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
@@ -102,7 +103,8 @@ public class ExpressionResolver
         }
 
         // Default to variable
-        return ctx.getVarpool().handleVariable(namespace, token, modifiers);
+        Identifier id = new Identifier(namespace, token);
+        return ctx.getVarpool().handleVariable(id, modifiers);
     }
 
     private static Accessor resolveOperator(CompileTimeContext ctx, UnitSection section, LinkedList<String> tokens)
@@ -184,7 +186,7 @@ public class ExpressionResolver
             }
             else
             {
-                handleFieldToken(ctx, section, builder, nextTokenList, index);
+                handleNonParameterizedToken(ctx, section, builder, nextTokenList, index);
             }
         }
 
@@ -239,7 +241,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.function(namespace, name, accessors);
+            builder.function(new Identifier(namespace, name), accessors);
             builder.index(index);
         }
         else
@@ -262,7 +264,7 @@ public class ExpressionResolver
         return accessors;
     }
 
-    private static void handleFieldToken(CompileTimeContext ctx, UnitSection section,
+    private static void handleNonParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         Set<Modifier> modifiers = readAllModifiers(tokens);

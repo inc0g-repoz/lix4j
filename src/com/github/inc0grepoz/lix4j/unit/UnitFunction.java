@@ -10,8 +10,8 @@ import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionVarpool;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitFunction extends UnitSection
 {
@@ -52,28 +52,28 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        UnitFunction fn = ctx.getScript().getFunction(ctx.getNamespace(), name, paramNames.size());
+        Identifier id = new Identifier(ctx.getNamespace(), name);
+        UnitFunction fn = ctx.getScript().getFunction(id, paramNames.size());
 
         if (fn != null)
         {
             throw new RuntimeException("Function overloading is not supported (duplicate function " + fn.getSignature() + ")");
         }
 
-        fn = new UnitFunction(section, ctx.getNamespace(), name, paramNames);
+        fn = new UnitFunction(section, id, paramNames);
         ScriptCompiler.appendSectionUnits(ctx, node, fn);
 
         return fn;
     }
 
-    final String namespace, name;
+    final Identifier identifier;
     final List<String> paramNames;
     final UnitRoot root;
 
-    protected UnitFunction(UnitSection parent, String namespace, String name, List<String> paramNames)
+    protected UnitFunction(UnitSection parent, Identifier identifier, List<String> paramNames)
     {
         super(parent);
-        this.namespace = namespace;
-        this.name = name;
+        this.identifier = identifier;
         this.paramNames = paramNames;
         root = root();
     }
@@ -95,7 +95,7 @@ public class UnitFunction extends UnitSection
         UnitFunction fn = (UnitFunction) obj;
 
         return fn.paramNames.size() == paramNames.size()
-                && fn.name.equals(name);
+                && fn.identifier.equals(identifier);
     }
 
     @Override
@@ -120,8 +120,7 @@ public class UnitFunction extends UnitSection
 
         if (params.length != paramNames.size())
         {
-            String desc = name + "(" + String.join(", ", paramNames) + ")";
-            throw new IllegalArgumentException(desc);
+            throw new IllegalArgumentException(getSignature());
         }
 
         ExecutionContext ctx = root.getScript().supplyContext();
@@ -130,7 +129,8 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-            pool.set(namespace, paramNames.get(i), params[i]);
+            Identifier id = new Identifier(identifier.getNamespace(), paramNames.get(i));
+            pool.set(id, params[i]);
         }
 
         Object rv = executeChilds(ctx);
@@ -140,13 +140,23 @@ public class UnitFunction extends UnitSection
     }
 
     /**
+     * Returns the function identifier.
+     * 
+     * @return the function identifier
+     */
+    public Identifier getIdentifier()
+    {
+        return identifier;
+    }
+
+    /**
      * Returns a string representation of the signature.
      * 
      * @return a string representation of the signature
      */
     public String getSignature()
     {
-        return (namespace == Namespace.GLOBAL ? "" : namespace + "::") + name + "(" + String.join(", ", paramNames) + ")";
+        return identifier + "(" + String.join(", ", paramNames) + ")";
     }
 
     /**

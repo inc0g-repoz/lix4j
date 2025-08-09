@@ -21,17 +21,17 @@ public class ExecutionVarpool extends Varpool<Object> implements Cloneable
         this(new ArrayDeque<>());
     }
 
-    private ExecutionVarpool(ArrayDeque<Map<String, Object>> stack)
+    private ExecutionVarpool(ArrayDeque<Map<Identifier, Object>> stack)
     {
         super(stack);
     }
 
     @Override
-    public Object get(String namespace, String name)
+    public Object get(Identifier identifier)
     {
-        Object o = super.get(namespace, name);
+        Object o = super.get(identifier);
 
-        return o == null ? new AccessorUnassigned(namespace, name) : o;
+        return o == null ? new AccessorUnassigned(identifier) : o;
     }
 
     @Override

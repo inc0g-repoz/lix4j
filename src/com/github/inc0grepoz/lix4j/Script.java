@@ -10,6 +10,7 @@ import java.util.List;
 import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
@@ -54,16 +55,15 @@ public class Script
     }
 
     /**
-     * Returns the function by the specified name and parameters
+     * Returns the function by the specified identifier and parameters
      * count, if exists, or {@code null} otherwise.
      * 
-     * @param namespace  the function namespace
-     * @param name       the function name
+     * @param identifier the function identifier
      * @param paramCount the parameters count
      * @return a function
      */
-    public UnitFunction getFunction(String namespace, String name, int paramCount) {
-        return root.getFunction(namespace, name, paramCount);
+    public UnitFunction getFunction(Identifier identifier, int paramCount) {
+        return root.getFunction(identifier, paramCount);
     }
 
     /**
@@ -76,23 +76,22 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.getFunction(Namespace.GLOBAL, name, paramCount);
+        return root.getFunction(new Identifier(Namespace.GLOBAL, name), paramCount);
     }
 
     /**
-     * Calls the function with the specified name and parameters
+     * Calls the function with the specified identifier and parameters
      * count, if exists.
      * 
-     * @param namespace  the function namespace
-     * @param name   the function name
-     * @param params the parameters
+     * @param identifier the function identifier
+     * @param params     the parameters
      * @return the function return value
      * @throws IllegalArgumentException
      *         if no function has the same name and parameters count
      */
-    public Object callFunction(String namespace, String name, Object... params)
+    public Object callFunction(Identifier identifier, Object... params)
     {
-        return root.getFunction(namespace, name, params.length).call(params);
+        return root.getFunction(identifier, params.length).call(params);
     }
 
     /**
@@ -107,7 +106,7 @@ public class Script
      */
     public Object callFunction(String name, Object... params)
     {
-        return root.getFunction(Namespace.GLOBAL, name, params.length).call(params);
+        return root.getFunction(new Identifier(Namespace.GLOBAL, name), params.length).call(params);
     }
 
     /**

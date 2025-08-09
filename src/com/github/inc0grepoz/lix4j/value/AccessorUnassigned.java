@@ -1,18 +1,18 @@
 package com.github.inc0grepoz.lix4j.value;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.exception.UnassignedVariableError;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class AccessorUnassigned extends AccessorNamespaced
 {
 
     private Object proxy;
 
-    public AccessorUnassigned(String namespace, String name)
+    public AccessorUnassigned(Identifier identifier)
     {
-        super(namespace, name);
+        super(identifier);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class AccessorUnassigned extends AccessorNamespaced
             throwUnassigned();
         }
 
-        return "$" + (namespace == Namespace.GLOBAL ? "" : namespace + "::") + name + (next == null ? "" : "." + next);
+        return identifier + (next == null ? "" : "." + next);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AccessorUnassigned extends AccessorNamespaced
 
     public void throwUnassigned()
     {
-        throw new UnassignedVariableError("Variable " + namespace + "::" + name + " is unassigned");
+        throw new UnassignedVariableError("Variable " + identifier + " is unassigned");
     }
 
 }

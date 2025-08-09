@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import com.github.inc0grepoz.lix4j.util.Namespace;
-
 /**
  * Represents an abstract pool for variables. Stores a stack
  * of scopes with variables in their scopes and lets the engine
@@ -20,9 +18,9 @@ public abstract class Varpool<T>
 
     private static final Object NO_KEY = new Object();
 
-    protected final ArrayDeque<Map<String, Object>> stack;
+    protected final ArrayDeque<Map<Identifier, Object>> stack;
 
-    protected Varpool(ArrayDeque<Map<String, Object>> stack)
+    protected Varpool(ArrayDeque<Map<Identifier, Object>> stack)
     {
         this.stack = stack;
     }
@@ -32,7 +30,7 @@ public abstract class Varpool<T>
     {
         StringJoiner joiner = new StringJoiner("\n");
 
-        for (Map<String, Object> scope: stack)
+        for (Map<Identifier, Object> scope: stack)
         {
             scope.forEach((k, v) -> joiner.add(k + " = " + v));
         }
@@ -43,58 +41,47 @@ public abstract class Varpool<T>
     /**
      * Sets the specified variable in the context section.
      * 
-     * @param the variable namespace
-     * @param the variable name
+     * @param the variable identifier
      * @param the variable value
      * @return the variable value
      */
-    public T set(String namespace, String name, T value)
+    public T set(Identifier identifier, T value)
     {
         if (stack.isEmpty())
         {
             throw new IllegalStateException("No active section to set variable in");
         }
 
-        String id = toNamespaced(namespace, name);
-
         // Redefining in another layer, if defined
-        for (Map<String, Object> scope: stack)
+        for (Map<Identifier, Object> scope: stack)
         {
-            if (scope.containsKey(id))
+            if (scope.containsKey(identifier))
             {
-                scope.put(id, value);
+                scope.put(identifier, value);
                 return value;
             }
         }
 
         // Define at the last layer
-        stack.peek().put(id, value);
+        stack.peek().put(identifier, value);
         return value;
     }
 
     /**
      * Returns the variable by the specified name, if exists.
      * 
-     * @param namespace the variable namespace
-     * @param name the variable name
+     * @param identifier the variable identifier
      * @return the variable value
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public T get(String namespace, String name)
+    public T get(Identifier identifier)
     {
         Object o;
-        String id = toNamespaced(namespace, name);
-        String gid = toNamespaced(Namespace.GLOBAL, name);
 
-        for (Map<String, Object> scope: stack)
+        for (Map<Identifier, Object> scope: stack)
         {
-            if ((o = scope.getOrDefault(id, NO_KEY)) != NO_KEY)
-            {
-                return (T) o;
-            }
-
-            if ((o = scope.getOrDefault(gid, NO_KEY)) != NO_KEY)
+            if ((o = scope.getOrDefault(identifier, NO_KEY)) != NO_KEY)
             {
                 return (T) o;
             }
@@ -133,11 +120,6 @@ public abstract class Varpool<T>
     public int getLayersCount()
     {
         return stack.size();
-    }
-
-    protected String toNamespaced(String namespace, String name)
-    {
-        return namespace + "::" + name;
     }
 
 }

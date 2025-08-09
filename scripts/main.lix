@@ -1,5 +1,5 @@
-include "math.lix";
 include "util.lix";
+include "math.lix";
 include "sort.lix";
 
 // Nested namespaces
@@ -13,27 +13,15 @@ function e() {
 namespace a {
     namespace b {
         function c() {
-            println(hi);
-            e();
+            ::println(::hi);
+            //e();
         }
-    }
-}
-
-// Lambda-function for invocation by Java.
-function hello() {
-    for (static i = 1; i <= 5; i++) {
-        println("Hello from a different thread! (x" + i + ")");
     }
 }
 
 // Lambda-function for invocation by Java.
 function each(string) {
     println("String value " + string);
-}
-
-function test_async() {
-    async(hello);
-    EXECUTOR_SERVICE.shutdown();
 }
 
 static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
@@ -45,26 +33,14 @@ function test_list() {
     list.forEach(each);
 }
 
-function test_unassigned(ref) {
-    println(ref);
-}
-
 function test_static() {
     static a = 0;
     println("Static increment " + (++a));
 }
 
 function main() {
-    number = 5;
-    factor = math::factorial_r(number);
-    println("Recursive factorial of " + number + " is " + factor);
-
-    //test_async();
-    test_list();
-
-    test_static();
-    test_static();
-
     a::b::c();
-    //scanLine();
+    pow = math::pow(2, 2);
+    test_list();
+    println(pow);
 }

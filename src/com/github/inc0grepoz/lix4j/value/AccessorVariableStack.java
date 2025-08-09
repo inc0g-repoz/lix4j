@@ -1,6 +1,7 @@
 package com.github.inc0grepoz.lix4j.value;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 
 /**
  * Represents an accessor for variables stored in a
@@ -15,24 +16,23 @@ public class AccessorVariableStack extends AccessorVariable
      * Creates and returns a new accessor for a variable
      * with a specified name.
      * 
-     * @param namespace the variable namespace
-     * @param name      the variable name
+     * @param identifier the variable identifier
      * @return a new {@code AccessorVariable}
      */
-    public static AccessorVariableStack of(String namespace, String name)
+    public static AccessorVariableStack of(Identifier identifier)
     {
-        return new AccessorVariableStack(namespace, name);
+        return new AccessorVariableStack(identifier);
     }
 
-    AccessorVariableStack(String namespace, String name)
+    AccessorVariableStack(Identifier identifier)
     {
-        super(namespace, name);
+        super(identifier);
     }
 
     @Override
     public Object access(ExecutionContext ctx, Object src)
     {
-        Object rv = ctx.getVarpool().get(namespace, name);
+        Object rv = ctx.getVarpool().get(identifier);
         return elementIndex == null ? rv : accessElement(ctx, unwrapSource(rv));
     }
 
@@ -42,11 +42,11 @@ public class AccessorVariableStack extends AccessorVariable
         if (elementIndex == null)
         {
             return next == null
-                    ? ctx.getVarpool().set(namespace, name, val)
-                    : next.mutate(ctx, ctx.getVarpool().get(namespace, name), val);
+                    ? ctx.getVarpool().set(identifier, val)
+                    : next.mutate(ctx, ctx.getVarpool().get(identifier), val);
         }
 
-        return mutateElement(ctx, ctx.getVarpool().get(namespace, name), val);
+        return mutateElement(ctx, ctx.getVarpool().get(identifier), val);
     }
 
 }

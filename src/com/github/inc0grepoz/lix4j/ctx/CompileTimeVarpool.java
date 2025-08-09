@@ -24,9 +24,9 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         super(new ArrayDeque<>());
     }
 
-    public AccessorVariable handleVariable(String namespace, String name, Set<Modifier> modifiers)
+    public AccessorVariable handleVariable(Identifier identifier, Set<Modifier> modifiers)
     {
-        AccessorVariable xcsVar = get(namespace, name);
+        AccessorVariable xcsVar = get(identifier);
 
         // Existing variable
         if (modifiers.isEmpty())
@@ -41,14 +41,14 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
 //              System.err.print(" for declaring variables.");
 //              System.err.println();
 
-                return handleVariable(namespace, name, EnumSet.of(Modifier.VAR));
+                return handleVariable(identifier, EnumSet.of(Modifier.VAR));
             }
 
             Class<? extends AccessorVariable> clazz = xcsVar.getClass();
 
             if (clazz == AccessorVariableStack.class)
             {
-                xcsVar = AccessorVariableStack.of(namespace, name);
+                xcsVar = AccessorVariableStack.of(identifier);
             }
             else if (clazz == AccessorVariableStatic.class)
             {
@@ -65,16 +65,16 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         {
             if (xcsVar != null)
             {
-                throw new RuntimeException("Two or more variables of the same name: " + name);
+                throw new RuntimeException("Two or more variables of the same identifier: " + identifier);
             }
 
             if (modifiers.contains(Modifier.STATIC))
             {
-                set(namespace, name, xcsVar = AccessorVariableStatic.of(namespace, name));
+                set(identifier, xcsVar = AccessorVariableStatic.of(identifier));
             }
             else
             {
-                set(namespace, name, xcsVar = AccessorVariableStack.of(namespace, name));
+                set(identifier, xcsVar = AccessorVariableStack.of(identifier));
             }
         }
 

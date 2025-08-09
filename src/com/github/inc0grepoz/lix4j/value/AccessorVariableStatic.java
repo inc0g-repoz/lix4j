@@ -1,6 +1,7 @@
 package com.github.inc0grepoz.lix4j.value;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 
 /**
  * Represents an accessor for static variables.
@@ -26,13 +27,12 @@ public class AccessorVariableStatic extends AccessorVariable
      * Creates and returns a new accessor for a variable
      * with a specified name.
      * 
-     * @param namespace   the variable namespace
-     * @param name        the variable name
+     * @param identifier the variable identifier
      * @return a new {@code AccessorVariableStatic}
      */
-    public static AccessorVariableStatic of(String namespace, String name)
+    public static AccessorVariableStatic of(Identifier identifier)
     {
-        return new AccessorVariableStatic(new Variable(namespace, name), true);
+        return new AccessorVariableStatic(new Variable(identifier), true);
     }
 
     private final Variable variable;
@@ -40,7 +40,7 @@ public class AccessorVariableStatic extends AccessorVariable
 
     AccessorVariableStatic(Variable variable, boolean declaration)
     {
-        super(variable.getNamespace(), variable.getName());
+        super(variable.getIdentifier());
 
         this.variable = variable;
         this.declaration = declaration;

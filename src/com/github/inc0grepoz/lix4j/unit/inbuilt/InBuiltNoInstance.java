@@ -2,6 +2,7 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 
 import java.util.Arrays;
 
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.Namespace;
@@ -12,7 +13,7 @@ public class InBuiltNoInstance extends UnitFunction
 
     public InBuiltNoInstance(UnitSection parent)
     {
-        super(parent, Namespace.GLOBAL, "no_instance", Arrays.asList("class"));
+        super(parent, new Identifier(Namespace.GLOBAL, "no_instance"), Arrays.asList("class"));
     }
 
     @Override

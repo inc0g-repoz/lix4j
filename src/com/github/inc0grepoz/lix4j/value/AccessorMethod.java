@@ -154,10 +154,8 @@ class AccessorMethod extends AccessorNamed
             }
 
             AccessorUnassigned unassigned = (AccessorUnassigned) paramArray[i];
-            String fnNs = unassigned.getNamespace();
-            String fnName = unassigned.getName();
             int paramCount = parameterTypes[i].getTypeParameters().length;
-            UnitFunction fn = ctx.getScript().getFunction(fnNs, fnName, paramCount);
+            UnitFunction fn = ctx.getScript().getFunction(unassigned.getIdentifier(), paramCount);
 
             if (fn == null)
             {

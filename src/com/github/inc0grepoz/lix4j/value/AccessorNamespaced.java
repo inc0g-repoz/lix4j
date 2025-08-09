@@ -1,24 +1,20 @@
 package com.github.inc0grepoz.lix4j.value;
 
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
+
 abstract class AccessorNamespaced extends Accessor
 {
 
-    protected final String namespace, name;
+    protected final Identifier identifier;
 
-    AccessorNamespaced(String namespace, String name)
+    AccessorNamespaced(Identifier identifier)
     {
-        this.namespace = namespace;
-        this.name = name;
+        this.identifier = identifier;
     }
 
-    public String getNamespace()
+    public Identifier getIdentifier()
     {
-        return namespace;
-    }
-
-    public String getName()
-    {
-        return name;
+        return identifier;
     }
 
 }
