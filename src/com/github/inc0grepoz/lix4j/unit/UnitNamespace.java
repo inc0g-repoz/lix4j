@@ -3,7 +3,9 @@ package com.github.inc0grepoz.lix4j.unit;
 import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
+import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitNamespace extends Unit
 {
@@ -15,16 +17,33 @@ public class UnitNamespace extends Unit
 
         if (tokens.size() != 1)
         {
-            throw new SyntaxError("Namespaces cannot contain whitespaces");
+            throw new SyntaxError("Namespaces cannot contain special symbols");
         }
 
-        if (!parent.isRoot())
+        String current = ctx.getNamespace();
+        String polled = tokens.poll();
+        String namespace = current == Namespace.GLOBAL ? polled : current + "::" + polled;
+
+        if (node.getNodeBreakerType() == NodeBreakerType.STATEMENT)
         {
-            throw new SyntaxError("Cannot use namespaces inside a section");
-        }
+            if (!parent.isRoot())
+            {
+                throw new SyntaxError("Cannot use namespaces inside a section");
+            }
 
-        String namespace = tokens.poll();
-        ctx.setNamespace(namespace);
+            if (current != Namespace.GLOBAL)
+            {
+                throw new SyntaxError("Cannot use non-block namespace \"" + namespace + "\" inside another namespace");
+            }
+
+            ctx.setNamespace(namespace);
+        }
+        else
+        {
+            ctx.setNamespace(namespace);
+            ScriptCompiler.compileSection_r0(ctx, node.getParent().getChildNodes().poll(), parent);
+            ctx.setNamespace(current);
+        }
 
         return null;
     }

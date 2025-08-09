@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -297,13 +298,30 @@ public class ExpressionResolver
         }
         else if (tokens.size() > 2 && tokens.get(1).equals("::"))
         {
-            namespace = tokens.poll();
-            tokens.poll();
+            StringJoiner joiner = new StringJoiner("::");
 
-            if (namespace.equals("this"))
+            do
             {
-                return ctx.getNamespace();
+                namespace = tokens.poll();
+                tokens.poll();
+
+                if (namespace.equals("this"))
+                {
+                    if (joiner.length() != 0)
+                    {
+                        throw new SyntaxError("\"this\" can only be used in the beginning of an operand");
+                    }
+
+                    joiner.add(ctx.getNamespace());
+                }
+                else
+                {
+                    joiner.add(namespace);
+                }
             }
+            while (tokens.size() > 2 && tokens.get(1).equals("::"));
+
+            return joiner.toString();
         }
         else
         {

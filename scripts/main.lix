@@ -2,6 +2,14 @@ include "math.lix";
 include "util.lix";
 include "sort.lix";
 
+// Nested namespaces
+namespace a {
+    namespace b {
+        // println(Object) is called from GLOBAL explicitly
+        function c() ::println("Hello from a nested namespace");
+    }
+}
+
 // Lambda-function for invocation by Java.
 function hello() {
     for (static i = 1; i <= 5; i++) {
@@ -47,5 +55,8 @@ function main() {
 
     test_static();
     test_static();
-    sleep(1000);
+
+    a::b::c();
+
+    //sleep(1000);
 }
