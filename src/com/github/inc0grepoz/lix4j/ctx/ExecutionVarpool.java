@@ -43,20 +43,20 @@ public class ExecutionVarpool extends Varpool implements Cloneable
             throw new IllegalStateException("No active section to set variable in");
         }
 
-        String namespaced = toNamespaced(namespace, name);
+        String id = toNamespaced(namespace, name);
 
         // Redefining in another layer, if defined
         for (Map<String, Object> layer: stack)
         {
-            if (layer.containsKey(namespaced))
+            if (layer.containsKey(id))
             {
-                layer.put(namespaced, value);
+                layer.put(id, value);
                 return value;
             }
         }
 
         // Define at the last layer
-        stack.peek().put(namespaced, value);
+        stack.peek().put(id, value);
         return value;
     }
 
