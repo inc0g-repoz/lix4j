@@ -31,9 +31,10 @@ public class Variable
         return name;
     }
 
-    public Object set(Object instance)
+    public Object set(Object instance, boolean declaration)
     {
-        return this.instance = instance;
+        return !declaration || this.instance.getClass() == AccessorUnassigned.class
+                ? this.instance = instance : this.instance;
     }
 
     public Object get()

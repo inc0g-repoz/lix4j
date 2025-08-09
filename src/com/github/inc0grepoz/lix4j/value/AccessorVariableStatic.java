@@ -19,27 +19,31 @@ public class AccessorVariableStatic extends AccessorVariable
      */
     public static AccessorVariableStatic of(Variable var)
     {
-        return new AccessorVariableStatic(var);
+        return new AccessorVariableStatic(var, false);
     }
 
     /**
      * Creates and returns a new accessor for a variable
      * with a specified name.
      * 
-     * @param name the variable name
+     * @param namespace   the variable namespace
+     * @param name        the variable name
      * @return a new {@code AccessorVariableStatic}
      */
     public static AccessorVariableStatic of(String namespace, String name)
     {
-        return of(new Variable(namespace, name));
+        return new AccessorVariableStatic(new Variable(namespace, name), true);
     }
 
     private final Variable variable;
+    private final boolean declaration;
 
-    AccessorVariableStatic(Variable var)
+    AccessorVariableStatic(Variable variable, boolean declaration)
     {
-        super(var.getNamespace(), var.getName());
-        variable = var;
+        super(variable.getNamespace(), variable.getName());
+
+        this.variable = variable;
+        this.declaration = declaration;
     }
 
     @Override
@@ -66,7 +70,7 @@ public class AccessorVariableStatic extends AccessorVariable
         if (elementIndex == null)
         {
             return next == null
-                    ? variable.set(val)
+                    ? variable.set(val, declaration)
                     : next.mutate(ctx, variable.get(), val);
         }
 
