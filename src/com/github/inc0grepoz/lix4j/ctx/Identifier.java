@@ -4,11 +4,24 @@ public class Identifier
 {
 
     private final String namespace, name;
+    private final int hash;
 
-    Identifier(String namespace, String name)
+    public Identifier(String namespace, String name)
     {
         this.namespace = namespace;
         this.name = name;
+
+        hash = 31 * namespace.hashCode() + name.hashCode();
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     @Override
@@ -18,17 +31,17 @@ public class Identifier
     }
 
     @Override
+    public int hashCode()
+    {
+        return hash;
+    }
+
+    @Override
     public boolean equals(Object obj)
     {
-        if (obj instanceof Identifier)
-        {
-            Identifier id = (Identifier) obj;
-
-            return (/* id.namespace == Namespace.GLOBAL || */ id.namespace.equals(namespace))
-                    && id.name.equals(name);
-        }
-
-        return false;
+        return this == obj || obj != null
+                && getClass() == obj.getClass()
+                && ((Identifier) obj).hash == hash;
     }
 
 }

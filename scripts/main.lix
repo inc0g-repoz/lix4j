@@ -5,11 +5,16 @@ include "sort.lix";
 // Nested namespaces
 static hi = "Hello from a nested namespace!";
 
+function e() {
+    println(hi);
+}
+
 // Nested namespaces
 namespace a {
     namespace b {
         function c() {
             println(hi);
+            e();
         }
     }
 }
@@ -61,5 +66,5 @@ function main() {
     test_static();
 
     a::b::c();
-    scanLine();
+    //scanLine();
 }

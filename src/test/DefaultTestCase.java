@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Disabled;
@@ -15,8 +17,10 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Namespace;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -76,6 +80,19 @@ class DefaultTestCase {
 
         System.setOut(ps);
         time("Executed", () -> fn.call());
+    }
+
+    @Disabled
+    @Test
+    void testIdentifier()
+    {
+        Map<Identifier, Object> pool = new HashMap<>();
+        pool.put(new Identifier(Namespace.GLOBAL, "a"), "value0");
+        pool.put(new Identifier("a", "a"), "value1");
+        pool.put(new Identifier("b", "a"), "value2");
+        pool.put(new Identifier("c", "a"), "value3");
+        Object result = pool.get(new Identifier("a", "a"));
+        System.out.println(result);
     }
 
     private static <T> T time(Supplier<T> lambda)
