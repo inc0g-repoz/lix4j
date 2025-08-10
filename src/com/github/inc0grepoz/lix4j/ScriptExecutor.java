@@ -7,9 +7,10 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.github.inc0grepoz.lix4j.ast.AST;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.expression.Operator;
@@ -49,7 +50,7 @@ public class ScriptExecutor
 
     private final List<Script> scripts = new ArrayList<>();
     private final List<Operator> operators = new ArrayList<>();
-    private final List<Function<UnitRoot, UnitFunction>> inbuilt = new ArrayList<>();
+    private final List<BiFunction<UnitRoot, Namespace, UnitFunction>> inbuilt = new ArrayList<>();
 
     // Provided by the application that uses the engine
     private File loaderDirectory = null;
@@ -190,11 +191,12 @@ public class ScriptExecutor
     /**
      * Supplies the inbuilt functions to compiled scripts.
      * 
-     * @param root the root section-unit of a script
+     * @param root      the root section-unit of a script
+     * @param namespace the namespace to put the functions into
      */
-    public void supplyInbuiltFunctions(UnitRoot root)
+    public void supplyInbuiltFunctions(UnitRoot root, Namespace namespace)
     {
-        inbuilt.forEach(fs -> fs.apply(root));
+        inbuilt.forEach(fs -> fs.apply(root, namespace));
     }
 
 }

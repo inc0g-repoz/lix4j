@@ -14,7 +14,7 @@ namespace a {
         static hi = "Hello 2";
 
         function c() {
-            println(::hi);
+            println(::a::b::hi);
             //e();
         }
 
@@ -30,22 +30,24 @@ function each(string) {
 static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
 
 function test_list() {
-    list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
+    var list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
     list.add("1");
     list.add("2");
     list.forEach(each);
 }
 
 function test_static() {
-    static a = 0;
+    static var a = 0;
     println("Static increment " + (++a));
 }
 
 function main() {
     a::b::c();
-    pow = math::pow(2, 2);
+
+    var pow = math::pow(2, 2);
+
     test_list();
-    println(pow);
-    a::f = 1;
-    println(a::f);
+
+    println(a::hi);
+    sleep(1000);
 }

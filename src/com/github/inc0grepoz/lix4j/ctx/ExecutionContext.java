@@ -13,21 +13,23 @@ public class ExecutionContext implements Cloneable
 
     private final Script script;
     private final ExecutionVarpool varpool;
+    private final Namespace namespace; // global
 
     /**
      * Creates a new global context for the specified {@code script}.
      * 
      * @param script the {@code Script}
      */
-    public ExecutionContext(Script script)
+    public ExecutionContext(Script script, Namespace namespace)
     {
-        this(script, new ExecutionVarpool());
+        this(script, new ExecutionVarpool(), namespace);
     }
 
-    private ExecutionContext(Script script, ExecutionVarpool varpool)
+    private ExecutionContext(Script script, ExecutionVarpool varpool, Namespace namespace)
     {
         this.script = script;
         this.varpool = varpool;
+        this.namespace = namespace; // global
     }
 
     @Override
@@ -51,10 +53,15 @@ public class ExecutionContext implements Cloneable
         return varpool;
     }
 
+    public Namespace getGlobalNamespace()
+    {
+        return namespace;
+    }
+
     @Override
     public ExecutionContext clone()
     {
-        return new ExecutionContext(script, varpool.clone());
+        return new ExecutionContext(script, varpool.clone(), namespace);
     }
 
 }

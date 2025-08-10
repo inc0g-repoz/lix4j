@@ -19,9 +19,16 @@ import com.github.inc0grepoz.lix4j.value.Variable;
 public class CompileTimeVarpool extends Varpool<AccessorVariable>
 {
 
+    private final Namespace globalNamespace = new Namespace(null, "");
+
     public CompileTimeVarpool()
     {
         super(new ArrayDeque<>());
+    }
+
+    public Namespace getGlobalNamespace()
+    {
+        return globalNamespace;
     }
 
     public AccessorVariable handleVariable(Identifier identifier, Set<Modifier> modifiers)

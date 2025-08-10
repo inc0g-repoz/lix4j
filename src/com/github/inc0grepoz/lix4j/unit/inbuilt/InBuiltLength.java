@@ -4,16 +4,16 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltLength extends UnitFunction
 {
 
-    public InBuiltLength(UnitSection parent)
+    public InBuiltLength(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(Namespace.GLOBAL, "length"), Arrays.asList("array"));
+        super(parent, Identifier.of(namespace, "length"), Arrays.asList("array"));
     }
 
     @Override

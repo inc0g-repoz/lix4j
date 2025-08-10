@@ -11,12 +11,12 @@ import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.expression.Operator;
 import com.github.inc0grepoz.lix4j.util.Lexer;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 /**
  * Represents a compiled script.
@@ -28,7 +28,8 @@ public class Script
 
     private final File loaderDirectory;
     private final List<Operator> operators = new ArrayList<>();
-    private final ExecutionContext globalContext = new ExecutionContext(this);
+    private final ExecutionContext globalContext;
+    private final Namespace globalNamespace;
     private final UnitRoot root = new UnitRoot(this);
 
     // Should only be instantiated within the executor's code
@@ -36,15 +37,17 @@ public class Script
     {
         // Configuring and loading inbuilt features
         loaderDirectory = executor.getLoaderDirectory();
+        globalNamespace = new Namespace(null, ""); // global
         executor.getDefaultOperators().forEach(operators::add);
-        executor.supplyInbuiltFunctions(root);
+        executor.supplyInbuiltFunctions(root, globalNamespace);
 
         // Compiling declared script members
-        CompileTimeContext ctx = new CompileTimeContext(this);
+        CompileTimeContext ctx = new CompileTimeContext(this, globalNamespace);
         ctx.getVarpool().enterSection(); // for global variables
         ScriptCompiler.compileSection(ctx, ast, root);
 
         // Initializing the script (global variables)
+        globalContext = new ExecutionContext(this, globalNamespace);
         globalContext.getVarpool().enterSection();
         root.init(globalContext);
     }
@@ -76,7 +79,7 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.getFunction(Identifier.of(Namespace.GLOBAL, name), paramCount);
+        return root.getFunction(Identifier.of(globalNamespace, name), paramCount);
     }
 
     /**
@@ -106,7 +109,7 @@ public class Script
      */
     public Object callFunction(String name, Object... params)
     {
-        return root.getFunction(Identifier.of(Namespace.GLOBAL, name), params.length).call(params);
+        return root.getFunction(Identifier.of(globalNamespace, name), params.length).call(params);
     }
 
     /**
@@ -143,8 +146,8 @@ public class Script
         AST ast = AST.generateTree(input);
 
         // Compiling into the global namespace by default
-        String namespace = ctx.getNamespace();
-        ctx.setNamespace(Namespace.GLOBAL);
+        Namespace namespace = ctx.getNamespace();
+        ctx.setNamespace(globalNamespace);
         ScriptCompiler.compileSection(ctx, ast, root);
         ctx.setNamespace(namespace);
     }

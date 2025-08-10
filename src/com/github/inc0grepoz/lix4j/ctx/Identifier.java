@@ -1,19 +1,18 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
-import com.github.inc0grepoz.lix4j.util.Namespace;
-
 public class Identifier
 {
 
-    public static Identifier of(String namespace, String name)
+    public static Identifier of(Namespace namespace, String name)
     {
         return new Identifier(namespace, name);
     }
 
-    final String namespace, name;
+    final Namespace namespace;
+    final String name;
     final int hash;
 
-    Identifier(String namespace, String name)
+    Identifier(Namespace namespace, String name)
     {
         this.namespace = namespace;
         this.name = name;
@@ -21,7 +20,7 @@ public class Identifier
         hash = name.hashCode();
     }
 
-    public String getNamespace()
+    public Namespace getNamespace()
     {
         return namespace;
     }
@@ -34,7 +33,7 @@ public class Identifier
     @Override
     public String toString()
     {
-        return namespace == Namespace.GLOBAL ? name : namespace + "::" + name;
+        return namespace.isGlobal() ? name : namespace + "::" + name;
     }
 
     @Override

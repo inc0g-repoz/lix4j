@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -71,6 +71,7 @@ class DefaultTestCase {
             }
         });
 
+//      System.err.println(script);
         UnitFunction fn = script.getFunction("main", 0);
 
         PrintStream ps = System.out;
@@ -88,12 +89,14 @@ class DefaultTestCase {
     void testIdentifier()
     {
         Map<Identifier, Object> pool = new HashMap<>();
-        pool.put(Identifier.of(Namespace.GLOBAL, "a"), "value0");
-        pool.put(Identifier.of("a", "a"), "value1");
-        pool.put(Identifier.of("b", "a"), "value2");
-        pool.put(Identifier.of("c", "a"), "value3");
-        Object result = pool.get(Identifier.of("a", "a"));
+        Namespace gns = new Namespace(null, "");
+        pool.put(Identifier.of(gns, "a"), "value0");
+        pool.put(Identifier.of(gns.nest("a"), "a"), "value1");
+        pool.put(Identifier.of(gns.nest("b"), "a"), "value2");
+        pool.put(Identifier.of(gns.nest("c").nest("d"), "a"), "value3");
+        Object result = pool.get(Identifier.of(gns.nest("c").nest("d"), "a"));
         System.out.println(result);
+        System.out.println(gns.nest("c").nest("d") == gns.nest("c").nest("d"));
     }
 
     private static <T> T time(Supplier<T> lambda)

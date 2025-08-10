@@ -4,17 +4,17 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 import com.github.inc0grepoz.lix4j.util.Reflection;
 
 public class InBuiltNewInstance extends UnitFunction
 {
 
-    public InBuiltNewInstance(UnitSection parent)
+    public InBuiltNewInstance(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(Namespace.GLOBAL, "new_instance"), Arrays.asList("class", "params"));
+        super(parent, Identifier.of(namespace, "new_instance"), Arrays.asList("class", "params"));
     }
 
     @Override

@@ -1,26 +1,32 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
-import com.github.inc0grepoz.lix4j.util.Namespace;
-
 public class IdentifierAccessor extends Identifier
 {
 
-    public static IdentifierAccessor of(String namespaceDeclared, String namespaceLocation, String name)
+    public static IdentifierAccessor of(Namespace namespaceDeclared, Namespace namespaceLocation, String name)
     {
         return new IdentifierAccessor(namespaceDeclared, namespaceLocation, name);
     }
 
-    final String namespaceDeclared;
+    final Namespace namespaceDeclared;
 
-    private IdentifierAccessor(String namespaceDeclared, String namespaceLocation, String name)
+    private IdentifierAccessor(Namespace namespaceDeclared, Namespace namespaceLocation, String name)
     {
         super(namespaceLocation, name);
         this.namespaceDeclared = namespaceDeclared;
     }
 
-    public String getNamespaceDeclared()
+    public Namespace getNamespaceDeclared()
     {
         return namespaceDeclared;
+    }
+
+    @Override
+    public String toString()
+    {
+        return !namespaceDeclared.isGlobal() ? namespaceDeclared + "::" + name
+             : !namespace.isGlobal() ? namespace + "::" + name
+             : name;
     }
 
     @Override
@@ -43,11 +49,14 @@ public class IdentifierAccessor extends Identifier
         {
             // Compare two namespaces of each identifier
             IdentifierAccessor oid = (IdentifierAccessor) obj;
-            return oid.hash == hash
-                 ? oid.namespace == Namespace.GLOBAL && namespaceDeclared == Namespace.GLOBAL
-                || namespace == Namespace.GLOBAL && oid.namespaceDeclared == Namespace.GLOBAL
-                || oid.namespace.equals(namespace)
-                 : false;
+            if (oid.hash != hash)
+            {
+                return false;
+            }
+
+            return oid.namespace.isGlobal() && namespaceDeclared.isGlobal()
+                || namespace.isGlobal() && oid.namespaceDeclared.isGlobal()
+                || oid.namespace.equals(namespace);
         }
 
         return false;

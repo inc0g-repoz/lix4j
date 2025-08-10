@@ -3,16 +3,16 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltClassForName extends UnitFunction
 {
 
-    public InBuiltClassForName(UnitSection parent)
+    public InBuiltClassForName(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(Namespace.GLOBAL, "class_for_name"), Arrays.asList("class"));
+        super(parent, Identifier.of(namespace, "class_for_name"), Arrays.asList("class"));
     }
 
     @Override

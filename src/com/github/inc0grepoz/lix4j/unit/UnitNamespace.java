@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class UnitNamespace extends Unit
 {
@@ -21,9 +21,8 @@ public class UnitNamespace extends Unit
             throw new SyntaxError("Namespaces cannot contain special symbols");
         }
 
-        String current = ctx.getNamespace();
-        String polled = tokens.poll();
-        String namespace = current == Namespace.GLOBAL ? polled : current + "::" + polled;
+        Namespace current = ctx.getNamespace();
+        Namespace namespace = current.nest(tokens.poll());
 
         if (node.getNodeBreakerType() == NodeBreakerType.STATEMENT)
         {
@@ -32,7 +31,7 @@ public class UnitNamespace extends Unit
                 throw new SyntaxError("Cannot use namespaces inside a section");
             }
 
-            if (current != Namespace.GLOBAL)
+            if (!current.isGlobal())
             {
                 throw new SyntaxError("Cannot use non-block namespace \"" + namespace + "\" inside another namespace");
             }

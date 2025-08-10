@@ -3,17 +3,17 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 import com.github.inc0grepoz.lix4j.value.AccessorNoInstance;
 
 public class InBuiltNoInstance extends UnitFunction
 {
 
-    public InBuiltNoInstance(UnitSection parent)
+    public InBuiltNoInstance(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(Namespace.GLOBAL, "no_instance"), Arrays.asList("class"));
+        super(parent, Identifier.of(namespace, "no_instance"), Arrays.asList("class"));
     }
 
     @Override

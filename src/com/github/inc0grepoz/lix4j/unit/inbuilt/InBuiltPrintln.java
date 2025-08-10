@@ -3,16 +3,16 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 import java.util.Arrays;
 
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
-import com.github.inc0grepoz.lix4j.util.Namespace;
 
 public class InBuiltPrintln extends UnitFunction
 {
 
-    public InBuiltPrintln(UnitSection parent)
+    public InBuiltPrintln(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(Namespace.GLOBAL, "println"), Arrays.asList("object"));
+        super(parent, Identifier.of(namespace, "println"), Arrays.asList("object"));
     }
 
     @Override
