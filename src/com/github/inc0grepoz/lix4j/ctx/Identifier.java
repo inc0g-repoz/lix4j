@@ -5,15 +5,20 @@ import com.github.inc0grepoz.lix4j.util.Namespace;
 public class Identifier
 {
 
-    private final String namespace, name;
-    private final int hash;
+    public static Identifier of(String namespace, String name)
+    {
+        return new Identifier(namespace, name);
+    }
 
-    public Identifier(String namespace, String name)
+    final String namespace, name;
+    final int hash;
+
+    Identifier(String namespace, String name)
     {
         this.namespace = namespace;
         this.name = name;
 
-        hash = 31 * namespace.hashCode() + name.hashCode();
+        hash = name.hashCode();
     }
 
     public String getNamespace()
@@ -41,16 +46,27 @@ public class Identifier
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj)
+        if (obj == this) return true;
+        if (obj == null) return false;
+
+        Class<?> clazz = obj.getClass();
+
+        if (clazz == Identifier.class)
         {
-            return true;
+            // Compare both identifiers namespaces
+            Identifier oid = (Identifier) obj;
+            return oid.hash == hash ? oid.namespace.equals(namespace) : false;
         }
-        if (obj == null || getClass() != obj.getClass())
+
+        if (clazz == IdentifierAccessor.class)
         {
-            return false;
+            // Compare two namespaces of each identifier
+            IdentifierAccessor oid = (IdentifierAccessor) obj;
+            return oid.hash == hash ? oid.namespace.equals(namespace)
+                || oid.namespaceDeclared.equals(namespace) : false;
         }
-        Identifier oid = (Identifier) obj;
-        return oid.hash == hash;
+
+        return false;
     }
 
 }

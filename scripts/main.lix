@@ -2,21 +2,24 @@ include "util.lix";
 include "math.lix";
 include "sort.lix";
 
-// Nested namespaces
 static hi = "Hello from a nested namespace!";
-
-function e() {
-    println(hi);
-}
 
 // Nested namespaces
 namespace a {
+
+    static hi = "Hello 1";
+
     namespace b {
+
+        static hi = "Hello 2";
+
         function c() {
-            ::println(::hi);
+            println(::hi);
             //e();
         }
+
     }
+
 }
 
 // Lambda-function for invocation by Java.
@@ -43,4 +46,6 @@ function main() {
     pow = math::pow(2, 2);
     test_list();
     println(pow);
+    a::f = 1;
+    println(a::f);
 }

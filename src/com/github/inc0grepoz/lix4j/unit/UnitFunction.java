@@ -52,7 +52,7 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        Identifier id = new Identifier(ctx.getNamespace(), name);
+        Identifier id = Identifier.of(ctx.getNamespace(), name);
         UnitFunction fn = ctx.getScript().getFunction(id, paramNames.size());
 
         if (fn != null)
@@ -129,7 +129,7 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-            Identifier id = new Identifier(identifier.getNamespace(), paramNames.get(i));
+            Identifier id = Identifier.of(identifier.getNamespace(), paramNames.get(i));
             pool.set(id, params[i]);
         }
 

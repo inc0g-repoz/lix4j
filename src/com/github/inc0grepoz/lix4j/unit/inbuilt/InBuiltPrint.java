@@ -12,7 +12,7 @@ public class InBuiltPrint extends UnitFunction
 
     public InBuiltPrint(UnitSection parent)
     {
-        super(parent, new Identifier(Namespace.GLOBAL, "print"), Arrays.asList("object"));
+        super(parent, Identifier.of(Namespace.GLOBAL, "print"), Arrays.asList("object"));
     }
 
     @Override

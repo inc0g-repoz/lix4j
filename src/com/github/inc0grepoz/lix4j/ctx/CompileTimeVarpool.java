@@ -50,6 +50,7 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
             {
                 xcsVar = AccessorVariableStack.of(identifier);
             }
+            // All statics are pointered
             else if (clazz == AccessorVariableStatic.class)
             {
                 Variable ptr = ((AccessorVariableStatic) xcsVar).getVariable();
@@ -63,7 +64,9 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         // Fresh variable
         else
         {
-            if (xcsVar != null)
+            // Duplicate variables are disallowed within equal namespaces
+            if (xcsVar != null && xcsVar.getIdentifier().getNamespace()
+                    .equals(identifier.getNamespace()))
             {
                 throw new RuntimeException("Two or more variables of the same identifier: " + identifier);
             }

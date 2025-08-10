@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.IdentifierAccessor;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
@@ -23,8 +24,6 @@ import com.github.inc0grepoz.lix4j.value.AccessorValue;
 public class ExpressionResolver
 {
 
-//  private static final Pattern PATTERN_STRING = Pattern.compile("^\".+\"$");
-//  private static final Pattern PATTERN_SPECIAL = Pattern.compile("[~!@#$%^&*()-=+\\[\\]{}:;'\"\\|/<>,.?]+");
     private static final Pattern PATTERN_NUMBER_INT = Pattern.compile("\\d+");
     private static final Pattern PATTERN_NUMBER_LONG = Pattern.compile("(\\d+)[Ll]");
     private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile("(\\d*\\.?\\d+)[Ff]");
@@ -37,14 +36,14 @@ public class ExpressionResolver
 
         if (tokens.size() == 1)
         {
-            return resolveToken(ctx, section, ctx.getNamespace(), tokens.getFirst(), Collections.emptySet());
+            return resolveToken(ctx, section, Namespace.GLOBAL, ctx.getNamespace(), tokens.getFirst(), Collections.emptySet());
         }
 
         return resolveOperator(ctx, section, tokens);
     }
 
     private static Accessor resolveToken(CompileTimeContext ctx, UnitSection section,
-            String namespace, String token, Set<Modifier> modifiers)
+            String namespaceDec, String namespaceCtx, String token, Set<Modifier> modifiers)
     {
         if (token == null)
         {
@@ -103,7 +102,7 @@ public class ExpressionResolver
         }
 
         // Default to variable
-        Identifier id = new Identifier(namespace, token);
+        Identifier id = IdentifierAccessor.of(namespaceDec, namespaceCtx, token);
         return ctx.getVarpool().handleVariable(id, modifiers);
     }
 
@@ -231,7 +230,8 @@ public class ExpressionResolver
     private static void handleParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
-        String namespace = handleNamespace(ctx, tokens);
+        String namespaceDec = handleDeclaredNamespace(ctx, tokens);
+        String namespaceCtx = handleLocationNamespace(ctx, tokens);
         String name = tokens.poll();
         TokenHelper.openParentheses(tokens);
 
@@ -241,7 +241,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.function(new Identifier(namespace, name), accessors);
+            builder.function(IdentifierAccessor.of(namespaceDec, namespaceCtx, name), accessors);
             builder.index(index);
         }
         else
@@ -268,7 +268,8 @@ public class ExpressionResolver
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         Set<Modifier> modifiers = readAllModifiers(tokens);
-        String namespace = handleNamespace(ctx, tokens);
+        String namespaceDec = handleDeclaredNamespace(ctx, tokens);
+        String namespaceCtx = handleLocationNamespace(ctx, tokens);
 
         if (tokens.size() > 1)
         {
@@ -279,7 +280,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.accessor(resolveToken(ctx, section, namespace, name, modifiers));
+            builder.accessor(resolveToken(ctx, section, namespaceDec, namespaceCtx, name, modifiers));
             builder.index(index);
         }
         else
@@ -289,22 +290,31 @@ public class ExpressionResolver
         }
     }
 
-    private static String handleNamespace(CompileTimeContext ctx, LinkedList<String> tokens)
+    private static String handleDeclaredNamespace(CompileTimeContext ctx, LinkedList<String> tokens)
     {
-        String namespace;
+        return readNamespace(ctx, tokens, Namespace.GLOBAL);
+    }
 
+    private static String handleLocationNamespace(CompileTimeContext ctx, LinkedList<String> tokens)
+    {
+        return readNamespace(ctx, tokens, ctx.getNamespace());
+    }
+
+    private static String readNamespace(CompileTimeContext ctx, LinkedList<String> tokens, String defNs)
+    {
         if (tokens.size() > 1 && tokens.get(0).equals("::"))
         {
             tokens.poll();
             return Namespace.GLOBAL;
         }
-        else if (tokens.size() > 2 && tokens.get(1).equals("::"))
+
+        if (tokens.size() > 2 && tokens.get(1).equals("::"))
         {
             StringJoiner joiner = new StringJoiner("::");
 
             do
             {
-                namespace = tokens.poll();
+                String namespace = tokens.poll();
                 tokens.poll();
 
                 if (namespace.equals("this"))
@@ -325,12 +335,8 @@ public class ExpressionResolver
 
             return joiner.toString();
         }
-        else
-        {
-            namespace = ctx.getNamespace();
-        }
 
-        return namespace.isEmpty() ? ctx.getNamespace() : namespace;
+        return defNs;
     }
 
     private static Set<Modifier> readAllModifiers(LinkedList<String> tokens)

@@ -13,7 +13,7 @@ public class InBuiltNoInstance extends UnitFunction
 
     public InBuiltNoInstance(UnitSection parent)
     {
-        super(parent, new Identifier(Namespace.GLOBAL, "no_instance"), Arrays.asList("class"));
+        super(parent, Identifier.of(Namespace.GLOBAL, "no_instance"), Arrays.asList("class"));
     }
 
     @Override

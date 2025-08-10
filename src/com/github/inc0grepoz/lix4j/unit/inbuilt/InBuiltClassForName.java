@@ -12,7 +12,7 @@ public class InBuiltClassForName extends UnitFunction
 
     public InBuiltClassForName(UnitSection parent)
     {
-        super(parent, new Identifier(Namespace.GLOBAL, "class_for_name"), Arrays.asList("class"));
+        super(parent, Identifier.of(Namespace.GLOBAL, "class_for_name"), Arrays.asList("class"));
     }
 
     @Override

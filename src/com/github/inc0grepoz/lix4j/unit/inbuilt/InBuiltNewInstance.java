@@ -14,7 +14,7 @@ public class InBuiltNewInstance extends UnitFunction
 
     public InBuiltNewInstance(UnitSection parent)
     {
-        super(parent, new Identifier(Namespace.GLOBAL, "new_instance"), Arrays.asList("class", "params"));
+        super(parent, Identifier.of(Namespace.GLOBAL, "new_instance"), Arrays.asList("class", "params"));
     }
 
     @Override

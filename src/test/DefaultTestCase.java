@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -75,8 +76,8 @@ class DefaultTestCase {
         PrintStream ps = System.out;
         PrintStream nps = new PrintStream(new NullOutputStream());
 
-        //System.setOut(nps);
-        //time("Executed", () -> fn.call());
+        System.setOut(nps);
+        time("Executed", () -> fn.call());
 
         System.setOut(ps);
         time("Executed", () -> fn.call());
@@ -87,11 +88,11 @@ class DefaultTestCase {
     void testIdentifier()
     {
         Map<Identifier, Object> pool = new HashMap<>();
-        pool.put(new Identifier(Namespace.GLOBAL, "a"), "value0");
-        pool.put(new Identifier("a", "a"), "value1");
-        pool.put(new Identifier("b", "a"), "value2");
-        pool.put(new Identifier("c", "a"), "value3");
-        Object result = pool.get(new Identifier("a", "a"));
+        pool.put(Identifier.of(Namespace.GLOBAL, "a"), "value0");
+        pool.put(Identifier.of("a", "a"), "value1");
+        pool.put(Identifier.of("b", "a"), "value2");
+        pool.put(Identifier.of("c", "a"), "value3");
+        Object result = pool.get(Identifier.of("a", "a"));
         System.out.println(result);
     }
 

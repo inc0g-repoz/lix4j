@@ -76,7 +76,7 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.getFunction(new Identifier(Namespace.GLOBAL, name), paramCount);
+        return root.getFunction(Identifier.of(Namespace.GLOBAL, name), paramCount);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Script
      */
     public Object callFunction(String name, Object... params)
     {
-        return root.getFunction(new Identifier(Namespace.GLOBAL, name), params.length).call(params);
+        return root.getFunction(Identifier.of(Namespace.GLOBAL, name), params.length).call(params);
     }
 
     /**

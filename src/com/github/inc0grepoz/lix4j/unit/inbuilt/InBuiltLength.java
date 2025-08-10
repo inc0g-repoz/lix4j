@@ -13,7 +13,7 @@ public class InBuiltLength extends UnitFunction
 
     public InBuiltLength(UnitSection parent)
     {
-        super(parent, new Identifier(Namespace.GLOBAL, "length"), Arrays.asList("array"));
+        super(parent, Identifier.of(Namespace.GLOBAL, "length"), Arrays.asList("array"));
     }
 
     @Override
