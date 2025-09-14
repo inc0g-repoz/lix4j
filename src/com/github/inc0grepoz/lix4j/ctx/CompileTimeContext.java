@@ -2,34 +2,16 @@ package com.github.inc0grepoz.lix4j.ctx;
 
 import com.github.inc0grepoz.lix4j.Script;
 
-public class CompileTimeContext
+public class CompileTimeContext extends AbstractContext<CompileTimeVarpool>
 {
-
-    private final Script script;
-    private final CompileTimeVarpool varpool = new CompileTimeVarpool();
-    private final Namespace globalNamespace;
 
     private Namespace namespace;
 
-    public CompileTimeContext(Script script, Namespace namespace)
+    public CompileTimeContext(Script script)
     {
-        this.script = script;
-        this.globalNamespace = this.namespace = namespace; // global
-    }
+        super(script, new CompileTimeVarpool());
 
-    public Script getScript()
-    {
-        return script;
-    }
-
-    public CompileTimeVarpool getVarpool()
-    {
-        return varpool;
-    }
-
-    public Namespace getGlobalNamespace()
-    {
-        return globalNamespace;
+        this.namespace = script.getGlobalNamespace();
     }
 
     public Namespace getNamespace()

@@ -1,8 +1,8 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 /**
@@ -18,9 +18,9 @@ public abstract class Varpool<T>
 
     private static final Object NO_KEY = new Object();
 
-    protected final ArrayDeque<Map<Identifier, Object>> stack;
+    protected final ArrayDeque<Lookup<T>> stack;
 
-    protected Varpool(ArrayDeque<Map<Identifier, Object>> stack)
+    protected Varpool(ArrayDeque<Lookup<T>> stack)
     {
         this.stack = stack;
     }
@@ -30,12 +30,27 @@ public abstract class Varpool<T>
     {
         StringJoiner joiner = new StringJoiner("\n");
 
-        for (Map<Identifier, Object> scope: stack)
+        for (Lookup<T> scope: stack)
         {
             scope.forEach((k, v) -> joiner.add(k + " = " + v));
         }
 
         return joiner.toString();
+    }
+
+    public Entry<Identifier, T> lookup(CompileTimeContext ctx, LinkedList<String> nsParts, String name)
+    {
+        Entry<Identifier, T> entry;
+
+        for (Lookup<T> scope: stack)
+        {
+            if ((entry = scope.findEntry(ctx, nsParts, name)) != null)
+            {
+                return entry;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -53,17 +68,17 @@ public abstract class Varpool<T>
         }
 
         // Redefining in another layer, if defined
-        for (Map<Identifier, Object> scope: stack)
+        for (Lookup<T> scope: stack)
         {
             if (scope.containsKey(identifier))
             {
-                scope.put(identifier, value);
+                scope.set(identifier, value);
                 return value;
             }
         }
 
         // Define at the last layer
-        stack.peek().put(identifier, value);
+        stack.peek().set(identifier, value);
         return value;
     }
 
@@ -79,9 +94,9 @@ public abstract class Varpool<T>
     {
         Object o;
 
-        for (Map<Identifier, Object> scope: stack)
+        for (Lookup<T> scope: stack)
         {
-            if ((o = scope.getOrDefault(identifier, NO_KEY)) != NO_KEY)
+            if ((o = scope.get(identifier, NO_KEY)) != NO_KEY)
             {
                 return (T) o;
             }
@@ -97,7 +112,7 @@ public abstract class Varpool<T>
      */
     public Varpool<T> enterSection()
     {
-        stack.push(new HashMap<>());
+        stack.push(new Lookup<>());
         return this;
     }
 

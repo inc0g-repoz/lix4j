@@ -1,7 +1,6 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
-import java.util.Map;
 
 import com.github.inc0grepoz.lix4j.value.AccessorUnassigned;
 
@@ -21,7 +20,7 @@ public class ExecutionVarpool extends Varpool<Object> implements Cloneable
         this(new ArrayDeque<>());
     }
 
-    private ExecutionVarpool(ArrayDeque<Map<Identifier, Object>> stack)
+    private ExecutionVarpool(ArrayDeque<Lookup<Object>> stack)
     {
         super(stack);
     }

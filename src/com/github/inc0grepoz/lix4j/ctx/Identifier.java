@@ -52,17 +52,8 @@ public class Identifier
 
         if (clazz == Identifier.class)
         {
-            // Compare both identifiers namespaces
             Identifier oid = (Identifier) obj;
-            return oid.hash == hash ? oid.namespace.equals(namespace) : false;
-        }
-
-        if (clazz == IdentifierAccessor.class)
-        {
-            // Compare two namespaces of each identifier
-            IdentifierAccessor oid = (IdentifierAccessor) obj;
-            return oid.hash == hash ? oid.namespace.equals(namespace)
-                || oid.namespaceDeclared.equals(namespace) : false;
+            return oid.hash == hash ? oid.namespace == namespace : false;
         }
 
         return false;

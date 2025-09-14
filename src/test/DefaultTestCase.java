@@ -7,20 +7,23 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
+import com.github.inc0grepoz.lix4j.unit.expression.NamespaceResolver;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 @SuppressWarnings("all")
@@ -97,6 +100,11 @@ class DefaultTestCase {
         Object result = pool.get(Identifier.of(gns.nest("c").nest("d"), "a"));
         System.out.println(result);
         System.out.println(gns.nest("c").nest("d") == gns.nest("c").nest("d"));
+    }
+
+    private static <T> LinkedList<T> link(T... values)
+    {
+        return Stream.of(values).collect(Collectors.toCollection(LinkedList::new));
     }
 
     private static <T> T time(Supplier<T> lambda)

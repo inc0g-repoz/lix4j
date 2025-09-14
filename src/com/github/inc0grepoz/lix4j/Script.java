@@ -37,17 +37,17 @@ public class Script
     {
         // Configuring and loading inbuilt features
         loaderDirectory = executor.getLoaderDirectory();
-        globalNamespace = new Namespace(null, ""); // global
+        globalNamespace = new Namespace(null, Namespace.GLOBAL_NAME);
         executor.getDefaultOperators().forEach(operators::add);
         executor.supplyInbuiltFunctions(root, globalNamespace);
 
         // Compiling declared script members
-        CompileTimeContext ctx = new CompileTimeContext(this, globalNamespace);
+        CompileTimeContext ctx = new CompileTimeContext(this);
         ctx.getVarpool().enterSection(); // for global variables
         ScriptCompiler.compileSection(ctx, ast, root);
 
         // Initializing the script (global variables)
-        globalContext = new ExecutionContext(this, globalNamespace);
+        globalContext = new ExecutionContext(this);
         globalContext.getVarpool().enterSection();
         root.init(globalContext);
     }
@@ -55,6 +55,11 @@ public class Script
     @Override
     public String toString() {
         return root.toString();
+    }
+
+    public Namespace getGlobalNamespace()
+    {
+        return globalNamespace;
     }
 
     /**

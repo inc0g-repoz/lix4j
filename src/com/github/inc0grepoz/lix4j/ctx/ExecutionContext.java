@@ -8,60 +8,28 @@ import com.github.inc0grepoz.lix4j.Script;
  * 
  * @author inc0g-repoz
  */
-public class ExecutionContext implements Cloneable
+public class ExecutionContext extends AbstractContext<ExecutionVarpool> implements Cloneable
 {
-
-    private final Script script;
-    private final ExecutionVarpool varpool;
-    private final Namespace namespace; // global
 
     /**
      * Creates a new global context for the specified {@code script}.
      * 
      * @param script the {@code Script}
      */
-    public ExecutionContext(Script script, Namespace namespace)
+    public ExecutionContext(Script script)
     {
-        this(script, new ExecutionVarpool(), namespace);
+        this(script, new ExecutionVarpool());
     }
 
-    private ExecutionContext(Script script, ExecutionVarpool varpool, Namespace namespace)
+    private ExecutionContext(Script script, ExecutionVarpool varpool)
     {
-        this.script = script;
-        this.varpool = varpool;
-        this.namespace = namespace; // global
-    }
-
-    @Override
-    public String toString()
-    {
-        return script.toString();
-    }
-
-    /**
-     * Returns the {@code Script} that supplied this {@code ExecutionContext}.
-     * 
-     * @return the {@code Script} that supplied this {@code ExecutionContext}
-     */
-    public Script getScript()
-    {
-        return script;
-    }
-
-    public ExecutionVarpool getVarpool()
-    {
-        return varpool;
-    }
-
-    public Namespace getGlobalNamespace()
-    {
-        return namespace;
+        super(script, varpool);
     }
 
     @Override
     public ExecutionContext clone()
     {
-        return new ExecutionContext(script, varpool.clone(), namespace);
+        return new ExecutionContext(script, varpool.clone());
     }
 
 }

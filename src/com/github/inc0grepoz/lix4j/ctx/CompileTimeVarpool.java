@@ -2,9 +2,12 @@ package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.inc0grepoz.lix4j.unit.Modifier;
+import com.github.inc0grepoz.lix4j.unit.expression.NamespaceResolver;
 import com.github.inc0grepoz.lix4j.value.AccessorVariable;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStatic;
@@ -31,14 +34,15 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         return globalNamespace;
     }
 
-    public AccessorVariable handleVariable(Identifier identifier, Set<Modifier> modifiers)
+    public AccessorVariable handleVariable(CompileTimeContext ctx, Set<Modifier> modifiers, LinkedList<String> nsParts, String name)
     {
-        AccessorVariable xcsVar = get(identifier);
+        Entry<Identifier, AccessorVariable> entry = lookup(ctx, nsParts, name);
+        AccessorVariable xcsVar;
 
         // Existing variable
         if (modifiers.isEmpty())
         {
-            if (xcsVar == null)
+            if (entry == null)
             {
 //              System.err.print("New variable ");
 //              System.err.print(token);
@@ -48,14 +52,16 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
 //              System.err.print(" for declaring variables.");
 //              System.err.println();
 
-                return handleVariable(identifier, EnumSet.of(Modifier.VAR));
+                return handleVariable(ctx, EnumSet.of(Modifier.VAR), nsParts, name);
             }
 
-            Class<? extends AccessorVariable> clazz = xcsVar.getClass();
+            Identifier id = entry.getKey();
+            xcsVar = get(id);
 
+            Class<? extends AccessorVariable> clazz = xcsVar.getClass();
             if (clazz == AccessorVariableStack.class)
             {
-                xcsVar = AccessorVariableStack.of(identifier);
+                xcsVar = AccessorVariableStack.of(id);
             }
             // All statics are pointered
             else if (clazz == AccessorVariableStatic.class)
@@ -72,19 +78,21 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         else
         {
             // Duplicate variables are disallowed within equal namespaces
-            if (xcsVar != null && xcsVar.getIdentifier().getNamespace()
-                    .equals(identifier.getNamespace()))
+            if (entry != null)
             {
-                throw new RuntimeException("Two or more variables of the same identifier: " + identifier);
+                throw new RuntimeException("Two or more variables of the same identifier: " + entry.getKey());
             }
+
+            Namespace  ns = NamespaceResolver.resolveLocationNamespace(ctx, nsParts);
+            Identifier id = Identifier.of(ns, name);
 
             if (modifiers.contains(Modifier.STATIC))
             {
-                set(identifier, xcsVar = AccessorVariableStatic.of(identifier));
+                set(id, xcsVar = AccessorVariableStatic.of(id));
             }
             else
             {
-                set(identifier, xcsVar = AccessorVariableStack.of(identifier));
+                set(id, xcsVar = AccessorVariableStack.of(id));
             }
         }
 

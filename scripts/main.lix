@@ -1,53 +1,11 @@
-include "util.lix";
-include "math.lix";
-include "sort.lix";
 
-static hi = "Hello from a nested namespace!";
 
-// Nested namespaces
-namespace a {
-
-    static hi = "Hello 1";
-
-    namespace b {
-
-        static hi = "Hello 2";
-
-        function c() {
-            println(::a::b::hi);
-            //e();
-        }
-
-    }
-
+function shit() {
+    return "shit";
 }
 
-// Lambda-function for invocation by Java.
-function each(string) {
-    println("String value " + string);
-}
-
-static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
-
-function test_list() {
-    var list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
-    list.add("1");
-    list.add("2");
-    list.forEach(each);
-}
-
-function test_static() {
-    static var a = 0;
-    println("Static increment " + (++a));
-}
 
 function main() {
-    a::b::c();
-
-    var pow = math::pow(2, 2);
-
-    test_list();
-
-    println(a::hi);
-    sleep(1000);
+    //c();
+    println(shit());
 }
