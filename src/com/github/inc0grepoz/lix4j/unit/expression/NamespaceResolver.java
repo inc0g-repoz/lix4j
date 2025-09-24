@@ -1,31 +1,43 @@
 package com.github.inc0grepoz.lix4j.unit.expression;
 
 import java.util.LinkedList;
-
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 
 public class NamespaceResolver
 {
 
-    public static LinkedList<String> resolveDeclaredNamespacePath(CompileTimeContext ctx, LinkedList<String> tokens) {
+    public static LinkedList<String> resolveDeclaredNamespacePath(CompileTimeContext ctx, LinkedList<String> tokens)
+    {
         LinkedList<String> path = new LinkedList<>();
 
+        if (tokens.size() < 2)
+        {
+            return path;
+        }
+
         // Handling absolute paths (leading separator)
-        if (tokens.peek().equals(Namespace.SEPARATOR)) {
+        if (tokens.peek().equals(Namespace.SEPARATOR))
+        {
             tokens.poll();
             path.add(Namespace.ABSOLUTE_MARKER);
         }
 
         // Handling pairs [part, separator]
-        while (tokens.size() > 2) {
-            String part = tokens.poll();
-            String nextToken = tokens.peek();
-
+        while (tokens.size() > 2)
+        {
+            // Checking the next token after the current
+            String nextToken = tokens.get(1);
             if (!nextToken.equals(Namespace.SEPARATOR)) break;
 
+            // Retrieving a namespace name
+            String part = tokens.poll();
+
+            // Removing a separator
+            tokens.poll();
+
+            // Adding a namespace name to the path
             path.add(part);
-            tokens.poll(); // Removing a separator
         }
 
         return path;

@@ -12,7 +12,7 @@ public class InBuiltPrint extends UnitFunction
 
     public InBuiltPrint(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(namespace, "print"), Arrays.asList("object"));
+        super(parent, Identifier.of(namespace, "print", 1), Arrays.asList("object"));
     }
 
     @Override

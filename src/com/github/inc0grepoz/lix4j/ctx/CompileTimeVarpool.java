@@ -34,9 +34,10 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         return globalNamespace;
     }
 
-    public AccessorVariable handleVariable(CompileTimeContext ctx, Set<Modifier> modifiers, LinkedList<String> nsParts, String name)
+    public AccessorVariable handleVariable(CompileTimeContext ctx, Set<Modifier> modifiers,
+            LinkedList<String> namespaceParts, String name)
     {
-        Entry<Identifier, AccessorVariable> entry = lookup(ctx, nsParts, name);
+        Entry<Identifier, AccessorVariable> entry = lookup(ctx, namespaceParts, name);
         AccessorVariable xcsVar;
 
         // Existing variable
@@ -52,7 +53,7 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
 //              System.err.print(" for declaring variables.");
 //              System.err.println();
 
-                return handleVariable(ctx, EnumSet.of(Modifier.VAR), nsParts, name);
+                return handleVariable(ctx, EnumSet.of(Modifier.VAR), namespaceParts, name);
             }
 
             Identifier id = entry.getKey();
@@ -77,13 +78,14 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         // Fresh variable
         else
         {
+            Namespace  ns = NamespaceResolver.resolveLocationNamespace(ctx, namespaceParts);
+
             // Duplicate variables are disallowed within equal namespaces
-            if (entry != null)
+            if (entry != null && entry.getKey().getNamespace() == ns)
             {
                 throw new RuntimeException("Two or more variables of the same identifier: " + entry.getKey());
             }
 
-            Namespace  ns = NamespaceResolver.resolveLocationNamespace(ctx, nsParts);
             Identifier id = Identifier.of(ns, name);
 
             if (modifiers.contains(Modifier.STATIC))

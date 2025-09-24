@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,12 +20,12 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
-import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
+import com.github.inc0grepoz.lix4j.ctx.Lookup;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
-import com.github.inc0grepoz.lix4j.unit.expression.NamespaceResolver;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Predicates;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -57,7 +58,7 @@ class DefaultTestCase {
         }
     }
 
-    //@Disabled
+//  @Disabled
     @Test
     void testScriptEngine()
     {
@@ -77,29 +78,32 @@ class DefaultTestCase {
 //      System.err.println(script);
         UnitFunction fn = script.getFunction("main", 0);
 
-        PrintStream ps = System.out;
-        PrintStream nps = new PrintStream(new NullOutputStream());
+//      PrintStream ps = System.out;
+//      PrintStream nps = new PrintStream(new NullOutputStream());
 
-        System.setOut(nps);
-        time("Executed", () -> fn.call());
+//      System.setOut(nps);
+//      time("Executed", () -> fn.call());
 
-        System.setOut(ps);
+//      System.setOut(ps);
         time("Executed", () -> fn.call());
     }
 
     @Disabled
     @Test
-    void testIdentifier()
+    void testLookup()
     {
-        Map<Identifier, Object> pool = new HashMap<>();
-        Namespace gns = new Namespace(null, "");
-        pool.put(Identifier.of(gns, "a"), "value0");
-        pool.put(Identifier.of(gns.nest("a"), "a"), "value1");
-        pool.put(Identifier.of(gns.nest("b"), "a"), "value2");
-        pool.put(Identifier.of(gns.nest("c").nest("d"), "a"), "value3");
-        Object result = pool.get(Identifier.of(gns.nest("c").nest("d"), "a"));
-        System.out.println(result);
-        System.out.println(gns.nest("c").nest("d") == gns.nest("c").nest("d"));
+        Namespace global = new Namespace(null, Namespace.GLOBAL_NAME);
+        Lookup<Object> lookup = new Lookup<>();
+
+        lookup.set(Identifier.of(global, "a"), "default");
+        lookup.set(Identifier.of(global.nest("values"), "a"), 5);
+        lookup.set(Identifier.of(global.nest("values").nest("strings"), "a"), "otherValue");
+
+        Entry<Identifier, Object> result = lookup.findEntry(link(), "a",
+                global, global.nest("values"), Predicates.alwaysTrue());
+        System.out.println(result.getKey() + " = " + result.getValue());
+        System.out.println(global.nest("c").nest("d") == global.nest("c").nest("d"));
+        System.out.println(global.find(link("values", "strings")) == global.find(link("values", "strings")));
     }
 
     private static <T> LinkedList<T> link(T... values)

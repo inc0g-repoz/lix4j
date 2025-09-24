@@ -12,7 +12,7 @@ public class InBuiltPrintln extends UnitFunction
 
     public InBuiltPrintln(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(namespace, "println"), Arrays.asList("object"));
+        super(parent, Identifier.of(namespace, "println", 1), Arrays.asList("object"));
     }
 
     @Override

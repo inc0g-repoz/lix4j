@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 /**
- * An aggregate in which you can do lookups of instances
- * by namespaced identifiers.
+ * A table for searching objects by identifiers with namespaces.
  * 
- * @param <T> the instance type to store
+ * @param <T> the type of elements stored by a table
  */
 @SuppressWarnings("unchecked")
 public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
@@ -29,57 +29,78 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         (this.identifiable = new HashMap<>()).putAll(identifiable);
     }
 
-    public Entry<Identifier, T> findEntry(CompileTimeContext ctx, LinkedList<String> nsParts, String name)
+    /**
+     * Finds an entry by parts of the namespace used by the identifier.
+     * Starts searching from the current namespace for relative paths
+     * or from the global namespace for abstract paths (starting with
+     * a "::" separator).
+     * 
+     * @param namespaceParts   the parts of nested namespaces
+     * @param name             the name used by the identifier
+     * @param namespaceGlobal  the global namespace
+     * @param namespaceCurrent the current namespace
+     * @param predicate        the predicate to test values
+     * @return a found entry or {@code null}
+     */
+    public Entry<Identifier, T> findEntry(LinkedList<String> namespaceParts, String name,
+            Namespace namespaceGlobal, Namespace namespaceCurrent, Predicate<T> predicate)
     {
         Namespace level, n;
 
-        // Determining, where to start searching
-        if (nsParts.isEmpty())
+        // Determining the namespace to start searching from
+        if (namespaceParts.isEmpty())
         {
-            level = ctx.getNamespace();
+            // A relative path with no namespace specified – starting from the current
+            level = namespaceCurrent;
         }
         else
         {
-            if (nsParts.peek() == Namespace.ABSOLUTE_MARKER)
+            if (namespaceParts.peek().equals(Namespace.ABSOLUTE_MARKER))
             {
-                level = ctx.getScript().getGlobalNamespace();
+                // An absolute path - starting from the global
+                level = namespaceGlobal;
 
-                // Only clone when mutability is needed
-                nsParts = (LinkedList<String>) nsParts.clone();
-                nsParts.poll();
+                // Cloning the list to not mutate the original
+                namespaceParts = (LinkedList<String>) namespaceParts.clone();
+                namespaceParts.poll(); // Removing the absolute path marker
             }
             else
             {
-                level = ctx.getNamespace();
+                // A relative path specified - starting from the current
+                level = namespaceCurrent;
             }
         }
 
         Identifier id;
 
-        // Looking for namespaces and values in them
+        // Looking through namespaces starting from the bottom level
+        // until the the top level is reached (global)
         while (level != null)
         {
-            n = level.findWithin(nsParts);
+            // Trying to find the target namespace in the current level
+            n = level.findWithin(namespaceParts);
 
-            // If a namespace exists by that path, search it
+            // If found the namespace, looking for an identifier
             if (n != null)
             {
                 for (Map.Entry<Identifier, T> entry: identifiable.entrySet())
                 {
                     id = entry.getKey();
 
-                    // Same namespace share the same pointers
-                    if (id.getNamespace() == n && id.getName().equals(name))
+                    // Comparing by a pointer to the namespace and a name
+                    if (id.getNamespace() == n
+                            && id.getName().equals(name)
+                            && predicate.test(entry.getValue()))
                     {
                         return entry;
                     }
                 }
             }
 
-            level = level.getParent(); // Ascending
+            level = level.getParent(); // Going to the parent namespace
         }
 
-        return null;
+        return null; // Nothing found
     }
 
     public boolean containsKey(Identifier id)
@@ -105,7 +126,8 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         return value;
     }
 
-    public void forEach(BiConsumer<Identifier, T> action) {
+    public void forEach(BiConsumer<Identifier, T> action)
+    {
         identifiable.forEach(action);
     }
 

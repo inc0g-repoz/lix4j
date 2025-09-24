@@ -13,7 +13,7 @@ public class InBuiltPrintlnEmpty extends UnitFunction
 
     public InBuiltPrintlnEmpty(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(namespace, "println"), Arrays.asList());
+        super(parent, Identifier.of(namespace, "println", 0), Arrays.asList());
     }
 
     @Override

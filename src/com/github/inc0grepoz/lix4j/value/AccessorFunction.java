@@ -68,20 +68,20 @@ class AccessorFunction extends AccessorNamespaced
 
         if (cachedFunction == null)
         {
-            cachedFunction = ctx.getScript().getFunction(identifier, paramArr.length);
+            cachedFunction = ctx.getScript().getFunction(
+                    identifier.getNamespace().toLinkedList(),
+                    identifier.getName(),
+                    identifier.getNamespace(),
+                    paramArr.length);
         }
 
-        try
+        if (cachedFunction == null)
+        {
+            throw new NullPointerException("Unknown function " + identifier + " with " + params.length + " parameter(-s)");
+        }
+        else
         {
             return cachedFunction.call(paramArr);
-        }
-        catch (NullPointerException npe)
-        {
-            throw new RuntimeException("Unknown function " + identifier + " with " + params.length + " parameter(-s)", npe);
-        }
-        catch (Throwable t)
-        {
-            throw t;
         }
     }
 

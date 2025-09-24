@@ -9,6 +9,20 @@ import java.util.StringJoiner;
 public class Reflection
 {
 
+    public static final String METHOD_NAME_TO_STRING;
+
+    static
+    {
+        try
+        {
+            METHOD_NAME_TO_STRING = Object.class.getMethod("toString").getName();
+        }
+        catch (NoSuchMethodException | SecurityException e)
+        {
+            throw new RuntimeException("Unable to precache a method name handle", e);
+        }
+    }
+
     public static Constructor<?> findConstructor(Class<?> clazz, Object[] params, Class<?>[] classes)
     {
         try

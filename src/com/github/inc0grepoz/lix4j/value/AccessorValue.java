@@ -38,11 +38,15 @@ public class AccessorValue extends Accessor
             return null;
         }
 
-        String rv = instance.toString();
+        String rv;
 
         if (instance instanceof String)
         {
-            rv = '"' + rv + '"';
+            rv = '"' + (String) instance + '"';
+        }
+        else
+        {
+            rv = instance.toString();
         }
 
         return rv + (next == null ? "" : "." + next);

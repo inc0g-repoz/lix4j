@@ -13,7 +13,7 @@ public class InBuiltNewArray extends UnitFunction
 
     public InBuiltNewArray(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(namespace, "new_array"), Arrays.asList("class", "length"));
+        super(parent, Identifier.of(namespace, "new_array", 2), Arrays.asList("class", "length"));
     }
 
     @Override

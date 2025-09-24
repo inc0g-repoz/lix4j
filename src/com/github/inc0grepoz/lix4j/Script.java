@@ -10,12 +10,12 @@ import java.util.List;
 import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.expression.Operator;
+import com.github.inc0grepoz.lix4j.util.Collections;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 /**
@@ -53,7 +53,8 @@ public class Script
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return root.toString();
     }
 
@@ -62,16 +63,26 @@ public class Script
         return globalNamespace;
     }
 
+    public UnitRoot getRoot()
+    {
+        return root;
+    }
+
     /**
-     * Returns the function by the specified identifier and parameters
+     * Returns the function by the specified namespace, name and parameters
      * count, if exists, or {@code null} otherwise.
      * 
-     * @param identifier the function identifier
-     * @param paramCount the parameters count
+     * @param namespaceParts the parts of a nested namespace
+     * @param name           the function name
+     * @param namespaceStart the namespace to start searching in
+     * @param paramCount     the parameters count
      * @return a function
      */
-    public UnitFunction getFunction(Identifier identifier, int paramCount) {
-        return root.getFunction(identifier, paramCount);
+    public UnitFunction getFunction(LinkedList<String> namespaceParts, String name,
+            Namespace namespaceStart, int paramCount)
+    {
+        return root.lookupFunction(namespaceParts, name,
+                globalNamespace, namespaceStart, paramCount);
     }
 
     /**
@@ -84,22 +95,27 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.getFunction(Identifier.of(globalNamespace, name), paramCount);
+        return root.lookupFunction(Collections.emptyLinkedList(), name,
+                globalNamespace, globalNamespace, paramCount);
     }
 
     /**
-     * Calls the function with the specified identifier and parameters
-     * count, if exists.
+     * Calls the function with the specified namespace and name and passes
+     * the specified parameters, if exists.
      * 
-     * @param identifier the function identifier
+     * @param namespaceParts the parts of a nested namespace
+     * @param name           the function name
+     * @param namespaceStart the namespace to start searching in
      * @param params     the parameters
      * @return the function return value
      * @throws IllegalArgumentException
      *         if no function has the same name and parameters count
      */
-    public Object callFunction(Identifier identifier, Object... params)
+    public Object callFunction(LinkedList<String> namespaceParts, String name,
+            Namespace namespaceStart, Object... params)
     {
-        return root.getFunction(identifier, params.length).call(params);
+        return root.lookupFunction(namespaceParts, name,
+                globalNamespace, namespaceStart, params.length).call(params);
     }
 
     /**
@@ -114,7 +130,8 @@ public class Script
      */
     public Object callFunction(String name, Object... params)
     {
-        return root.getFunction(Identifier.of(globalNamespace, name), params.length).call(params);
+        return root.lookupFunction(Collections.emptyLinkedList(), name,
+                globalNamespace, globalNamespace, params.length).call(params);
     }
 
     /**

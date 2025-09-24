@@ -13,7 +13,7 @@ public class InBuiltSleep extends UnitFunction
 
     public InBuiltSleep(UnitSection parent, Namespace namespace)
     {
-        super(parent, Identifier.of(namespace, "sleep"), Arrays.asList("time"));
+        super(parent, Identifier.of(namespace, "sleep", 1), Arrays.asList("time"));
     }
 
     @Override

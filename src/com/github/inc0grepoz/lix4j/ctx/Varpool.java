@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
+import com.github.inc0grepoz.lix4j.util.Predicates;
+
 /**
  * Represents an abstract pool for variables. Stores a stack
  * of scopes with variables in their scopes and lets the engine
@@ -44,7 +46,11 @@ public abstract class Varpool<T>
 
         for (Lookup<T> scope: stack)
         {
-            if ((entry = scope.findEntry(ctx, nsParts, name)) != null)
+            entry = scope.findEntry(nsParts, name,
+                    ctx.getScript().getGlobalNamespace(),
+                    ctx.getNamespace(),
+                    Predicates.alwaysTrue());
+            if (entry != null)
             {
                 return entry;
             }

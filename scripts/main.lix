@@ -1,11 +1,39 @@
+static hi = "Hello from global!";
 
+namespace a {
 
-function shit() {
-    return "shit";
+    static hi = "Hello from a!";
+
+    function foo() {
+        ::println(hi);
+    }
+
+    namespace b {
+
+        static hi = "Hello from b!";
+
+        function foo() {
+            ::println(a::foo());
+        }
+
+    }
+
 }
 
+static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
+
+function each(elt) {
+    println("List element: string \"" + elt + "\"");
+}
+
+function test_list() {
+    var list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
+    list.add("1");
+    list.add("2");
+    list.forEach(each);
+}
 
 function main() {
-    //c();
-    println(shit());
+    test_list();
+    a::b::foo();
 }

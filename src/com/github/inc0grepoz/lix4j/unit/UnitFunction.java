@@ -12,6 +12,7 @@ import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionVarpool;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
+import com.github.inc0grepoz.lix4j.util.Reflection;
 
 public class UnitFunction extends UnitSection
 {
@@ -52,8 +53,8 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        Identifier id = Identifier.of(ctx.getNamespace(), name);
-        UnitFunction fn = ctx.getScript().getFunction(id, paramNames.size());
+        Identifier id = Identifier.of(ctx.getNamespace(), name, paramNames.size());
+        UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id, paramNames.size());
 
         if (fn != null)
         {
@@ -99,8 +100,15 @@ public class UnitFunction extends UnitSection
     }
 
     @Override
+    public int hashCode()
+    {
+        return 31 * identifier.hashCode() + paramNames.size();
+    }
+
+    @Override
     Object execute(ExecutionContext context)
     {
+        root.functions.set(identifier, this);
         return ControlFlow.KEEP_EXECUTING;
     }
 
@@ -120,7 +128,14 @@ public class UnitFunction extends UnitSection
 
         if (params.length != paramNames.size())
         {
-            throw new IllegalArgumentException(getSignature());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Parameters count doesn't match ");
+            sb.append(getSignature());
+            sb.append(": passed ");
+            sb.append(params.length);
+            sb.append(", expected ");
+            sb.append(paramNames.size());
+            throw new IllegalArgumentException(sb.toString());
         }
 
         ExecutionContext ctx = root.getScript().supplyContext();
@@ -180,7 +195,10 @@ public class UnitFunction extends UnitSection
     public Object createProxy(Class<?> type)
     {
         return Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type },
-                (proxy, method, args) -> call(args));
+                // This is a hack that works, since all Object#toString() methods use
+                // the same instance of String as a name, even those are overridden
+                (proxy, method, args) -> method.getName() == Reflection.METHOD_NAME_TO_STRING
+                        ? identifier.toString() : call(args));
     }
 
 }

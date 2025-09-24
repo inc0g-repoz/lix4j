@@ -1,7 +1,6 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
@@ -63,6 +62,12 @@ public class Namespace
         return name;
     }
 
+    /**
+     * Finds a direct nested namespace by a name.
+     *
+     * @param name the namespace name
+     * @return a found namespace or {@code null}
+     */
     private Namespace get(String name)
     {
         for (Namespace n: nested)
@@ -113,12 +118,13 @@ public class Namespace
 
     public Namespace find(LinkedList<String> parts)
     {
-        Namespace n = this, level = this;
-
         if (parts.isEmpty())
         {
             return this;
         }
+
+        Namespace n = this, level = this;
+
         if (parts.peek() == ABSOLUTE_MARKER)
         {
             parts = (LinkedList<String>) parts.clone();
@@ -129,7 +135,7 @@ public class Namespace
 
         do
         {
-            n = n.findWithin(parts);
+            n = level.findWithin(parts);
 
             if (n != null)
             {
@@ -143,22 +149,24 @@ public class Namespace
         return null;
     }
 
+    /**
+     * Finds a nested namespace by a full path. Goes through the whole
+     * hierarchy of namespace until it finds the target namespace.
+     *
+     * @param parts the parts of the path to a certain namespace
+     * @return the found namespace or {@code null}
+     */
     public Namespace findWithin(LinkedList<String> parts)
     {
-        Namespace n = this;
-        Iterator<String> iter = parts.iterator();
+        Namespace current = this;
 
-        while (iter.hasNext())
-        {
-            n = n.get(iter.next());
-
-            if (n != null)
-            {
-                return n;
-            }
+        // Sequentially walking through all the parts.
+        // If some part is not found, null is returned.
+        for (String part: parts) {
+            if ((current = current.get(part)) == null) return null;
         }
 
-        return null;
+        return current; // Returning the namespace found
     }
 
     @Override
@@ -174,7 +182,7 @@ public class Namespace
 
         while (n.parent != null)
         {
-            list.addLast(n.name);
+            list.addFirst(n.name);
             n = n.parent;
         }
 
