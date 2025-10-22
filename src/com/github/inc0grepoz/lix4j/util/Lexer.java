@@ -180,8 +180,8 @@ public class Lexer
         flushBuffer(builder, tokens);
 
         // Validate all quotes and multi-line comments terminated
-        if (q != '\0')   throw new SyntaxError("Unterminated quote detected");
-        if (cmt == '\2') throw new SyntaxError("Unterminated multi-line comment detected");
+        if (q != '\0') throw new SyntaxError("Unterminated quote detected");
+        if (cmt == 2)  throw new SyntaxError("Unterminated multi-line comment detected");
 
         return tokens;
     }

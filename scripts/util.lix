@@ -21,7 +21,7 @@ function scanLine() {
 
     // Initializing and reading the next token
     scanner = new_instance("java.util.Scanner", params);
-    println("Press Enter to continue...");
+    println("Type something...");
     next = scanner.nextLine();
     scanner.close();
 

@@ -78,13 +78,13 @@ class DefaultTestCase {
 //      System.err.println(script);
         UnitFunction fn = script.getFunction("main", 0);
 
-//      PrintStream ps = System.out;
-//      PrintStream nps = new PrintStream(new NullOutputStream());
+        PrintStream ps = System.out;
+        PrintStream nps = new PrintStream(new NullOutputStream());
 
-//      System.setOut(nps);
-//      time("Executed", () -> fn.call());
+        System.setOut(nps);
+        time("Executed", () -> fn.call());
 
-//      System.setOut(ps);
+        System.setOut(ps);
         time("Executed", () -> fn.call());
     }
 

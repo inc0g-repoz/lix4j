@@ -18,11 +18,14 @@ public class InBuiltNewArray extends UnitFunction
     @Override
     public Object call(Object... params)
     {
-        try {
+        try
+        {
             Class<?> clazz = Class.forName((String) params[0]);
-            int length = (int) params[1];
+            int length = ((Number) params[1]).intValue();
             return Array.newInstance(clazz, length);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t)
+        {
             throw new IllegalArgumentException(t);
         }
     }

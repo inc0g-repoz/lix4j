@@ -101,7 +101,7 @@ public class UnitLoopFor extends UnitSection
     {
         if (increment != null)
         {
-            increment.access(context, null);
+            increment.linkedAccess(context, null);
         }
     }
 
