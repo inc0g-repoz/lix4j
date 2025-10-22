@@ -2,13 +2,12 @@ package com.github.inc0grepoz.lix4j.unit.expression;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 
 public class NamespaceResolver
 {
 
-    public static LinkedList<String> resolveTargetNamespacePath(CompileTimeContext ctx, LinkedList<String> tokens)
+    public static LinkedList<String> resolveTargetNamespacePath(LinkedList<String> tokens)
     {
         LinkedList<String> path = new LinkedList<>();
 

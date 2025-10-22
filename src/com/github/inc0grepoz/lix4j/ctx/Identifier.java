@@ -45,16 +45,6 @@ public class Identifier
         hash = calculateHash(data, isResolved());
     }
 
-    public Identifier withData(int data)
-    {
-        return new Identifier(unresolvedTargetNamespace, namespace, name, data);
-    }
-
-    public boolean isResolved()
-    {
-        return unresolvedTargetNamespace == null;
-    }
-
     public LinkedList<String> getUnresolvedTargetNamespace()
     {
         return unresolvedTargetNamespace;
@@ -75,10 +65,19 @@ public class Identifier
         return data;
     }
 
+    public Identifier withData(int data)
+    {
+        return new Identifier(unresolvedTargetNamespace, namespace, name, data);
+    }
+
+    public boolean isResolved()
+    {
+        return unresolvedTargetNamespace == null;
+    }
+
     public void resolve(Namespace namespace)
     {
         this.namespace = namespace;
-
         unresolvedTargetNamespace = null;
         hash = calculateHash(data, true);
     }

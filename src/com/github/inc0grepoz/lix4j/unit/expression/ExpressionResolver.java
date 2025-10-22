@@ -227,7 +227,7 @@ public class ExpressionResolver
     private static void handleParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
-        LinkedList<String> targetNamespace = NamespaceResolver.resolveTargetNamespacePath(ctx, tokens);
+        LinkedList<String> targetNamespace = NamespaceResolver.resolveTargetNamespacePath(tokens);
         String name = tokens.poll();
         TokenHelper.openParentheses(tokens);
 
@@ -266,7 +266,7 @@ public class ExpressionResolver
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         Set<Modifier> modifiers = readAllModifiers(tokens);
-        LinkedList<String> namespaceDec = NamespaceResolver.resolveTargetNamespacePath(ctx, tokens);
+        LinkedList<String> targetNamespace = NamespaceResolver.resolveTargetNamespacePath(tokens);
 
         if (tokens.size() > 1)
         {
@@ -277,7 +277,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.accessor(resolveToken(ctx, section, namespaceDec, name, modifiers));
+            builder.accessor(resolveToken(ctx, section, targetNamespace, name, modifiers));
             builder.index(index);
         }
         else

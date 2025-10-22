@@ -26,11 +26,10 @@ public class ExecutionVarpool extends Varpool<Object> implements Cloneable
     }
 
     @Override
-    public Object get(Identifier identifier)
+    public Object get(Identifier id)
     {
-        Object o = super.get(identifier);
-
-        return o == null ? new AccessorUnassigned(identifier) : o;
+        Object o = super.get(id);
+        return o == null ? new AccessorUnassigned(id) : o;
     }
 
     @Override

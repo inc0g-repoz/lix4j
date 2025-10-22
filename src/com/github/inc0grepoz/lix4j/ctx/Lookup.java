@@ -49,56 +49,55 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
             return value == null ? null : new LookupEntry<T>(identifier, value);
         }
 
-        LinkedList<String> targetNamespace = identifier.getUnresolvedTargetNamespace();
-        Namespace level, namespaceCurrent = identifier.getNamespace();
+        LinkedList<String> target = identifier.getUnresolvedTargetNamespace();
+        Namespace level, n = identifier.getNamespace();
         String name = identifier.getName();
 
         // Determining the namespace to start searching from
-        if (targetNamespace.isEmpty())
+        if (target.isEmpty())
         {
             // A relative path with no namespace specified – starting from the current
-            level = namespaceCurrent;
+            level = n;
         }
         else
         {
-            if (targetNamespace.peek().equals(Namespace.ABSOLUTE_MARKER))
+            if (target.peek().equals(Namespace.ABSOLUTE_MARKER))
             {
                 // An absolute path - starting from the global
                 level = namespaceGlobal;
 
                 // Cloning the list to not mutate the original
-                targetNamespace = (LinkedList<String>) targetNamespace.clone();
-                targetNamespace.poll(); // Removing the absolute path marker
+                target = (LinkedList<String>) target.clone();
+                target.poll(); // Removing the absolute path marker
             }
             else
             {
                 // A relative path specified - starting from the current
-                level = namespaceCurrent;
+                level = n;
             }
         }
 
-        Identifier id;
-        Namespace n;
+        Identifier idi;
 
         // Looking through namespaces starting from the bottom level
         // until the the top level is reached (global)
         while (level != null)
         {
             // Trying to find the target namespace in the current level
-            n = level.findWithin(targetNamespace);
+            n = level.findWithin(target);
 
             // If found the namespace, looking for an identifier
             if (n != null)
             {
                 for (Map.Entry<Identifier, T> entry: identifiable.entrySet())
                 {
-                    id = entry.getKey();
+                    idi = entry.getKey();
 
-                    if (id.getNamespace() == n
-                            && id.getName().equals(name)
+                    if (idi.getNamespace() == n
+                            && idi.getName().equals(name)
                             && predicate.test(entry.getValue()))
                     {
-                        identifier.resolve(id.getNamespace());
+                        identifier.resolve(idi.getNamespace());
                         return entry;
                     }
                 }

@@ -2,11 +2,11 @@ static hi = "Hello from global!";
 
 namespace a {
 
-    static hi = "Hello from a!";
+    //static hi = "Hello from a!";
 
     namespace b {
 
-        static hi = "Hello from b!";
+        //static hi = "Hello from b!";
 
         function foo() {
             println(::hi);
@@ -14,22 +14,26 @@ namespace a {
 
     }
 
+    function each(elt) {
+        println("Namespace a, Element: \"" + elt + "\"");
+    }
+
 }
 
 static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
 
 function each(elt) {
-    ::println("List element: string \"" + elt + "\"");
+    println("Element: \"" + elt + "\"");
 }
 
 function test_list() {
     var list = new_instance("java.util.ArrayList", EMPTY_ARRAY);
     list.add("1");
     list.add("2");
-    list.forEach(each);
+    list.forEach(a::each);
 }
 
 function main() {
     test_list();
-    a::b::foo();
+    //a::b::foo();
 }

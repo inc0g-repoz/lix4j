@@ -2,6 +2,7 @@ package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -67,7 +68,12 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         // Fresh variable
         else
         {
-            id.resolve(ctx.getNamespace());
+            if (!id.isResolved())
+            {
+                LinkedList<String> targetNamespace = id.getUnresolvedTargetNamespace();
+                Namespace namespace = ctx.getNamespace().find(targetNamespace);
+                id.resolve(namespace);
+            }
 
             // Duplicate variables are disallowed within equal namespaces
             if (entry != null && entry.getKey().equals(id))

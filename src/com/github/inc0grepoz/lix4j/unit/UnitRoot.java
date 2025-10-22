@@ -32,19 +32,17 @@ public class UnitRoot extends UnitSection
         return joiner.toString();
     }
 
-    public UnitFunction getFunctionAsChild(Identifier identifier)
+    public UnitFunction getFunctionAsChild(Identifier id)
     {
         UnitFunction fn;
-        Identifier id;
 
         for (Unit child: childs)
         {
             if (child instanceof UnitFunction)
             {
                 fn = ((UnitFunction) child);
-                id = fn.identifier;
 
-                if (id.equals(identifier))
+                if (fn.identifier.equals(id))
                 {
                     return fn;
                 }
