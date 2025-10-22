@@ -36,7 +36,7 @@ public class ScriptCompiler
     {
         if (!node.hasTokens())
         {
-            return enterCompileSection(ctx, node, new UnitSection(parent));
+            return enterCompileSection(ctx, node, new UnitSection(parent, ctx));
         }
 
         switch (node.getTokens().peek())

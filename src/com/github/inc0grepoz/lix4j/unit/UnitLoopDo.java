@@ -18,7 +18,7 @@ public class UnitLoopDo extends UnitSection
     {
         node.getTokens().poll(); // do
 
-        UnitLoopDo unit = new UnitLoopDo(section);
+        UnitLoopDo unit = new UnitLoopDo(section, ctx);
         ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         LinkedList<ASTNode> parentNodes = node.getParent().getChildNodes();
@@ -38,9 +38,9 @@ public class UnitLoopDo extends UnitSection
 
     Accessor condition;
 
-    UnitLoopDo(UnitSection parent)
+    UnitLoopDo(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent);
+        super(parent, ctx);
     }
 
     @Override

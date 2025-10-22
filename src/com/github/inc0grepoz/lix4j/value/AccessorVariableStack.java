@@ -14,14 +14,14 @@ public class AccessorVariableStack extends AccessorVariable
 
     /**
      * Creates and returns a new accessor for a variable
-     * with a specified name.
+     * with a specified identifier.
      * 
-     * @param identifier the variable identifier
+     * @param id the variable identifier
      * @return a new {@code AccessorVariable}
      */
-    public static AccessorVariableStack of(Identifier identifier)
+    public static AccessorVariableStack of(Identifier id)
     {
-        return new AccessorVariableStack(identifier);
+        return new AccessorVariableStack(id);
     }
 
     AccessorVariableStack(Identifier identifier)

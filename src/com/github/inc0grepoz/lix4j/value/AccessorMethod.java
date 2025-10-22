@@ -157,7 +157,7 @@ class AccessorMethod extends AccessorNamed
             AccessorUnassigned unassigned = (AccessorUnassigned) paramArray[i];
             int paramCount = parameterTypes[i].getTypeParameters().length;
             Identifier id = unassigned.getIdentifier().withData(paramCount);
-            UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id, paramCount);
+            UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id);
 
             if (fn == null)
             {

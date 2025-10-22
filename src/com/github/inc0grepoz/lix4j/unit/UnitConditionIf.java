@@ -21,7 +21,7 @@ public class UnitConditionIf extends UnitSection
         LinkedList<String> conditionTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
         Accessor condition = ExpressionResolver.resolve(ctx, section, conditionTokens);
 
-        UnitConditionIf unit = new UnitConditionIf(section, condition);
+        UnitConditionIf unit = new UnitConditionIf(section, ctx, condition);
         ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         LinkedList<ASTNode> parentNodes = node.getParent().getChildNodes();
@@ -40,9 +40,9 @@ public class UnitConditionIf extends UnitSection
 
     UnitConditionElse otherwise;
 
-    UnitConditionIf(UnitSection parent, Accessor condition)
+    UnitConditionIf(UnitSection parent, CompileTimeContext ctx, Accessor condition)
     {
-        super(parent);
+        super(parent, ctx);
         this.condition = condition;
     }
 

@@ -10,9 +10,9 @@ import com.github.inc0grepoz.lix4j.ctx.Identifier;
 public abstract class AccessorVariable extends AccessorNamespaced
 {
 
-    AccessorVariable(Identifier identifier)
+    AccessorVariable(Identifier id)
     {
-        super(identifier);
+        super(id);
     }
 
     @Override

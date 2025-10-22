@@ -35,34 +35,40 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
      * or from the global namespace for abstract paths (starting with
      * a "::" separator).
      * 
-     * @param namespaceParts   the parts of nested namespaces
-     * @param name             the name used by the identifier
+     * @param identifier       the identifier
      * @param namespaceGlobal  the global namespace
-     * @param namespaceCurrent the current namespace
      * @param predicate        the predicate to test values
      * @return a found entry or {@code null}
      */
-    public Entry<Identifier, T> findEntry(LinkedList<String> namespaceParts, String name,
-            Namespace namespaceGlobal, Namespace namespaceCurrent, Predicate<T> predicate)
+    public Entry<Identifier, T> findEntry(Identifier identifier, Namespace namespaceGlobal,
+            Predicate<T> predicate)
     {
-        Namespace level, n;
+        if (identifier.isResolved())
+        {
+            T value = identifiable.get(identifier);
+            return value == null ? null : new LookupEntry<T>(identifier, value);
+        }
+
+        LinkedList<String> targetNamespace = identifier.getUnresolvedTargetNamespace();
+        Namespace level, namespaceCurrent = identifier.getNamespace();
+        String name = identifier.getName();
 
         // Determining the namespace to start searching from
-        if (namespaceParts.isEmpty())
+        if (targetNamespace.isEmpty())
         {
             // A relative path with no namespace specified – starting from the current
             level = namespaceCurrent;
         }
         else
         {
-            if (namespaceParts.peek().equals(Namespace.ABSOLUTE_MARKER))
+            if (targetNamespace.peek().equals(Namespace.ABSOLUTE_MARKER))
             {
                 // An absolute path - starting from the global
                 level = namespaceGlobal;
 
                 // Cloning the list to not mutate the original
-                namespaceParts = (LinkedList<String>) namespaceParts.clone();
-                namespaceParts.poll(); // Removing the absolute path marker
+                targetNamespace = (LinkedList<String>) targetNamespace.clone();
+                targetNamespace.poll(); // Removing the absolute path marker
             }
             else
             {
@@ -72,13 +78,14 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         }
 
         Identifier id;
+        Namespace n;
 
         // Looking through namespaces starting from the bottom level
         // until the the top level is reached (global)
         while (level != null)
         {
             // Trying to find the target namespace in the current level
-            n = level.findWithin(namespaceParts);
+            n = level.findWithin(targetNamespace);
 
             // If found the namespace, looking for an identifier
             if (n != null)
@@ -87,11 +94,11 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
                 {
                     id = entry.getKey();
 
-                    // Comparing by a pointer to the namespace and a name
                     if (id.getNamespace() == n
                             && id.getName().equals(name)
                             && predicate.test(entry.getValue()))
                     {
+                        identifier.resolve(id.getNamespace());
                         return entry;
                     }
                 }
@@ -141,6 +148,38 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
     public Iterator<Entry<Identifier, T>> iterator()
     {
         return identifiable.entrySet().iterator();
+    }
+
+    public static class LookupEntry<T> implements Entry<Identifier, T>
+    {
+
+        private final Identifier key;
+        private final T value;
+
+        LookupEntry(Identifier key, T value)
+        {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public Identifier getKey()
+        {
+            return key;
+        }
+
+        @Override
+        public T getValue()
+        {
+            return value;
+        }
+
+        @Override
+        public T setValue(T value)
+        {
+            throw new UnsupportedOperationException("Immutable entry: " + key);
+        }
+
     }
 
 }

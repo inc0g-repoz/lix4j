@@ -10,12 +10,12 @@ import java.util.List;
 import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
+import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.expression.Operator;
-import com.github.inc0grepoz.lix4j.util.Collections;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 /**
@@ -30,19 +30,24 @@ public class Script
     private final List<Operator> operators = new ArrayList<>();
     private final ExecutionContext globalContext;
     private final Namespace globalNamespace;
-    private final UnitRoot root = new UnitRoot(this);
+    private final UnitRoot root;
+
+    {
+        globalNamespace = new Namespace(null, Namespace.GLOBAL_NAME);
+    }
 
     // Should only be instantiated within the executor's code
     Script(ScriptExecutor executor, AST ast)
     {
+        CompileTimeContext ctx = new CompileTimeContext(this);
+        root = new UnitRoot(this, ctx);
+
         // Configuring and loading inbuilt features
         loaderDirectory = executor.getLoaderDirectory();
-        globalNamespace = new Namespace(null, Namespace.GLOBAL_NAME);
         executor.getDefaultOperators().forEach(operators::add);
-        executor.supplyInbuiltFunctions(root, globalNamespace);
+        executor.supplyInbuiltFunctions(root, ctx);
 
         // Compiling declared script members
-        CompileTimeContext ctx = new CompileTimeContext(this);
         ctx.getVarpool().enterSection(); // for global variables
         ScriptCompiler.compileSection(ctx, ast, root);
 
@@ -72,17 +77,12 @@ public class Script
      * Returns the function by the specified namespace, name and parameters
      * count, if exists, or {@code null} otherwise.
      * 
-     * @param namespaceParts the parts of a nested namespace
-     * @param name           the function name
-     * @param namespaceStart the namespace to start searching in
-     * @param paramCount     the parameters count
+     * @param id the function identifier
      * @return a function
      */
-    public UnitFunction getFunction(LinkedList<String> namespaceParts, String name,
-            Namespace namespaceStart, int paramCount)
+    public UnitFunction getFunction(Identifier id)
     {
-        return root.lookupFunction(namespaceParts, name,
-                globalNamespace, namespaceStart, paramCount);
+        return root.lookupFunction(id, globalNamespace);
     }
 
     /**
@@ -95,43 +95,8 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        return root.lookupFunction(Collections.emptyLinkedList(), name,
-                globalNamespace, globalNamespace, paramCount);
-    }
-
-    /**
-     * Calls the function with the specified namespace and name and passes
-     * the specified parameters, if exists.
-     * 
-     * @param namespaceParts the parts of a nested namespace
-     * @param name           the function name
-     * @param namespaceStart the namespace to start searching in
-     * @param params     the parameters
-     * @return the function return value
-     * @throws IllegalArgumentException
-     *         if no function has the same name and parameters count
-     */
-    public Object callFunction(LinkedList<String> namespaceParts, String name,
-            Namespace namespaceStart, Object... params)
-    {
-        return root.lookupFunction(namespaceParts, name,
-                globalNamespace, namespaceStart, params.length).call(params);
-    }
-
-    /**
-     * Calls the function with the specified name and parameters
-     * count, if exists.
-     * 
-     * @param name   the function name
-     * @param params the parameters
-     * @return the function return value
-     * @throws IllegalArgumentException
-     *         if no function has the same name and parameters count
-     */
-    public Object callFunction(String name, Object... params)
-    {
-        return root.lookupFunction(Collections.emptyLinkedList(), name,
-                globalNamespace, globalNamespace, params.length).call(params);
+        Identifier id = Identifier.resolved(globalNamespace, name, paramCount);
+        return root.lookupFunction(id, globalNamespace);
     }
 
     /**

@@ -95,12 +95,13 @@ class DefaultTestCase {
         Namespace global = new Namespace(null, Namespace.GLOBAL_NAME);
         Lookup<Object> lookup = new Lookup<>();
 
-        lookup.set(Identifier.of(global, "a"), "default");
-        lookup.set(Identifier.of(global.nest("values"), "a"), 5);
-        lookup.set(Identifier.of(global.nest("values").nest("strings"), "a"), "otherValue");
+        lookup.set(Identifier.resolved(global, "a"), "default");
+        lookup.set(Identifier.resolved(global.nest("values"), "a"), 5);
+        lookup.set(Identifier.resolved(global.nest("values").nest("strings"), "a"), "otherValue");
 
-        Entry<Identifier, Object> result = lookup.findEntry(link(), "a",
-                global, global.nest("values"), Predicates.alwaysTrue());
+        Entry<Identifier, Object> result = lookup.findEntry(
+                Identifier.unresolved(link("values", "strings"), global, "a"),
+                global, Predicates.alwaysTrue());
         System.out.println(result.getKey() + " = " + result.getValue());
         System.out.println(global.nest("c").nest("d") == global.nest("c").nest("d"));
         System.out.println(global.find(link("values", "strings")) == global.find(link("values", "strings")));

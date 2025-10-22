@@ -35,7 +35,7 @@ public class UnitLoopFor extends UnitSection
         Accessor increment = (tempTokens = split.poll()).isEmpty() ? null
                 : ExpressionResolver.resolve(ctx, section, tempTokens);
 
-        UnitLoopFor unit = new UnitLoopFor(section, parameter, condition, increment);
+        UnitLoopFor unit = new UnitLoopFor(section, ctx, parameter, condition, increment);
         ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         return unit;
@@ -43,9 +43,10 @@ public class UnitLoopFor extends UnitSection
 
     final Accessor parameter, condition, increment;
 
-    UnitLoopFor(UnitSection parent, Accessor parameter, Accessor condition, Accessor increment)
+    UnitLoopFor(UnitSection parent, CompileTimeContext ctx,
+            Accessor parameter, Accessor condition, Accessor increment)
     {
-        super(parent);
+        super(parent, ctx);
         this.parameter = parameter;
         this.condition = condition;
         this.increment = increment;

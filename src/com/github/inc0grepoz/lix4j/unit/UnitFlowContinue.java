@@ -21,12 +21,12 @@ public class UnitFlowContinue extends Unit
             throw new SyntaxError("Illegal tokens after a continue statement: " + String.join(" ", tokens));
         }
 
-        return new UnitFlowContinue(parent);
+        return new UnitFlowContinue(parent, ctx);
     }
 
-    UnitFlowContinue(UnitSection parent)
+    UnitFlowContinue(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent);
+        super(parent, ctx);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class UnitLoopWhile extends UnitSection
         LinkedList<String> conditionTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
         Accessor condition = ExpressionResolver.resolve(ctx, section, conditionTokens);
 
-        UnitLoopWhile unit = new UnitLoopWhile(section, condition);
+        UnitLoopWhile unit = new UnitLoopWhile(section, ctx, condition);
         ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         return unit;
@@ -29,9 +29,9 @@ public class UnitLoopWhile extends UnitSection
 
     final Accessor condition;
 
-    UnitLoopWhile(UnitSection parent, Accessor condition)
+    UnitLoopWhile(UnitSection parent, CompileTimeContext ctx, Accessor condition)
     {
-        super(parent);
+        super(parent, ctx);
         this.condition = condition;
     }
 

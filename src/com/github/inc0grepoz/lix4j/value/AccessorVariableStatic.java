@@ -15,7 +15,7 @@ public class AccessorVariableStatic extends AccessorVariable
      * Creates and returns a new accessor for a variable
      * with an existing pointer.
      * 
-     * @param var the variable pointer
+     * @param var       the variable pointer
      * @return a new {@code AccessorVariableStatic}
      */
     public static AccessorVariableStatic of(Variable var)

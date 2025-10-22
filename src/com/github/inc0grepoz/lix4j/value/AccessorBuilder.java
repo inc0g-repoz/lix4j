@@ -73,6 +73,7 @@ public class AccessorBuilder
      * Appends the access chain with a specified script function
      * with precached parameters and returns this builder instance.
      * 
+     * @param namespace  the namespace where the function is accessed
      * @param identifier the function identifier
      * @param params     the precached parameters array
      * @return this builder instance

@@ -13,7 +13,7 @@ public class UnitConditionElse extends UnitSection
         LinkedList<String> tokens = node.getTokens();
         tokens.poll(); // else
 
-        UnitConditionElse unit = new UnitConditionElse(section);
+        UnitConditionElse unit = new UnitConditionElse(section, ctx);
 
         if (tokens.isEmpty())
         {
@@ -27,9 +27,9 @@ public class UnitConditionElse extends UnitSection
         return unit;
     }
 
-    UnitConditionElse(UnitSection parent)
+    UnitConditionElse(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent, false);
+        super(parent, ctx, false);
     }
 
     @Override

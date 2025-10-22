@@ -3,17 +3,16 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 
 public class InBuiltNewArray extends UnitFunction
 {
 
-    public InBuiltNewArray(UnitSection parent, Namespace namespace)
+    public InBuiltNewArray(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent, Identifier.of(namespace, "new_array", 2), Arrays.asList("class", "length"));
+        super(parent, ctx, "new_array", Arrays.asList("class", "length"));
     }
 
     @Override

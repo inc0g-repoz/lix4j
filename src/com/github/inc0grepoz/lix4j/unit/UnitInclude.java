@@ -44,7 +44,7 @@ public class UnitInclude extends Unit
 
     private UnitInclude(UnitSection parent)
     {
-        super(null);
+        super(null, null);
 
         throw new UnsupportedOperationException();
     }

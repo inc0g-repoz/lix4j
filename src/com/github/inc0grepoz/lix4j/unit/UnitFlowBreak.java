@@ -21,12 +21,12 @@ public class UnitFlowBreak extends Unit
             throw new SyntaxError("Illegal tokens after a break statement: " + String.join(" ", tokens));
         }
 
-        return new UnitFlowBreak(parent);
+        return new UnitFlowBreak(parent, ctx);
     }
 
-    UnitFlowBreak(UnitSection parent)
+    UnitFlowBreak(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent);
+        super(parent, ctx);
     }
 
     @Override

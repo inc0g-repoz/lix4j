@@ -1,3 +1,23 @@
+namespace values {
+
+    static default = null;
+
+    namespace strings {
+
+        static default = "default string";
+        static hi = "hi";
+
+    }
+
+    namespace numbers {
+
+        static default = 0;
+        static one = 1;
+
+    }
+
+}
+
 static hi = "Hello from global!";
 
 namespace a {
@@ -5,7 +25,7 @@ namespace a {
     static hi = "Hello from a!";
 
     function foo() {
-        ::println(hi);
+        //::println(hi);
     }
 
     namespace b {
@@ -23,7 +43,7 @@ namespace a {
 static var EMPTY_ARRAY = new_array("java.lang.Object", 0);
 
 function each(elt) {
-    println("List element: string \"" + elt + "\"");
+    ::println("List element: string \"" + elt + "\"");
 }
 
 function test_list() {

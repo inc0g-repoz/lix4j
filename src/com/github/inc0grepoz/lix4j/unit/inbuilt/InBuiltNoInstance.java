@@ -2,8 +2,7 @@ package com.github.inc0grepoz.lix4j.unit.inbuilt;
 
 import java.util.Arrays;
 
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.value.AccessorNoInstance;
@@ -11,9 +10,9 @@ import com.github.inc0grepoz.lix4j.value.AccessorNoInstance;
 public class InBuiltNoInstance extends UnitFunction
 {
 
-    public InBuiltNoInstance(UnitSection parent, Namespace namespace)
+    public InBuiltNoInstance(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent, Identifier.of(namespace, "no_instance", 1), Arrays.asList("class"));
+        super(parent, ctx, "no_instance", Arrays.asList("class"));
     }
 
     @Override

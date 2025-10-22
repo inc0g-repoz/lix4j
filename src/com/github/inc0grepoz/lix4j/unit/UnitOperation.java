@@ -12,13 +12,14 @@ public class UnitOperation extends Unit
 
     static UnitOperation compile(CompileTimeContext ctx, ASTNode node, UnitSection parent)
     {
-        return new UnitOperation(parent, ExpressionResolver.resolve(ctx, parent, node.getTokens()));
+        return new UnitOperation(parent, ctx, ExpressionResolver.resolve(ctx, parent, node.getTokens()));
     }
 
     private Accessor accessor;
 
-    UnitOperation(UnitSection parent, Accessor accessor) {
-        super(parent);
+    UnitOperation(UnitSection parent, CompileTimeContext ctx, Accessor accessor)
+    {
+        super(parent, ctx);
         this.accessor = accessor;
     }
 

@@ -53,15 +53,19 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        Identifier id = Identifier.of(ctx.getNamespace(), name, paramNames.size());
-        UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id, paramNames.size());
+        Identifier id = Identifier.resolved(ctx.getNamespace(), name, paramNames.size());
+        UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id);
 
         if (fn != null)
         {
-            throw new RuntimeException("Function overloading is not supported (duplicate function " + fn.getSignature() + ")");
+            StringBuilder err = new StringBuilder();
+            err.append("Function overloading is not supported (duplicate function ");
+            err.append(fn.getSignature());
+            err.append(')');
+            throw new RuntimeException(err.toString());
         }
 
-        fn = new UnitFunction(section, id, paramNames);
+        fn = new UnitFunction(section, ctx, id, paramNames);
         ScriptCompiler.appendSectionUnits(ctx, node, fn);
 
         return fn;
@@ -71,12 +75,20 @@ public class UnitFunction extends UnitSection
     final List<String> paramNames;
     final UnitRoot root;
 
-    protected UnitFunction(UnitSection parent, Identifier identifier, List<String> paramNames)
+    protected UnitFunction(UnitSection parent, CompileTimeContext ctx,
+            Identifier identifier, List<String> paramNames)
     {
-        super(parent);
+        super(parent, ctx);
         this.identifier = identifier;
         this.paramNames = paramNames;
         root = root();
+    }
+
+    protected UnitFunction(UnitSection parent, CompileTimeContext ctx,
+            String name, List<String> paramNames)
+    {
+        this(parent, ctx, Identifier.resolved(ctx.getNamespace(), name,
+                paramNames.size()), paramNames);
     }
 
     @Override
@@ -144,7 +156,7 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-            Identifier id = Identifier.of(identifier.getNamespace(), paramNames.get(i));
+            Identifier id = Identifier.resolved(identifier.getNamespace(), paramNames.get(i));
             pool.set(id, params[i]);
         }
 

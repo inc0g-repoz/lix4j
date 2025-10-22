@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
@@ -41,7 +40,7 @@ public class ExpressionResolver
     }
 
     private static Accessor resolveToken(CompileTimeContext ctx, UnitSection section,
-            LinkedList<String> nsPath, String token, Set<Modifier> modifiers)
+            LinkedList<String> unresolvedTargetNamespace, String token, Set<Modifier> modifiers)
     {
         if (token == null)
         {
@@ -100,7 +99,8 @@ public class ExpressionResolver
         }
 
         // Default to variable
-        return ctx.getVarpool().handleVariable(ctx, modifiers, nsPath, token);
+        return ctx.getVarpool().handleVariable(ctx, modifiers,
+                Identifier.unresolved(unresolvedTargetNamespace, ctx.getNamespace(), token));
     }
 
     private static Accessor resolveOperator(CompileTimeContext ctx, UnitSection section, LinkedList<String> tokens)
@@ -227,8 +227,7 @@ public class ExpressionResolver
     private static void handleParameterizedToken(CompileTimeContext ctx, UnitSection section,
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
-        LinkedList<String> namespaceDec = NamespaceResolver.resolveDeclaredNamespacePath(ctx, tokens);
-        Namespace namespaceCtx = ctx.getNamespace().find(namespaceDec);
+        LinkedList<String> targetNamespace = NamespaceResolver.resolveTargetNamespacePath(ctx, tokens);
         String name = tokens.poll();
         TokenHelper.openParentheses(tokens);
 
@@ -238,7 +237,9 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.function(Identifier.of(namespaceCtx, name), accessors);
+            Identifier id = Identifier.unresolved(targetNamespace,
+                    ctx.getNamespace(), name, accessors.length);
+            builder.function(id, accessors);
             builder.index(index);
         }
         else
@@ -265,7 +266,7 @@ public class ExpressionResolver
             AccessorBuilder builder, LinkedList<String> tokens, Accessor index)
     {
         Set<Modifier> modifiers = readAllModifiers(tokens);
-        LinkedList<String> nsPath = NamespaceResolver.resolveDeclaredNamespacePath(ctx, tokens);
+        LinkedList<String> namespaceDec = NamespaceResolver.resolveTargetNamespacePath(ctx, tokens);
 
         if (tokens.size() > 1)
         {
@@ -276,7 +277,7 @@ public class ExpressionResolver
 
         if (builder.isEmpty())
         {
-            builder.accessor(resolveToken(ctx, section, nsPath, name, modifiers));
+            builder.accessor(resolveToken(ctx, section, namespaceDec, name, modifiers));
             builder.index(index);
         }
         else

@@ -68,11 +68,7 @@ class AccessorFunction extends AccessorNamespaced
 
         if (cachedFunction == null)
         {
-            cachedFunction = ctx.getScript().getFunction(
-                    identifier.getNamespace().toLinkedList(),
-                    identifier.getName(),
-                    identifier.getNamespace(),
-                    paramArr.length);
+            cachedFunction = ctx.getScript().getFunction(identifier);
         }
 
         if (cachedFunction == null)

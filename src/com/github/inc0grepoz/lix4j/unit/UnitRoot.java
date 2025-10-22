@@ -1,14 +1,15 @@
 package com.github.inc0grepoz.lix4j.unit;
 
-import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.Script;
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.ctx.Lookup;
 import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.util.Predicates;
 
 public class UnitRoot extends UnitSection
 {
@@ -17,9 +18,9 @@ public class UnitRoot extends UnitSection
 
     final Lookup<UnitFunction> functions = new Lookup<>();
 
-    public UnitRoot(Script script)
+    public UnitRoot(Script script, CompileTimeContext ctx)
     {
-        super(null);
+        super(null, ctx);
         this.script = script;
     }
 
@@ -31,19 +32,19 @@ public class UnitRoot extends UnitSection
         return joiner.toString();
     }
 
-    public UnitFunction getFunctionAsChild(Identifier identifier, int paramCount)
+    public UnitFunction getFunctionAsChild(Identifier identifier)
     {
         UnitFunction fn;
-        Identifier fid;
+        Identifier id;
 
         for (Unit child: childs)
         {
             if (child instanceof UnitFunction)
             {
                 fn = ((UnitFunction) child);
-                fid = fn.identifier;
+                id = fn.identifier;
 
-                if (fid.equals(identifier) && fn.paramNames.size() == paramCount)
+                if (id.equals(identifier))
                 {
                     return fn;
                 }
@@ -53,11 +54,10 @@ public class UnitRoot extends UnitSection
         return null;
     }
 
-    public UnitFunction lookupFunction(LinkedList<String> namespaceParts, String name,
-            Namespace namespaceGlobal, Namespace namespaceCurrent, int paramCount)
+    public UnitFunction lookupFunction(Identifier id, Namespace namespaceGlobal)
     {
-        Entry<Identifier, UnitFunction> result = functions.findEntry(namespaceParts, name,
-                namespaceGlobal, namespaceCurrent, fn -> fn.paramNames.size() == paramCount);
+        Entry<Identifier, UnitFunction> result = functions.findEntry(id,
+                namespaceGlobal, Predicates.alwaysTrue());
         return result == null ? null : result.getValue();
     }
 

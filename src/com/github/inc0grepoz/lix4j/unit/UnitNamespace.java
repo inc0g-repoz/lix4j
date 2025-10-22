@@ -50,7 +50,7 @@ public class UnitNamespace extends Unit
 
     private UnitNamespace(UnitSection parent)
     {
-        super(null);
+        super(null, null);
 
         throw new UnsupportedOperationException();
     }

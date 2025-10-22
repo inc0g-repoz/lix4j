@@ -1,7 +1,6 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import java.util.ArrayDeque;
-import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
@@ -40,15 +39,14 @@ public abstract class Varpool<T>
         return joiner.toString();
     }
 
-    public Entry<Identifier, T> lookup(CompileTimeContext ctx, LinkedList<String> nsParts, String name)
+    public Entry<Identifier, T> lookup(CompileTimeContext ctx, Identifier id)
     {
         Entry<Identifier, T> entry;
 
         for (Lookup<T> scope: stack)
         {
-            entry = scope.findEntry(nsParts, name,
+            entry = scope.findEntry(id,
                     ctx.getScript().getGlobalNamespace(),
-                    ctx.getNamespace(),
                     Predicates.alwaysTrue());
             if (entry != null)
             {
@@ -62,11 +60,11 @@ public abstract class Varpool<T>
     /**
      * Sets the specified variable in the context section.
      * 
-     * @param the variable identifier
-     * @param the variable value
+     * @param id    the variable identifier
+     * @param value the variable value
      * @return the variable value
      */
-    public T set(Identifier identifier, T value)
+    public T set(Identifier id, T value)
     {
         if (stack.isEmpty())
         {
@@ -76,33 +74,33 @@ public abstract class Varpool<T>
         // Redefining in another layer, if defined
         for (Lookup<T> scope: stack)
         {
-            if (scope.containsKey(identifier))
+            if (scope.containsKey(id))
             {
-                scope.set(identifier, value);
+                scope.set(id, value);
                 return value;
             }
         }
 
         // Define at the last layer
-        stack.peek().set(identifier, value);
+        stack.peek().set(id, value);
         return value;
     }
 
     /**
      * Returns the variable by the specified name, if exists.
      * 
-     * @param identifier the variable identifier
+     * @param id the variable identifier
      * @return the variable value
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public T get(Identifier identifier)
+    public T get(Identifier id)
     {
         Object o;
 
         for (Lookup<T> scope: stack)
         {
-            if ((o = scope.get(identifier, NO_KEY)) != NO_KEY)
+            if ((o = scope.get(id, NO_KEY)) != NO_KEY)
             {
                 return (T) o;
             }

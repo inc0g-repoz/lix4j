@@ -10,9 +10,9 @@ public class AccessorUnassigned extends AccessorNamespaced
 
     private Object proxy;
 
-    public AccessorUnassigned(Identifier identifier)
+    public AccessorUnassigned(Identifier id)
     {
-        super(identifier);
+        super(id);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class UnitErrorCatch extends UnitSection
         LinkedList<String> errorTokens = TokenHelper.readEnclosedTokens(node.getTokens(), "(", ")");
         Accessor error = ExpressionResolver.resolve(ctx, section, errorTokens);
 
-        UnitErrorCatch unit = new UnitErrorCatch(section, error);
+        UnitErrorCatch unit = new UnitErrorCatch(section, ctx, error);
 
         if (tokens.isEmpty())
         {
@@ -35,9 +35,9 @@ public class UnitErrorCatch extends UnitSection
 
     final Accessor error;
 
-    UnitErrorCatch(UnitSection parent, Accessor error)
+    UnitErrorCatch(UnitSection parent, CompileTimeContext ctx, Accessor error)
     {
-        super(parent, false);
+        super(parent, ctx, false);
         this.error = error;
     }
 

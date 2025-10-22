@@ -14,7 +14,7 @@ public class UnitErrorTry extends UnitSection
     {
         node.getTokens().poll(); // try
 
-        UnitErrorTry unit = new UnitErrorTry(section);
+        UnitErrorTry unit = new UnitErrorTry(section, ctx);
         ScriptCompiler.appendSectionUnits(ctx, node, unit);
 
         LinkedList<ASTNode> parentNodes = node.getParent().getChildNodes();
@@ -31,9 +31,9 @@ public class UnitErrorTry extends UnitSection
 
     UnitErrorCatch otherwise;
 
-    UnitErrorTry(UnitSection parent)
+    UnitErrorTry(UnitSection parent, CompileTimeContext ctx)
     {
-        super(parent);
+        super(parent, ctx);
     }
 
     @Override

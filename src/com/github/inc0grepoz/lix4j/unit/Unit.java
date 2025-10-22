@@ -1,5 +1,6 @@
 package com.github.inc0grepoz.lix4j.unit;
 
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
@@ -14,7 +15,7 @@ public abstract class Unit
 
     final UnitSection parent;
 
-    Unit(UnitSection parent, boolean add)
+    Unit(UnitSection parent, CompileTimeContext ctx, boolean add)
     {
         this.parent = parent;
 
@@ -24,9 +25,9 @@ public abstract class Unit
         }
     }
 
-    Unit(UnitSection parent)
+    Unit(UnitSection parent, CompileTimeContext ctx)
     {
-        this(parent, true);
+        this(parent, ctx, true);
     }
 
     /**

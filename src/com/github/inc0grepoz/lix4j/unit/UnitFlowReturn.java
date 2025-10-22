@@ -20,14 +20,14 @@ public class UnitFlowReturn extends Unit
                 ? Accessor.VOID
                 : ExpressionResolver.resolve(ctx, parent, tokens);
 
-        return new UnitFlowReturn(parent, rva);
+        return new UnitFlowReturn(parent, ctx, rva);
     }
 
     private final Accessor accessor;
 
-    UnitFlowReturn(UnitSection parent, Accessor accessor)
+    UnitFlowReturn(UnitSection parent, CompileTimeContext ctx, Accessor accessor)
     {
-        super(parent);
+        super(parent, ctx);
         this.accessor = accessor;
     }
 
