@@ -26,5 +26,5 @@ function main() {
     //var line = scanLine();
     //println("You said \"" + line + "\"");
 
-    //sleep(1000);
+    sleep(1000);
 }

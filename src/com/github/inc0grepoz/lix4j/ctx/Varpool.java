@@ -87,7 +87,7 @@ public abstract class Varpool<T>
     }
 
     /**
-     * Returns the variable by the specified name, if exists.
+     * Returns the variable by the specified identifier, if exists.
      * 
      * @param id the variable identifier
      * @return the variable value

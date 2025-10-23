@@ -2,6 +2,11 @@ package com.github.inc0grepoz.lix4j.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * A color printable in the debug console.
+ * 
+ * @author inc0g-repoz
+ */
 public enum AnsiColor
 {
 

@@ -5,6 +5,12 @@ import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.exception.UnassignedVariableError;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 
+/**
+ * Represents an accessor for an unassigned variable.
+ * Allows fallbacks to function proxies.
+ * 
+ * @author inc0g-repoz
+ */
 public class AccessorUnassigned extends AccessorNamespaced
 {
 

@@ -9,11 +9,10 @@ public class Variable
 
     private Object instance;
 
-    Variable(Identifier identifier)
+    Variable(Identifier id)
     {
-        this.identifier = identifier;
-
-        instance = new AccessorUnassigned(identifier);
+        identifier = id;
+        instance = new AccessorUnassigned(id);
     }
 
     @Override
