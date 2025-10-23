@@ -1,5 +1,7 @@
 [icon]: https://raw.githubusercontent.com/inc0g-repoz/lix4j/refs/heads/main/src/assets/icon.png
 [reflection]: https://www.oracle.com/technical-resources/articles/java/javareflection.html
+[release]: https://github.com/inc0g-repoz/lix4j/releases/latest
+[test]: https://github.com/inc0g-repoz/lix4j/blob/main/src/test/DefaultTestCase.java
 <!-- The stuff above is invisible -->
 
 # ![icon] LIX4J
@@ -28,3 +30,6 @@ Instead of using types compatible with the engine it allows accessing them direc
 - [x] Function references
 - [x] Namespaces
 - [ ] Bitwise operators
+
+### Setup
+Download the [latest release][release] of LIX4J, import it into your project and use the [test cases][test] code.
