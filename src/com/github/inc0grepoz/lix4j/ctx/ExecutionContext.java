@@ -1,6 +1,7 @@
 package com.github.inc0grepoz.lix4j.ctx;
 
 import com.github.inc0grepoz.lix4j.Script;
+import com.github.inc0grepoz.lix4j.ctx.pool.ExecutionVarpool;
 
 /**
  * Represents a context of the execution flow with a

@@ -3,7 +3,7 @@ package com.github.inc0grepoz.lix4j.value;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.unit.expression.Operator;
+import com.github.inc0grepoz.lix4j.unit.exp.Operator;
 
 /**
  * Represents an {@code Accessor} for values processed by operators

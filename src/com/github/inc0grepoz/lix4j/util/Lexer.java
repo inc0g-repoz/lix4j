@@ -8,6 +8,17 @@ import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 
+/**
+ * A lexical analyzer that converts character input streams into tokens.
+ * Handles comments, strings, numbers, and special characters while respecting
+ * escape sequences and quote boundaries.
+ * <p>
+ * The lexer processes input character by character, grouping them into tokens
+ * based on special character boundaries and maintaining context for strings
+ * and comments.
+ * 
+ * @author inc0g-repoz
+ */
 public class Lexer
 {
 
@@ -17,6 +28,25 @@ public class Lexer
     private static final String CHAR_NEVER_TRAIL = CHAR_BRACES + "!;.";
     private static final Pattern PATTERN_NUMBER = Pattern.compile("(\\d*\\.)?(\\d+)");
 
+    /**
+     * Reads tokens from a character input stream, processing the entire input.
+     * Handles comments (both single-line and multi-line), strings with escape sequences,
+     * numbers, and special characters while maintaining proper token boundaries.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * String input = "var x = 42; // This is a comment\n" +
+     *                "str = \"Hello\\nWorld\"; /* multi-line * /";
+     * Reader reader = new StringReader(input);
+     * LinkedList<String> tokens = Lexer.readTokens(reader);
+     * // tokens: ["var", "x", "=", "42", ";", "str", "=", "\"Hello\\nWorld\"", ";"]
+     * </pre></blockquote>
+     *
+     * @param in the character input stream to read from
+     * @return a linked list of tokens extracted from the input
+     * @throws IOException if an I/O error occurs while reading from the input stream
+     * @throws SyntaxError if unterminated quotes or multi-line comments are detected
+     */
     public static LinkedList<String> readTokens(Reader in) throws IOException
     {
         StringBuilder builder = new StringBuilder();
@@ -186,6 +216,21 @@ public class Lexer
         return tokens;
     }
 
+    /**
+     * Flushes the current buffer content to the tokens list if the buffer is not empty.
+     * Clears the buffer after adding its content to the tokens list.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * StringBuilder builder = new StringBuilder("hello");
+     * List<String> tokens = new ArrayList<>();
+     * flushBuffer(builder, tokens);
+     * // tokens now contains ["hello"], builder is empty
+     * </pre></blockquote>
+     *
+     * @param builder the string builder containing accumulated characters
+     * @param tokens the list to which the buffer content should be added
+     */
     private static void flushBuffer(StringBuilder builder, List<String> tokens)
     {
         if (builder.length() != 0)
@@ -195,7 +240,11 @@ public class Lexer
         }
     }
 
-    // Instances of this class should never be made
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     *
+     * @throws UnsupportedOperationException always thrown when called
+     */
     private Lexer()
     {
         throw new UnsupportedOperationException("Utility class");

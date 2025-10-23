@@ -10,12 +10,12 @@ import java.util.List;
 import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
-import com.github.inc0grepoz.lix4j.unit.expression.Operator;
+import com.github.inc0grepoz.lix4j.unit.exp.Operator;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 
 /**

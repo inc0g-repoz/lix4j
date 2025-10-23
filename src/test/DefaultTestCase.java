@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
-import com.github.inc0grepoz.lix4j.ctx.Lookup;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.id.Lookup;
+import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 import com.github.inc0grepoz.lix4j.util.Predicates;

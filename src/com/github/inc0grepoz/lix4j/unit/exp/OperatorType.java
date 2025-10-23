@@ -1,4 +1,4 @@
-package com.github.inc0grepoz.lix4j.unit.expression;
+package com.github.inc0grepoz.lix4j.unit.exp;
 
 /**
  * Represents the enumerable type of an operator.

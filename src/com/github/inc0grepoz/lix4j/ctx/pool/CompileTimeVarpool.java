@@ -1,4 +1,4 @@
-package com.github.inc0grepoz.lix4j.ctx;
+package com.github.inc0grepoz.lix4j.ctx.pool;
 
 import java.util.ArrayDeque;
 import java.util.EnumSet;
@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
+import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.value.AccessorVariable;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;

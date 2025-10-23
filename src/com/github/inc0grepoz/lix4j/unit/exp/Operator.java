@@ -1,4 +1,4 @@
-package com.github.inc0grepoz.lix4j.unit.expression;
+package com.github.inc0grepoz.lix4j.unit.exp;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.value.Accessor;

@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.id.Namespace;
 
 public class UnitNamespace extends Unit
 {

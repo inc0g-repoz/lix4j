@@ -1,8 +1,8 @@
 package com.github.inc0grepoz.lix4j.value;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.ctx.Identifier;
 import com.github.inc0grepoz.lix4j.exception.UnassignedVariableError;
+import com.github.inc0grepoz.lix4j.id.Identifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 
 /**

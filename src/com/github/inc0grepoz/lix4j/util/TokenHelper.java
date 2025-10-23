@@ -5,9 +5,34 @@ import java.util.ListIterator;
 
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 
+/**
+ * A utility class providing methods for token manipulation and processing.
+ * Includes functionality for reading enclosed tokens, splitting token sequences,
+ * and handling escape sequences in strings.
+ * 
+ * @author inc0g-repoz
+ */
 public class TokenHelper
 {
 
+    /**
+     * Reads tokens enclosed between specified prefix and suffix delimiters.
+     * Processes tokens from the beginning of the list and returns the enclosed content.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * LinkedList<String> tokens = new LinkedList<>(Arrays.asList("(", "a", "b", ")", "c"));
+     * LinkedList<String> result = TokenHelper.readEnclosedTokens(tokens, "(", ")");
+     * // result contains ["a", "b"], tokens becomes ["c"]
+     * </pre></blockquote>
+     *
+     * @param tokens the linked list of tokens to process
+     * @param prefix the opening delimiter (e.g., "(" or "[")
+     * @param suffix the closing delimiter (e.g., ")" or "]")
+     * @return a new linked list containing the tokens between the prefix and suffix
+     * @throws SyntaxError
+     *         if the first token doesn't match the prefix or if the sequence is unterminated
+     */
     public static LinkedList<String> readEnclosedTokens(LinkedList<String> tokens,
             String prefix, String suffix)
     {
@@ -48,6 +73,24 @@ public class TokenHelper
         return out;
     }
 
+    /**
+     * Reads tokens enclosed between specified prefix and suffix delimiters from the end.
+     * Processes tokens from the end of the list and returns the enclosed content.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * LinkedList<String> tokens = new LinkedList<>(Arrays.asList("a", "(", "b", "c", ")"));
+     * LinkedList<String> result = TokenHelper.readEnclosedTokensBackwards(tokens, "(", ")");
+     * // result contains ["b", "c"], tokens becomes ["a"]
+     * </pre></blockquote>
+     *
+     * @param tokens the linked list of tokens to process
+     * @param prefix the opening delimiter (e.g., "(" or "[")
+     * @param suffix the closing delimiter (e.g., ")" or "]")
+     * @return a new linked list containing the tokens between the prefix and suffix
+     * @throws SyntaxError
+     *         if the last token doesn't match the suffix or if the sequence is unterminated
+     */
     public static LinkedList<String> readEnclosedTokensBackwards(LinkedList<String> tokens,
             String prefix, String suffix)
     {
@@ -88,6 +131,22 @@ public class TokenHelper
         return out;
     }
 
+    /**
+     * Splits tokens by a separator while respecting nested parentheses and square brackets.
+     * The splitting only occurs when brackets and parentheses are balanced at level 0.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * LinkedList<String> tokens = new LinkedList<>(Arrays.asList("a", ",", "b", "(", "c", ",", "d", ")", ",", "e"));
+     * LinkedList<LinkedList<String>> result = TokenHelper.splitTokens(tokens, ",");
+     * // result contains [["a"], ["b", "(", "c", ",", "d", ")"], ["e"]]
+     * </pre></blockquote>
+     *
+     * @param tokens the linked list of tokens to split
+     * @param separator the token to use as a separator
+     * @param limit the maximum number of splits to perform
+     * @return a list of token lists separated by the specified separator
+     */
     public static LinkedList<LinkedList<String>> splitTokens(LinkedList<String> tokens, String separator, int limit)
     {
         int parentheses = 0;
@@ -141,11 +200,44 @@ public class TokenHelper
         return separateTokens;
     }
 
+    /**
+     * Splits tokens by a separator with no limit on the number of splits.
+     * Works identically to {@link #splitTokens(LinkedList, String, int)} with unlimited splits.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * LinkedList<String> tokens = new LinkedList<>(Arrays.asList("a", ",", "b", ",", "c"));
+     * LinkedList<LinkedList<String>> result = TokenHelper.splitTokens(tokens, ",");
+     * // result contains [["a"], ["b"], ["c"]]
+     * </pre></blockquote>
+     *
+     * @param tokens the linked list of tokens to split
+     * @param separator the token to use as a separator
+     * @return a list of token lists separated by the specified separator
+     */
     public static LinkedList<LinkedList<String>> splitTokens(LinkedList<String> tokens, String separator)
     {
         return splitTokens(tokens, separator, Integer.MAX_VALUE);
     }
 
+    /**
+     * Removes outer parentheses from a token list if they form a balanced pair.
+     * Only removes parentheses when all inner parentheses are properly balanced.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * LinkedList<String> tokens = new LinkedList<>(Arrays.asList("(", "a", "+", "b", ")"));
+     * LinkedList<String> result = TokenHelper.openParentheses(tokens);
+     * // result contains ["a", "+", "b"]
+     * 
+     * LinkedList<String> tokens2 = new LinkedList<>(Arrays.asList("(", "a", "(", "b", ")", ")"));
+     * LinkedList<String> result2 = TokenHelper.openParentheses(tokens2);
+     * // result2 contains ["a", "(", "b", ")"]
+     * </pre></blockquote>
+     *
+     * @param tokens the linked list of tokens to process
+     * @return the token list with outer parentheses removed if applicable
+     */
     public static LinkedList<String> openParentheses(LinkedList<String> tokens)
     {
         int balance;
@@ -183,6 +275,24 @@ public class TokenHelper
         return tokens;
     }
 
+    /**
+     * Converts escape sequences in a string to their corresponding characters.
+     * Supports common escape sequences like \n, \t, \", \\, and Unicode escapes.
+     * <p>
+     * Example:
+     * <blockquote><pre>
+     * String input = "Hello\\nWorld\\t!";
+     * String result = TokenHelper.unescape(input);
+     * // result equals "Hello\nWorld\t!"
+     * 
+     * String input2 = "\\u0041pple"; // \u0041 is 'A'
+     * String result2 = TokenHelper.unescape(input2);
+     * // result2 equals "Apple"
+     * </pre></blockquote>
+     *
+     * @param string the string containing escape sequences
+     * @return the string with escape sequences converted to actual characters
+     */
     public static String unescape(String string)
     {
         StringBuilder builder = new StringBuilder(string.length());
@@ -247,6 +357,11 @@ public class TokenHelper
         return builder.toString();
     }
 
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     *
+     * @throws UnsupportedOperationException always thrown when called
+     */
     private TokenHelper()
     {
         throw new UnsupportedOperationException("Utility class");

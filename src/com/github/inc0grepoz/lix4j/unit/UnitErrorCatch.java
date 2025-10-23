@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
-import com.github.inc0grepoz.lix4j.unit.expression.ExpressionResolver;
+import com.github.inc0grepoz.lix4j.unit.exp.ExpressionResolver;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 

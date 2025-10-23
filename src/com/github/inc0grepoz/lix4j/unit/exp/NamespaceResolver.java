@@ -1,8 +1,8 @@
-package com.github.inc0grepoz.lix4j.unit.expression;
+package com.github.inc0grepoz.lix4j.unit.exp;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.ctx.Namespace;
+import com.github.inc0grepoz.lix4j.id.Namespace;
 
 public class NamespaceResolver
 {
