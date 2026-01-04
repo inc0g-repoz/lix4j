@@ -45,9 +45,17 @@ public abstract class Accessor
     {
         Class<?> rv = object.getClass();
 
-        return rv == AccessorNoInstance.class
-                ? ((AccessorNoInstance) object).clazz
-                : rv;
+        if (rv == AccessorNoInstance.class)
+        {
+            return ((AccessorNoInstance) object).clazz;
+        }
+
+        if (rv == AccessorUnassigned.class)
+        {
+            throw new RuntimeException("Tried to access a member of a null/unassigned value");
+        }
+
+        return rv;
     }
 
     static Object unwrapSource(Object src)
