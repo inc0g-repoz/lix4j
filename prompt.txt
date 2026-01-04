@@ -1,0 +1,49 @@
+LIX4J is a C-like language that caches and calls Java methods (including static ones) through Reflection ("instance.substring(a, b)").
+LIX4J doesn't use explicit variable types, but new variable declaration starts with a "var".
+LIX4J supports "static" variables in both script (recommended) and function scopes (use discretion).
+LIX4J supports namespaces with nesting and namespaced identifiers for functions and script scope variables.
+LIX4J supports lambda expression as "function proxies" – is when you pass a function identifier as a parameter to a method or another function.
+LIX4J supports inclusion of modules from separate files (include "filename"), they whole file gets included wherever include is used.
+LIX4J supports error handling with "try/catch" structures.
+LIX4J supports conditional code execution through "if/else".
+LIX4J supports looping through classic "for", "while", "do/while" structures.
+Any structure in LIX4J can be represented as a block or a statement, even a function definition: "function foo() return;".
+
+LIX4J supports the following operators:
+Name | Type        | Behavior
+---  | ---         | ---
+\+   | Binary      | Adds numbers or concatenates strings.
+\-   | Binary      | Subtracts numbers.
+\*   | Binary      | Multiplies numbers.
+/    | Binary      | Divides numbers.
+==   | Binary      | Compares numbers or pointers equality.
+!=   | Binary      | Compares numbers or pointers equality.
+\>   | Binary      | Compares numbers.
+<    | Binary      | Compares numbers.
+\>=  | Binary      | Compares numbers.
+<=   | Binary      | Compares numbers.
+=    | Binary      | Maps a value to a variable name.
+\+=  | Binary      | Adds the second operand to a variable and assigns the result.
+\-=  | Binary      | Subtracts the second operand from a variable and assigns the result.
+\*=  | Binary      | Multiplies a variable by the second operand and assigns the result.
+/=   | Binary      | Divides a variable by the second operand and assigns the result.
+&&   | Binary      | Returns true only if both conditions are met and false otherwise.
+\|\| | Binary      | Returns true if one of the conditions is met and false otherwise.
+!    | Unary-left  | Inverses boolean conditions or checks null variables.
+\+\+ | Unary-left  | Adds 1 to the operand and returns it.
+\-\- | Unary-left  | Subtracts 1 from the operand and returns it.
+\+\+ | Unary-right | Returns the operand and adds 1 to it.
+\-\- | Unary-right | Returns the operand and subtracts 1 from it.
+?, : | Ternary     | Returns the 2nd operand, if the 1st operand returns true, or the 3rd operand otherwise.
+
+LIX4J has built-in functions that are implemented in Java:
+Signature                   | Parameter Types    | Behavior
+---                         | ---                | ---
+class_for_name(class)       | (String)           | Returns the class by the specified classpath.
+length(array)               | (Object[])         | Returns the length of the passed array.
+new_array(class, length)    | (String, int)      | Returns a new array with specified component type and length.
+new_instance(class, params) | (String, Object[]) | Returns a new instance constructed from the specified classpath and parameters.
+no_instance(class)          | (String)           | Returns a new no-instance accessor created from the specified classpath.
+print(object)               | (Object)           | Prints the passed object to STDOUT and returns it's value.
+println(object)             | (Object)           | Prints the passed object to STDOUT and returns it's value.
+sleep(time)                 | (int)              | Makes the executing thread sleep for the specified amount of time in milliseconds.
