@@ -28,8 +28,23 @@ public class Variable
 
     public Object set(Object instance, boolean declaration)
     {
-        return !declaration || this.instance.getClass() == AccessorUnassigned.class
-                ? this.instance = instance : this.instance;
+        // No other conditions matter, if the variable was not
+        // declared in the current line
+        if (!declaration)
+        {
+            return this.instance = instance;
+        }
+
+        // We can still assign a value, if it has not been yet
+        // (for unassigned variables like "var x;")
+        if (this.instance != null && this.instance.getClass() == AccessorUnassigned.class)
+        {
+            return this.instance = instance;
+        }
+
+        // Returning the stored instance, if the variable was
+        // assigned in the current line (static)
+        return this.instance;
     }
 
     public Object get()

@@ -56,12 +56,12 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         // Determining the namespace to start searching from
         if (target.isEmpty())
         {
-            // A relative path with no namespace specified – starting from the current
+            // A relative path with no namespace specified - starting from the current
             level = n;
         }
         else
         {
-            if (target.peek().equals(Namespace.ABSOLUTE_MARKER))
+            if (target.peek().equals(Namespace.ABSOLUTE_MARKER)) // equals?
             {
                 // An absolute path - starting from the global
                 level = namespaceGlobal;

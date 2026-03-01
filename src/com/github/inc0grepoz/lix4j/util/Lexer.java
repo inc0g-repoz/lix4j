@@ -179,7 +179,7 @@ public class Lexer
                 continue;
             }
 
-            // Number are whole tokens and literals are written with the
+            // Numbers are whole tokens and literals are written with the
             // non-special characters
             if (CHAR_DIGIT.indexOf(ch) != -1)
             {
