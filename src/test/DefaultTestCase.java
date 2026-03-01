@@ -25,6 +25,8 @@ import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
+import ctxfree.ast.AST.ASTNodeSection;
+
 @SuppressWarnings("all")
 class DefaultTestCase {
 
@@ -56,7 +58,25 @@ class DefaultTestCase {
         }
     }
 
-//  @Disabled
+    //@Disabled
+    @Test
+    void testCtxFree()
+    {
+        File file = new File(LOADER_DIRECTORY, "main.lix");
+        try
+        {
+            LinkedList<String> tokens = Lexer.readTokens(new FileReader(file));
+            ASTNodeSection ast = ctxfree.ast.AST.generate(tokens);
+            System.out.println(ast.toString());
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail("Failed to lex the script: " + t);
+        }
+    }
+
+    @Disabled
     @Test
     void testScriptEngine()
     {
