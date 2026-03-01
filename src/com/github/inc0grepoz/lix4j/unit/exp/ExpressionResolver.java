@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
@@ -12,6 +11,7 @@ import com.github.inc0grepoz.lix4j.id.Identifier;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
 import com.github.inc0grepoz.lix4j.util.Collections;
+import com.github.inc0grepoz.lix4j.util.Patterns;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 import com.github.inc0grepoz.lix4j.value.AccessorBuilder;
@@ -27,11 +27,6 @@ import com.github.inc0grepoz.lix4j.value.AccessorValue;
  */
 public class ExpressionResolver
 {
-
-    private static final Pattern PATTERN_NUMBER_INT = Pattern.compile("\\d+");
-    private static final Pattern PATTERN_NUMBER_LONG = Pattern.compile("(\\d+)[Ll]");
-    private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile("(\\d*\\.?\\d+)[Ff]");
-    private static final Pattern PATTERN_NUMBER_DOUBLE = Pattern.compile("(\\d*\\.?\\d+)[Dd]?");
 
     /**
      * Resolves a sequence of tokens into an Accessor representing the expression.
@@ -126,19 +121,19 @@ public class ExpressionResolver
         Matcher matcher;
 
         // Handle numeric tokens
-        if ((matcher = PATTERN_NUMBER_INT.matcher(token)).matches())
+        if ((matcher = Patterns.NUMBER_INT.matcher(token)).matches())
         {
             return AccessorValue.of(Integer.parseInt(matcher.group()));
         }
-        if ((matcher = PATTERN_NUMBER_LONG.matcher(token)).matches())
+        if ((matcher = Patterns.NUMBER_LONG.matcher(token)).matches())
         {
             return AccessorValue.of(Long.parseLong(matcher.group(1)));
         }
-        if ((matcher = PATTERN_NUMBER_FLOAT.matcher(token)).matches())
+        if ((matcher = Patterns.NUMBER_FLOAT.matcher(token)).matches())
         {
             return AccessorValue.of(Float.parseFloat(matcher.group(1)));
         }
-        if ((matcher = PATTERN_NUMBER_DOUBLE.matcher(token)).matches())
+        if ((matcher = Patterns.NUMBER_DOUBLE.matcher(token)).matches())
         {
             return AccessorValue.of(Double.parseDouble(matcher.group(1)));
         }

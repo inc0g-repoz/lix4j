@@ -20,13 +20,13 @@ function test_list() {
 }
 
 function main() {
-    //test_list();
-    //println(math::factorial(5));
+    test_list();
+    println(math::factorial(5));
 
-    //var line = scanLine();
-    //println("You said \"" + line + "\"");
+    var line = scanLine();
+    println("You said \"" + line + "\"");
 
-    //sleep(1000);
+    sleep(1000);
 
     static var a = null;
     println("val1: " + a);
