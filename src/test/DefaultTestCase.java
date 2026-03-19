@@ -23,9 +23,12 @@ import com.github.inc0grepoz.lix4j.id.Lookup;
 import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
-import ctxfree.ast.AST.ASTNodeSection;
+import ctxfree.ast.AST.NodeSection;
+import ctxfree.lex.LexerTest;
+import ctxfree.lex.LexerTest.LTToken;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -48,7 +51,7 @@ class DefaultTestCase {
 
         try
         {
-            LinkedList<String> tokens = Lexer.readTokens(new FileReader(file));
+            LinkedList<Token> tokens = Lexer.readTokens(new FileReader(file));
             tokens.forEach(token -> System.out.print("$" + token));
             System.out.println();
         }
@@ -58,16 +61,34 @@ class DefaultTestCase {
         }
     }
 
-    //@Disabled
+    @Disabled
     @Test
     void testCtxFree()
     {
         File file = new File(LOADER_DIRECTORY, "main.lix");
         try
         {
-            LinkedList<String> tokens = Lexer.readTokens(new FileReader(file));
-            ASTNodeSection ast = ctxfree.ast.AST.generate(tokens);
+            LinkedList<Token> tokens = Lexer.readTokens(new FileReader(file));
+            NodeSection ast = ctxfree.ast.AST.generate(tokens);
             System.out.println(ast.toString());
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            fail("Failed to lex the script: " + t);
+        }
+    }
+
+    //@Disabled
+    @Test
+    void testLexer2()
+    {
+        File file = new File(LOADER_DIRECTORY, "main.lix");
+        try
+        {
+            LinkedList<LTToken> tokens = LexerTest.lex(new FileReader(file));
+            tokens.forEach(token -> System.out.print("$" + token));
+            System.out.println();
         }
         catch (Throwable t)
         {

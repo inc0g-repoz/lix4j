@@ -47,11 +47,12 @@ public class Lexer
      * @throws IOException if an I/O error occurs while reading from the input stream
      * @throws SyntaxError if unterminated quotes or multi-line comments are detected
      */
-    public static LinkedList<String> readTokens(Reader in) throws IOException
+    public static LinkedList<Token> readTokens(Reader in) throws IOException
     {
         StringBuilder builder = new StringBuilder();
-        LinkedList<String> tokens = new LinkedList<>();
+        LinkedList<Token> tokens = new LinkedList<>();
 
+        int line = 1;
         int i;                       // raw character
         char ch, chp = '\0';         // current and previous characters
         char q = '\0';               // quotes used: '\0', '\'', '"'
@@ -97,7 +98,7 @@ public class Lexer
             {
                 if (lastSpecial)
                 {
-                    flushBuffer(builder, tokens);
+                    flushBuffer(builder, tokens, line);
                 }
 
                 escapeNext = false;
@@ -130,7 +131,7 @@ public class Lexer
                     lastSpecial = false; // not resolved along with special symbols
 
                     // Writing the last token before opening
-                    flushBuffer(builder, tokens);
+                    flushBuffer(builder, tokens, line);
                 }
                 else if (q == ch)
                 {
@@ -145,9 +146,13 @@ public class Lexer
             // Whitespaces
             if (Character.isWhitespace(ch))
             {
+                if (ch == '\n')
+                {
+                    line++;
+                }
                 if (q == '\0') // no quotes
                 {
-                    flushBuffer(builder, tokens);
+                    flushBuffer(builder, tokens, line);
                 }
                 else
                 {
@@ -199,7 +204,7 @@ public class Lexer
                     || CHAR_NEVER_TRAIL.indexOf(ch) != -1
                     || CHAR_BRACES.indexOf(chp) != -1)
             {
-                flushBuffer(builder, tokens);
+                flushBuffer(builder, tokens, line);
             }
 
             lastSpecial = true;
@@ -207,7 +212,7 @@ public class Lexer
         }
 
         // Reading the last token
-        flushBuffer(builder, tokens);
+        flushBuffer(builder, tokens, line);
 
         // Validate all quotes and multi-line comments terminated
         if (q != '\0') throw new SyntaxError("Unterminated quote detected");
@@ -230,14 +235,57 @@ public class Lexer
      *
      * @param builder the string builder containing accumulated characters
      * @param tokens the list to which the buffer content should be added
+     * @param line the line where the token appears
      */
-    private static void flushBuffer(StringBuilder builder, List<String> tokens)
+    private static void flushBuffer(StringBuilder builder, List<Token> tokens, int line)
     {
         if (builder.length() != 0)
         {
-            tokens.add(builder.toString());
+            tokens.add(new Token(line, builder.toString()));
             builder.setLength(0);
         }
+    }
+
+    /**
+     * Represents an element of a lexed token. May be
+     * a string, number, keyword or a special symbol.
+     * 
+     * @author inc0g-repoz
+     */
+    public static class Token
+    {
+
+        private final int line;
+        private final String string;
+
+        private Token(int line, String string)
+        {
+            this.line = line;
+            this.string = string;
+        }
+
+        /**
+         * Returns the line number of where this token
+         * appeared in the parsed text.
+         * 
+         * @return the line number
+         */
+        public int getLine()
+        {
+            return line;
+        }
+
+        /**
+         * Returns the {@code String} stored by this
+         * token as it was in the parsed text.
+         * 
+         * @return the {@code String} representation
+         */
+        public String getString()
+        {
+            return string;
+        }
+
     }
 
     /**

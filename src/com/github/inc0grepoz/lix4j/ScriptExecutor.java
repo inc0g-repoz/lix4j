@@ -13,32 +13,10 @@ import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
-import com.github.inc0grepoz.lix4j.unit.exp.Operator;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorAdd;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorAnd;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorAssign;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorAssignMutate;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorAssignMutateUnary;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorComparator;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorDivide;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorEqual;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorMultiply;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorNot;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorNotEqual;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorOr;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorSubtract;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorTernary;
-import com.github.inc0grepoz.lix4j.unit.exp.OperatorType;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltClassForName;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltLength;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltNewArray;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltNewInstance;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltNoInstance;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrint;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrintln;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltPrintlnEmpty;
-import com.github.inc0grepoz.lix4j.unit.inbuilt.InBuiltSleep;
+import com.github.inc0grepoz.lix4j.unit.exp.*;
+import com.github.inc0grepoz.lix4j.unit.inbuilt.*;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 
 /**
  * A script execution framework.
@@ -105,7 +83,7 @@ public class ScriptExecutor
      */
     public Script load(Reader reader) throws IOException
     {
-        LinkedList<String> input = Lexer.readTokens(reader);
+        LinkedList<Token> input = Lexer.readTokens(reader);
         AST ast = AST.generateTree(input);
 
         Script script = new Script(this, ast);

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.github.inc0grepoz.lix4j.util.AnsiColor;
+import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 
 /**
  * Generates abstract syntax trees from lexer output.
@@ -20,17 +21,16 @@ public class AST
      * @param input the lexer output
      * @return a root node of a generated abstract syntax tree
      */
-    public static ASTNodeSection generate(LinkedList<String> input)
+    public static NodeSection generate(LinkedList<Token> input)
     {
-        ASTNodeSection root = new ASTNodeSection(null, ASTNodeType.ROOT);
+        NodeSection root = new NodeSection(null, NodeType.ROOT);
         generateSection(root, input);
         return root;
     }
 
     // Recursively writes a section of an AST
-    private static void generateSection(ASTNodeSection to, LinkedList<String> in)
+    private static void generateSection(NodeSection to, LinkedList<Token> in)
     {
-        ASTNodeTokens tokens = null;
         String breaker;
 
         switch (to.getType())
@@ -43,7 +43,8 @@ public class AST
 
         while (!in.isEmpty())
         {
-            String token = in.peek();
+            Token tk = in.peek();
+            String token = tk.getString();
 
             if (token.equals(breaker))
             {
@@ -51,39 +52,27 @@ public class AST
                 return;
             }
 
-            if (token.equals(";"))
-            {
-                tokens = null;
-                in.poll();
-                continue;
-            }
-
             if (token.equals("{") || token.equals("(") || token.equals("["))
             {
-                tokens = null;
                 in.poll();
 
-                ASTNodeType type;
+                NodeType type;
                 switch (token) {
-                    case "{": type = ASTNodeType.CURLY; break;
-                    case "(": type = ASTNodeType.PAREN; break;
-                    case "[": type = ASTNodeType.SQUARE; break;
+                    case "{": type = NodeType.CURLY; break;
+                    case "(": type = NodeType.PAREN; break;
+                    case "[": type = NodeType.SQUARE; break;
                     default: continue;
                 }
 
-                ASTNodeSection section = new ASTNodeSection(to, type);
+                NodeSection section = new NodeSection(to, type);
                 to.getChildren().add(section);
                 generateSection(section, in);
                 continue;
             }
 
-            if (tokens == null)
-            {
-                tokens = new ASTNodeTokens(to);
-                to.getChildren().add(tokens);
-            }
-
-            tokens.getTokens().add(in.poll());
+            // For any other token (including ';') create a separate token node
+            NodeToken tokenNode = new NodeToken(to, in.poll());
+            to.getChildren().add(tokenNode);
         }
     }
 
@@ -92,7 +81,7 @@ public class AST
      * 
      * @author inc0g-repoz
      */
-    public static enum ASTNodeType
+    public static enum NodeType
     {
 
         /** The root of an abstract syntax tree. **/
@@ -107,24 +96,24 @@ public class AST
         /** Stores other nodes in square brackets. **/
         SQUARE,
 
-        /** Stores tokens. **/
-        TOKENS;
+        /** Represents a single token. **/
+        TOKEN;
 
     }
 
     /**
      * Represents a node in an abstract syntax tree.
-     * May contain child nodes or tokens.
+     * May contain child nodes or a token.
      * 
      * @author inc0g-repoz
      */
     public static abstract class Node
     {
 
-        protected final ASTNodeSection parent;
-        protected final ASTNodeType type;
+        protected final NodeSection parent;
+        protected final NodeType type;
 
-        Node(ASTNodeSection parent, ASTNodeType type)
+        Node(NodeSection parent, NodeType type)
         {
             this.parent = parent;
             this.type = type;
@@ -136,7 +125,7 @@ public class AST
          * 
          * @return the parent node section
          */
-        public ASTNodeSection getParent()
+        public NodeSection getParent()
         {
             return parent;
         }
@@ -146,7 +135,7 @@ public class AST
          * 
          * @return a {@code NodeType} value
          */
-        public ASTNodeType getType()
+        public NodeType getType()
         {
             return type;
         }
@@ -154,7 +143,7 @@ public class AST
         /**
          * Returns {@code true}, if the node implementation
          * can store child nodes, or {@code false}, if it's
-         * meant for tokens.
+         * meant for a token.
          * 
          * @return whether the node implementation can store
          *         child nodes
@@ -168,7 +157,7 @@ public class AST
          * @return a linked list of child nodes
          * @throws UnsupportedOperationException
          *         if the node implementation can only
-         *         store tokens
+         *         store a token
          */
         public LinkedList<Node> getChildren()
         {
@@ -184,7 +173,7 @@ public class AST
          *         if the node implementation can only
          *         store child nodes
          */
-        public LinkedList<String> getTokens()
+        public Token getToken()
         {
             throw new UnsupportedOperationException();
         }
@@ -207,24 +196,25 @@ public class AST
 
     /**
      * Represents a node of an abstract syntax tree
-     * that contains tokens.
+     * that contains a single token.
      * 
      * @author inc0g-repoz
      */
-    public static class ASTNodeTokens extends Node
+    public static class NodeToken extends Node
     {
 
-        private final LinkedList<String> tokens = new LinkedList<>();
+        private final Token token;
 
-        ASTNodeTokens(ASTNodeSection parent)
+        NodeToken(NodeSection parent, Token token)
         {
-            super(parent, ASTNodeType.TOKENS);
+            super(parent, NodeType.TOKEN);
+            this.token = token;
         }
 
         @Override
-        public LinkedList<String> getTokens()
+        public Token getToken()
         {
-            return tokens;
+            return token;
         }
 
         @Override
@@ -237,7 +227,7 @@ public class AST
         public String toString()
         {
             String indentation = new String(new char[indentation()]).replace("\0", "    ");
-            return indentation + tokens.stream().collect(Collectors.joining(" "));
+            return indentation + token.getString();
         }
 
     }
@@ -248,13 +238,13 @@ public class AST
      * 
      * @author inc0g-repoz
      */
-    public static class ASTNodeSection extends Node
+    public static class NodeSection extends Node
     {
 
         private final LinkedList<Node> children = new LinkedList<>();
         private final AnsiColor color = AnsiColor.randomDarkBright();
 
-        ASTNodeSection(ASTNodeSection parent, ASTNodeType type)
+        NodeSection(NodeSection parent, NodeType type)
         {
             super(parent, type);
         }

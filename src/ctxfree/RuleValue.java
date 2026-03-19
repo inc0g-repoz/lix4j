@@ -1,5 +1,0 @@
-package ctxfree;
-
-class RuleValue {
-    
-}

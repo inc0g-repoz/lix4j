@@ -1,6 +1,8 @@
-package ctxfree;
+package com.github.inc0grepoz.lix4j.util;
 
-enum Keyword {
+public enum Keyword
+{
+
     // Constants
     FALSE, NULL, TRUE,
     // Variables
@@ -16,8 +18,21 @@ enum Keyword {
     // Modules
     INCLUDE, NAMESPACE,
     ;
+
+    public static Keyword fromString(String string)
+    {
+        for (Keyword k: values())
+        {
+            if (k.string.equals(string)) return k;
+        }
+        return null;
+    }
+
     private final String string = name().toLowerCase();
-    public String getString() {
+
+    public String getString()
+    {
         return string;
     }
+
 }

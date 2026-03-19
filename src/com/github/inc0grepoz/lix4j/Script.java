@@ -17,6 +17,7 @@ import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.exp.Operator;
 import com.github.inc0grepoz.lix4j.util.Lexer;
+import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 
 /**
  * Represents a compiled script.
@@ -129,7 +130,7 @@ public class Script
 
         // Lexing the input and generating a syntax tree
         File file = new File(loaderDirectory, filepath);
-        LinkedList<String> input = Lexer.readTokens(new FileReader(file));
+        LinkedList<Token> input = Lexer.readTokens(new FileReader(file));
         AST ast = AST.generateTree(input);
 
         // Compiling into the global namespace by default

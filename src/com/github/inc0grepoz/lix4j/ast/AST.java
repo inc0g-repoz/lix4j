@@ -3,6 +3,7 @@ package com.github.inc0grepoz.lix4j.ast;
 import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 
 /**
  * Represents an abstract syntax tree read from lexer output.
@@ -18,18 +19,20 @@ public class AST extends ASTNodeSection
      * @param input the lexer output
      * @return a new generated {@code AST}
      */
-    public static AST generateTree(LinkedList<String> input)
+    public static AST generateTree(LinkedList<Token> input)
     {
         AST root = new AST();
         ASTNodeSection curSection = root;
         ASTNodeTokens curTokens = null;
 
+        Token nextToken;
         String nextTokenString;
         int braces = 0;
 
         while (!input.isEmpty())
         {
-            nextTokenString = input.poll();
+            nextToken = input.poll();
+            nextTokenString = nextToken.getString();
 
             switch (nextTokenString)
             {
