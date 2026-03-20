@@ -2,18 +2,18 @@ package com.github.inc0grepoz.lix4j.unit;
 
 import java.util.LinkedList;
 
-import com.github.inc0grepoz.lix4j.ast.ASTNode;
-import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+
+import ctxfree.ast.AST2;
 
 public class ScriptCompiler
 {
 
     // Compiles, but doesn't enter or leave sections in the compile time varpool
-    public static UnitSection compileSection(CompileTimeContext ctx, ASTNode node, UnitSection section)
+    public static UnitSection compileSection(CompileTimeContext ctx, AST2.Node node, UnitSection section)
     {
-        LinkedList<ASTNode> childs = node.getChildNodes();
+        LinkedList<AST2.Node> childs = node.getChildren();
 
         while (!childs.isEmpty())
         {

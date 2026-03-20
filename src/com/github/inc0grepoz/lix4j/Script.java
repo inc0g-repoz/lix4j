@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.inc0grepoz.lix4j.ast.AST;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.id.Identifier;
@@ -16,8 +15,10 @@ import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.exp.Operator;
-import com.github.inc0grepoz.lix4j.util.Lexer;
 import com.github.inc0grepoz.lix4j.util.Lexer.Token;
+
+import ctxfree.ast.AST2;
+import ctxfree.lex.Lexer2;
 
 /**
  * Represents a compiled script.
@@ -38,7 +39,7 @@ public class Script
     }
 
     // Should only be instantiated within the executor's code
-    Script(ScriptExecutor executor, AST ast)
+    Script(ScriptExecutor executor, AST2.TokenGroup ast)
     {
         CompileTimeContext ctx = new CompileTimeContext(this);
         root = new UnitRoot(this, ctx);
@@ -130,8 +131,8 @@ public class Script
 
         // Lexing the input and generating a syntax tree
         File file = new File(loaderDirectory, filepath);
-        LinkedList<Token> input = Lexer.readTokens(new FileReader(file));
-        AST ast = AST.generateTree(input);
+        LinkedList<Lexer2.Token> input = Lexer2.lex(new FileReader(file));
+        AST2.TokenGroup ast = AST2.generate(input);
 
         // Compiling into the global namespace by default
         Namespace namespace = ctx.getNamespace();

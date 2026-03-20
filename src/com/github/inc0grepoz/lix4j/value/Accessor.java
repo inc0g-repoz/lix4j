@@ -16,19 +16,19 @@ public abstract class Accessor
 {
 
     /** Precached {@code void} return value accessor. **/
-    public static final Accessor VOID = AccessorValue.of(ControlFlow.VOID);
+    public static final Accessor VOID = AccessorLiteral.of(ControlFlow.VOID);
 
     /** Precached {@code null} value accessor. **/
-    public static final Accessor NULL = AccessorValue.of(null);
+    public static final Accessor NULL = AccessorLiteral.of(null);
 
     /** Precached {@code 0} accessor for subtraction operators. **/
-    public static final Accessor ZERO = AccessorValue.of(0);
+    public static final Accessor ZERO = AccessorLiteral.of(0);
 
     /** Precached {@code true} value accessor. **/
-    public static final Accessor TRUE = AccessorValue.of(true);
+    public static final Accessor TRUE = AccessorLiteral.of(true);
 
     /** Precached {@code false} value accessor. **/
-    public static final Accessor FALSE = AccessorValue.of(false);
+    public static final Accessor FALSE = AccessorLiteral.of(false);
 
     /**
      * Creates a new {@code AccessorBuilder} with an empty

@@ -1,17 +1,27 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST;
+import ctxfree.ast.AST2;
 
-public abstract class Rule implements Cloneable
+public abstract class Rule
 {
 
-    private Rule parent, alternative;
+    private Rule parent, next, alternative;
 
-    public boolean match(AST.Node node)
+    public boolean match(AST2.Node node)
     {
-        return matchImpl(node) ? true
+        boolean alts = matchAlternative(node) ? true
+                     : alternative == null    ? false
+                     : alternative.matchAlternative(node);
+        return matchAlternative(node) ? true
              : alternative == null ? false
-             : alternative.matchImpl(node);
+             : alternative.matchAlternative(node);
+    }
+
+    public Rule and(Rule rule)
+    {
+        next = rule;
+        next.parent = parent;
+        return next;
     }
 
     public Rule or(Rule rule)
@@ -26,9 +36,6 @@ public abstract class Rule implements Cloneable
         return parent;
     }
 
-    @Override
-    public abstract Rule clone();
-
-    abstract boolean matchImpl(AST.Node node);
+    abstract boolean matchAlternative(AST2.Node node);
 
 }

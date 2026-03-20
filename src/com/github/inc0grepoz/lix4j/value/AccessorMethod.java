@@ -165,7 +165,7 @@ class AccessorMethod extends AccessorNamed
             }
 
             // Writing function cache
-            params[i] = new AccessorValue(paramArray[i] = unassigned.initProxy(fn, classArray[i] = parameterTypes[i]));
+            params[i] = new AccessorLiteral(paramArray[i] = unassigned.initProxy(fn, classArray[i] = parameterTypes[i]));
         }
     }
 

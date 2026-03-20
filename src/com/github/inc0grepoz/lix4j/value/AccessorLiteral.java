@@ -8,7 +8,7 @@ import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
  * 
  * @author inc0g-repoz
  */
-public class AccessorValue extends Accessor
+public class AccessorLiteral extends Accessor
 {
 
     /**
@@ -18,14 +18,14 @@ public class AccessorValue extends Accessor
      * @param instance an {@code Object} to store
      * @return a new {@code AccessorValue}
      */
-    public static AccessorValue of(Object instance)
+    public static AccessorLiteral of(Object instance)
     {
-        return new AccessorValue(instance);
+        return new AccessorLiteral(instance);
     }
 
     final Object instance;
 
-    AccessorValue(Object instance)
+    AccessorLiteral(Object instance)
     {
         this.instance = instance;
     }

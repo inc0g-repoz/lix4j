@@ -9,19 +9,22 @@ import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.id.Identifier;
 import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.util.Keyword;
+import com.github.inc0grepoz.lix4j.util.PrimitiveConverter;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 
-public class LexerTest
+import ctxfree.ast.AST2;
+
+public class Lexer2
 {
 
     private static final String NUMERIC_SUFFIXES = "dflDFL";
 
-    public static LinkedList<LTToken> lex(Reader in)
+    public static LinkedList<Token> lex(Reader in)
     throws IOException
     {
         StringBuilder buffer = new StringBuilder();
-        LinkedList<LTToken> out = new LinkedList<>();
-        int nsd = 0; // namespace parts delimiter
+        LinkedList<Token> out = new LinkedList<>();
+        boolean nsd = false; // namespace parts delimiter
         int[] line = { 1 };
         int[] chs = new int[2]; // chs[0] = current, chs[1] = lookahead
         chs[1] = in.read(); // initial read
@@ -59,7 +62,7 @@ public class LexerTest
                 expectIdentifier(nsd, buffer);
 
                 String unescaped = TokenHelper.unescape(buffer.toString());
-                out.add(new LTToken(line, LTTokenType.LITERAL_STRING, unescaped));
+                out.add(new Token(line, TokenType.LITERAL_STRING, unescaped));
                 continue;
             }
 
@@ -76,7 +79,7 @@ public class LexerTest
                     throw new SyntaxError("Invalid character literal");
                 }
 
-                out.add(new LTToken(line, LTTokenType.LITERAL_CHAR, unescaped.charAt(0)));
+                out.add(new Token(line, TokenType.LITERAL_CHAR, unescaped.charAt(0)));
                 continue;
             }
 
@@ -87,7 +90,7 @@ public class LexerTest
                 expectIdentifier(nsd, buffer);
 
                 Number n = parseNumber(buffer.toString());
-                out.add(new LTToken(line, LTTokenType.LITERAL_NUMBER, n));
+                out.add(new Token(line, TokenType.LITERAL_NUMBER, PrimitiveConverter.narrow(n)));
                 continue;
             }
 
@@ -97,22 +100,32 @@ public class LexerTest
                 numberHex(in, chs, buffer);
                 expectIdentifier(nsd, buffer);
 
-                int hex = Integer.parseInt(buffer.toString(), 16);
-                out.add(new LTToken(line, LTTokenType.LITERAL_NUMBER, hex));
+                int n = Integer.parseInt(buffer.toString(), 16);
+                out.add(new Token(line, TokenType.LITERAL_NUMBER, PrimitiveConverter.narrow(n)));
                 continue;
             }
 
             // Special characters (operators, punctuation)
             if (isSpecialChar(chs[0]))
             {
-                out.add(new LTToken(line, LTTokenType.SPECIAL_CHARACTER, (char) chs[0]));
-                if (chs[0] == ':')
+                buffer.append(chs[0]);
+                expectIdentifier(nsd, buffer);
+
+                if (isSpecialChar(chs[1]) && !isBracket(chs[0])) // two-character composite
                 {
-                    nsd++; // for namespaced identifiers
-                    if (nsd > 2) // maximum of 2
+                    out.add(new Token(line, TokenType.SPECIAL_COMPOSITE,
+                            new String(new char[] { (char) chs[0], (char) chs[1] })));
+
+                    if (chs[0] == ':' && chs[1] == ':')
                     {
-                        throw new SyntaxError("Unexpected namespace or identifier: " + chs[0]);
+                        nsd = true; // for namespaced identifiers
                     }
+
+                    read(in, chs); // consume the second colon
+                }
+                else
+                {
+                    out.add(new Token(line, TokenType.SPECIAL_CHARACTER, (char) chs[0]));
                 }
                 continue;
             }
@@ -125,12 +138,28 @@ public class LexerTest
             if (kw != null)
             {
                 expectIdentifier(nsd, buffer);
-                out.add(new LTToken(line, LTTokenType.KEYWORD, kw));
+
+                if (kw == Keyword.NULL)
+                {
+                    out.add(new Token(line, TokenType.LITERAL_NULL, null));
+                }
+                else if (kw == Keyword.TRUE)
+                {
+                    out.add(new Token(line, TokenType.LITERAL_BOOLEAN, true));
+                }
+                else if (kw == Keyword.FALSE)
+                {
+                    out.add(new Token(line, TokenType.LITERAL_BOOLEAN, false));
+                }
+                else
+                {
+                    out.add(new Token(line, TokenType.KEYWORD, kw));
+                }
             }
             else
             {
-                namespacedIdentifier(in, chs, word, out, nsd == 2, line);
-                nsd = 0;
+                namespacedIdentifier(in, chs, word, out, nsd, line);
+                nsd = false;
             }
         }
 
@@ -262,8 +291,6 @@ public class LexerTest
     throws IOException
     {
         // chs[0] = '0', chs[1] = 'x' or 'X'
-        buffer.append((char) chs[0]);
-        buffer.append((char) chs[1]);
         read(in, chs); // move past 'x'
 
         // read hexadecimal digits
@@ -299,35 +326,33 @@ public class LexerTest
     }
 
     private static void namespacedIdentifier(Reader in, int[] chs,
-        String word, LinkedList<LTToken> out, boolean delimiter, int[] line)
+        String word, LinkedList<Token> out, boolean delimiter, int[] line)
     throws IOException
     {
         if (!delimiter)
         {
-            out.add(new LTToken(line, LTTokenType.IDENTIFIER, new LTIdentifier(word)));
+            out.add(new Token(line, TokenType.IDENTIFIER, new LexedIdentifier(word)));
             return;
         }
 
-        ListIterator<LTToken> iter = out.listIterator(out.size());
-        iter.previous();
-        iter.remove();
+        ListIterator<Token> iter = out.listIterator(out.size());
         iter.previous();
         iter.remove();
 
         if (iter.hasPrevious())
         {
-            LTToken token = iter.previous();
-            if (token.getType() == LTTokenType.IDENTIFIER)
+            Token token = iter.previous();
+            if (token.getTokenType() == TokenType.IDENTIFIER)
             {
-                LTIdentifier id = token.getIdentifier();
+                LexedIdentifier id = token.getLexedIdentifier();
                 id.add(word);
                 return;
             }
         }
 
-        LTIdentifier ltid = new LTIdentifier(Namespace.ABSOLUTE_MARKER);
+        LexedIdentifier ltid = new LexedIdentifier(Namespace.ABSOLUTE_MARKER);
         ltid.add(word);
-        out.add(new LTToken(line, LTTokenType.IDENTIFIER, ltid));
+        out.add(new Token(line, TokenType.IDENTIFIER, ltid));
     }
 
     private static boolean isSpecialChar(int c)
@@ -336,6 +361,11 @@ public class LexerTest
             || ( 58 <= c && c <=  64)  // : ; < = > ? @
             || ( 91 <= c && c <=  96 && c != 95)  // [ \ ] ^ _ ` (95 is an _)
             || (123 <= c && c <= 126); // { | } ~
+    }
+
+    private static boolean isBracket(int c)
+    {
+        return c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}';
     }
 
     private static boolean isDigit(int c)
@@ -371,34 +401,81 @@ public class LexerTest
              : Long.parseLong(word);
     }
 
-    private static void expectIdentifier(int namespaceDelimiter, StringBuilder buffer)
+    private static void expectIdentifier(boolean nsd, StringBuilder buffer)
     {
-        if (namespaceDelimiter > 1)
+        if (nsd)
         {
             throw new SyntaxError("Unexpected namespace or identifier: " + buffer.toString());
         }
     }
 
-    public static enum LTTokenType
+    public static enum TokenType
     {
 
+        /** Unresolved namespaced identifier. */
         IDENTIFIER,
+        /** Reserved keywords, except literals. */
         KEYWORD,
+        /** Boolean literals: true or false. **/
+        LITERAL_BOOLEAN,
+        /** Character in quotes */
         LITERAL_CHAR,
+        /** Explicit null-pointer. */
+        LITERAL_NULL,
+        /** Any number: 1, 0x1, 1d, 1e+1, etc. */
         LITERAL_NUMBER,
+        /** String in quotes. */
         LITERAL_STRING,
-        SPECIAL_CHARACTER;
+        /** Special single-character token. */
+        SPECIAL_CHARACTER,
+        /** Special composite token. */
+        SPECIAL_COMPOSITE,
+        ;
+
+        public boolean isLiteral()
+        {
+            switch (this)
+            {
+            case LITERAL_BOOLEAN:
+            case LITERAL_CHAR:
+            case LITERAL_NULL:
+            case LITERAL_NUMBER:
+            case LITERAL_STRING:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        @Deprecated
+        public boolean isSpecial()
+        {
+            switch (this)
+            {
+            case SPECIAL_CHARACTER:
+            case SPECIAL_COMPOSITE:
+                return true;
+            default:
+                return false;
+            }
+        }
 
     }
 
-    public static class LTToken
+    /**
+     * Represents a leaf-node of an abstract syntax tree
+     * that contains a single token.
+     * 
+     * @author inc0g-repoz
+     */
+    public static class Token implements AST2.Node
     {
 
         private final int line;
-        private final LTTokenType type;
+        private final TokenType type;
         private final Object item;
 
-        LTToken(int[] line, LTTokenType type, Object item)
+        Token(int[] line, TokenType type, Object item)
         {
             this.line = line[0];
             this.type = type;
@@ -406,55 +483,96 @@ public class LexerTest
         }
 
         @Override
-        public String toString()
+        public boolean isGroup()
         {
-            return item.toString();
+            return false;
         }
 
+        @Override
         public int getLine()
         {
             return line;
         }
 
-        public LTTokenType getType()
+        @Override
+        public Object getLiteral()
         {
-            return type;
+            if (!type.isLiteral())
+            {
+                throw new UnsupportedOperationException("Not a literal token");
+            }
+            return item;
         }
 
-        public LTIdentifier getIdentifier()
+        @Override
+        public LexedIdentifier getLexedIdentifier()
         {
-            return (LTIdentifier) item;
+            return (LexedIdentifier) item;
         }
 
+        @Override
         public Keyword getKeyword()
         {
             return (Keyword) item;
         }
 
+        @Override
         public Number getNumber()
         {
             return (Number) item;
         }
 
+        @Override
         public String getString()
         {
             return (String) item;
         }
 
+        @Override
+        public boolean getBoolean()
+        {
+            return (boolean) item;
+        }
+
+        @Override
         public char getChar()
         {
             return (char) item;
         }
 
+        @Override
+        public TokenType getTokenType()
+        {
+            return type;
+        }
+
+        @Override
+        public AST2.GroupType getGroupType()
+        {
+            throw new UnsupportedOperationException("Attempted to get a group type of a single token");
+        }
+
+        @Override
+        public LinkedList<AST2.Node> getChildren()
+        {
+            throw new UnsupportedOperationException("Attempted to get children of a single token");
+        }
+
+        @Override
+        public String toString()
+        {
+            return item == null ? type.name() : item.toString();
+        }
+
     }
 
-    public static class LTIdentifier
+    public static class LexedIdentifier
     {
 
         private final LinkedList<String> parts = new LinkedList<>();
         private String name;
 
-        LTIdentifier(String name)
+        LexedIdentifier(String name)
         {
             this.name = name;
         }
@@ -483,7 +601,7 @@ public class LexerTest
 
     }
 
-    private LexerTest()
+    private Lexer2()
     {
         throw new UnsupportedOperationException();
     }

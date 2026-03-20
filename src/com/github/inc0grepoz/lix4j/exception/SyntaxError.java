@@ -1,5 +1,7 @@
 package com.github.inc0grepoz.lix4j.exception;
 
+import ctxfree.ast.AST2;
+
 /**
  * An exception that can be thrown due to bad syntax
  * during a script compilation.
@@ -8,6 +10,17 @@ package com.github.inc0grepoz.lix4j.exception;
  */
 public final class SyntaxError extends RuntimeException
 {
+
+    public static void unexpectedTokenGroupType(AST2.Node node)
+    {
+        String gtn = node.getGroupType().name().toLowerCase();
+        StringBuilder msg = new StringBuilder();
+        msg.append("Unexpected token group type (");
+        msg.append(gtn);
+        msg.append("), line: ");
+        msg.append(node.getLine());
+        throw new SyntaxError(msg.toString());
+    }
 
     // Implements serializable
     private static final long serialVersionUID = -7932907360413850284L;

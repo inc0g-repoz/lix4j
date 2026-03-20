@@ -1,10 +1,5 @@
 package ctxfree.rule;
 
-import java.util.function.Consumer;
-
-import com.github.inc0grepoz.lix4j.ast.ASTNode;
-import com.github.inc0grepoz.lix4j.util.Keyword;
-
 enum RefRuleType {
     /*
     VAROP(r -> r

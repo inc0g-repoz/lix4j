@@ -3,6 +3,8 @@ package com.github.inc0grepoz.lix4j.unit.exp;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.value.Accessor;
 
+import ctxfree.lex.Lexer2;
+
 /**
  * Represents an abstract implementation of some operator.
  * 
@@ -45,6 +47,27 @@ public abstract class Operator
     public OperatorType getType()
     {
         return type;
+    }
+
+    /**
+     * Returns {@code true}, if the given token matches
+     * the name of this operator; otherwise, {@code false}.
+     * 
+     * @param token a token to test
+     * @return a {@code boolean} value
+     */
+    public boolean isNameMatching(Lexer2.Token token)
+    {
+        if (token == null) return false;
+        switch (token.getTokenType())
+        {
+        case SPECIAL_CHARACTER:
+            return name.length() == 1 && name.charAt(0) == token.getChar();
+        case SPECIAL_COMPOSITE:
+            return name.equals(token.getString());
+        default:
+            return false;
+        }
     }
 
     /**

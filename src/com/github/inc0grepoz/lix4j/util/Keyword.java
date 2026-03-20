@@ -3,7 +3,7 @@ package com.github.inc0grepoz.lix4j.util;
 public enum Keyword
 {
 
-    // Constants
+    // Literals
     FALSE, NULL, TRUE,
     // Variables
     STATIC, VAR,
@@ -33,6 +33,19 @@ public enum Keyword
     public String getString()
     {
         return string;
+    }
+
+    public boolean isLiteral()
+    {
+        switch (this)
+        {
+        case FALSE:
+        case NULL:
+        case TRUE:
+            return true;
+        default:
+            return false;
+        }
     }
 
 }

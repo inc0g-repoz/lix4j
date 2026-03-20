@@ -34,4 +34,7 @@ function main() {
     println("val2: " + a);
     a = null;
     println("val3: " + a);
+    a = 1;
+    a++;
+    a += a++ + 2 + ++a;
 }

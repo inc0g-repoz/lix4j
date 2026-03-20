@@ -1,6 +1,6 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST;
+import ctxfree.ast.AST2;
 
 class RuleBlock extends Rule
 {
@@ -12,9 +12,9 @@ class RuleBlock extends Rule
     }
 
     @Override
-    boolean matchImpl(AST.Node node)
+    boolean matchAlternative(AST2.Node node)
     {
-        return node.getType() == AST.NodeType.CURLY;
+        return node.isGroup() && node.getGroupType() == AST2.GroupType.CURLY;
     }
 
 }

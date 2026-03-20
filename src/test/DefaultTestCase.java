@@ -22,13 +22,11 @@ import com.github.inc0grepoz.lix4j.id.Identifier;
 import com.github.inc0grepoz.lix4j.id.Lookup;
 import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
-import com.github.inc0grepoz.lix4j.util.Lexer;
-import com.github.inc0grepoz.lix4j.util.Lexer.Token;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
-import ctxfree.ast.AST.NodeSection;
-import ctxfree.lex.LexerTest;
-import ctxfree.lex.LexerTest.LTToken;
+import ctxfree.ast.AST2;
+import ctxfree.lex.Lexer2;
+import ctxfree.lex.Lexer2.Token;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -41,54 +39,17 @@ class DefaultTestCase {
         EXECUTOR.setLoaderDirectory(LOADER_DIRECTORY = new File("scripts"));
     }
 
-    @Disabled
-    @Test
-    void testLexer()
-    {
-        // src/com/github/inc0grepoz/dsl/util/Lexer.java
-        // main.script
-        File file = new File(LOADER_DIRECTORY, "main.lix");
-
-        try
-        {
-            LinkedList<Token> tokens = Lexer.readTokens(new FileReader(file));
-            tokens.forEach(token -> System.out.print("$" + token));
-            System.out.println();
-        }
-        catch (Throwable t)
-        {
-            fail("Failed to lex the script: " + t);
-        }
-    }
-
-    @Disabled
+    //@Disabled
     @Test
     void testCtxFree()
     {
         File file = new File(LOADER_DIRECTORY, "main.lix");
         try
         {
-            LinkedList<Token> tokens = Lexer.readTokens(new FileReader(file));
-            NodeSection ast = ctxfree.ast.AST.generate(tokens);
-            System.out.println(ast.toString());
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            fail("Failed to lex the script: " + t);
-        }
-    }
-
-    //@Disabled
-    @Test
-    void testLexer2()
-    {
-        File file = new File(LOADER_DIRECTORY, "main.lix");
-        try
-        {
-            LinkedList<LTToken> tokens = LexerTest.lex(new FileReader(file));
-            tokens.forEach(token -> System.out.print("$" + token));
-            System.out.println();
+            LinkedList<Lexer2.Token> tokens = Lexer2.lex(new FileReader(file));
+            System.out.println(String.join(" ", tokens.stream().map(Lexer2.Token::toString).collect(Collectors.toList())));
+            AST2.TokenGroup ast = ctxfree.ast.AST2.generate(tokens);
+            //System.out.println(ast.toString());
         }
         catch (Throwable t)
         {
