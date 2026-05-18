@@ -1,18 +1,16 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST2;
+import ctxfree.lex.AST;
 
 public abstract class Rule
 {
 
     private Rule parent, next, alternative;
 
-    public boolean match(AST2.Node node)
+    public boolean match(AST.Node node)
     {
-        boolean alts = matchAlternative(node) ? true
-                     : alternative == null    ? false
-                     : alternative.matchAlternative(node);
-        return matchAlternative(node) ? true
+        return matchAlternative(node)
+             ? (next == null ? true : next.match(node))
              : alternative == null ? false
              : alternative.matchAlternative(node);
     }
@@ -36,6 +34,8 @@ public abstract class Rule
         return parent;
     }
 
-    abstract boolean matchAlternative(AST2.Node node);
+    protected void executeMappedAction() {} // action mapping
+
+    abstract boolean matchAlternative(AST.Node node);
 
 }

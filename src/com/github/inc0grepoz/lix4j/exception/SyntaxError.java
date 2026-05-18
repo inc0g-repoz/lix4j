@@ -1,6 +1,6 @@
 package com.github.inc0grepoz.lix4j.exception;
 
-import ctxfree.ast.AST2;
+import ctxfree.lex.AST;
 
 /**
  * An exception that can be thrown due to bad syntax
@@ -11,7 +11,7 @@ import ctxfree.ast.AST2;
 public final class SyntaxError extends RuntimeException
 {
 
-    public static void unexpectedTokenGroupType(AST2.Node node)
+    public static void unexpectedTokenGroupType(AST.Node node)
     {
         String gtn = node.getGroupType().name().toLowerCase();
         StringBuilder msg = new StringBuilder();

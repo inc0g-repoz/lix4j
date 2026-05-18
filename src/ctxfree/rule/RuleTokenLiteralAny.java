@@ -1,14 +1,19 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST2;
+import ctxfree.lex.AST;
 
 public class RuleTokenLiteralAny extends RuleToken
 {
 
     @Override
-    boolean matchToken(AST2.Node token)
+    boolean matchToken(AST.Node token)
     {
         return token.getTokenType().isLiteral();
+    }
+
+    @Override
+    void executeMappedAction() {
+        
     }
 
 }

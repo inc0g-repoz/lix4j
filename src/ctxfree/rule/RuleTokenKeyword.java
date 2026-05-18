@@ -2,8 +2,8 @@ package ctxfree.rule;
 
 import com.github.inc0grepoz.lix4j.util.Keyword;
 
-import ctxfree.ast.AST2;
-import ctxfree.lex.Lexer2;
+import ctxfree.lex.AST;
+import ctxfree.lex.Lexer;
 
 public class RuleTokenKeyword extends RuleToken
 {
@@ -16,9 +16,9 @@ public class RuleTokenKeyword extends RuleToken
     }
 
     @Override
-    boolean matchToken(AST2.Node token)
+    boolean matchToken(AST.Node token)
     {
-        return token.getTokenType() == Lexer2.TokenType.KEYWORD
+        return token.getTokenType() == Lexer.TokenType.KEYWORD
             && token.getKeyword() == keyword;
     }
 

@@ -3,7 +3,6 @@ package com.github.inc0grepoz.lix4j.unit;
 import java.util.LinkedList;
 import java.util.StringJoiner;
 
-import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
 
@@ -12,14 +11,14 @@ public class UnitSection extends Unit
 
     final LinkedList<Unit> childs = new LinkedList<>();
 
-    UnitSection(UnitSection parent, CompileTimeContext ctx, boolean add)
+    public UnitSection(UnitSection parent)
     {
-        super(parent, ctx, add);
+        super(parent);
     }
 
-    UnitSection(UnitSection parent, CompileTimeContext ctx)
+    protected UnitSection(UnitSection parent, boolean add)
     {
-        super(parent, ctx);
+        super(parent, add);
     }
 
     @Override
@@ -38,6 +37,11 @@ public class UnitSection extends Unit
         }
 
         return joiner.toString();
+    }
+
+    public LinkedList<Unit> getChildren()
+    {
+        return childs;
     }
 
     @Override

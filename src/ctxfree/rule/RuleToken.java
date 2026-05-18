@@ -1,16 +1,16 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST2;
+import ctxfree.lex.AST;
 
 public abstract class RuleToken extends Rule
 {
 
     @Override
-    boolean matchAlternative(AST2.Node node)
+    boolean matchAlternative(AST.Node node)
     {
         return node.isGroup() ? false : matchToken(node);
     }
 
-    abstract boolean matchToken(AST2.Node token);
+    abstract boolean matchToken(AST.Node token);
 
 }

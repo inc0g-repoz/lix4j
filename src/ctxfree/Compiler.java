@@ -1,57 +1,126 @@
 package ctxfree;
 
-import java.util.LinkedList;
+import java.util.ListIterator;
 
+import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 import com.github.inc0grepoz.lix4j.unit.Unit;
+import com.github.inc0grepoz.lix4j.unit.UnitFlowBreak;
+import com.github.inc0grepoz.lix4j.unit.UnitSection;
 
-import ctxfree.ast.AST2;
-import ctxfree.ast.AST2.GroupType;
+import ctxfree.lex.AST;
+import ctxfree.lex.Lexer;
 
 public class Compiler {
 
-    public Unit compileNext(AST2.TokenGroup flow) {
+    public static void root(CompileTimeContext ctx, AST.TokenGroup root) {
+        ListIterator<AST.Node> iter = root.getChildren().listIterator();
+        AST.Node node;
 
-        if (flow.isGroup()) {
+        
+    }
 
-            LinkedList<AST2.Node> children = flow.getChildren();
-            AST2.Node first = children.peek();
+    public static Unit unit(CompileTimeContext ctx, AST.TokenGroup from, UnitSection to) {
+        ListIterator<AST.Node> iter = from.getChildren().listIterator();
+        AST.Node node = iter.next();
 
-            if (first.isGroup()) {
-                if (first.getGroupType() != GroupType.CURLY)
-                {
-                    SyntaxError.unexpectedTokenGroupType(first);
-                }
-
-                // it's just a block
-                
-            } else {
-                
+        if (node.isGroup()) {
+            if (node.getGroupType() == AST.GroupType.CURLY) {
+                // a scope
+                UnitSection usec = new UnitSection(to);
+                AST.TokenGroup tkgrp = (AST.TokenGroup) node;
+                node.getChildren().forEach(child -> unit(ctx, tkgrp, usec));
+                return (UnitSection) usec;
             }
 
+            // not a scope
+            StringBuilder message = new StringBuilder();
+            message.append("Unexpected group type (");
+            message.append(node.getGroupType().name());
+            message.append("), line: ");
+            message.append(node.getLine());
+            throw new SyntaxError(message.toString());
         }
 
+        // THE HEAD NODE IS A TOKEN
 
-
-        // THERE WILL ALSO BE CODE FOR
-        // LITERALS LATER
-        else {
+        if (node.getTokenType() == Lexer.TokenType.KEYWORD) {
+            switch (node.getKeyword()) {
+            case BREAK:
+                return new UnitFlowBreak(to);
+            case CATCH:
+                throw new SyntaxError("Every \"catch\" statement should have a \"try\" statement before");
+            case CONTINUE:
+                break;
+            case DO:
+                break;
+            case ELSE:
+                throw new SyntaxError("There can be no \"else\" without an \"if\"");
+            case FALSE:
+                break;
+            case FOR:
+                break;
+            case FUNCTION:
+                break;
+            case IF:
+                break;
+            case INCLUDE:
+                break;
+            case NAMESPACE:
+                break;
+            case NULL:
+                break;
+            case RETURN:
+                break;
+            case STATIC:
+                break;
+            case SWITCH:
+                throw new SyntaxError("Switching is not supported");
+            case TRUE:
+                break;
+            case TRY:
+                break;
+            case VAR:
+                break;
+            case WHILE:
+                break;
+            default:
+                break;
             
+            }
         }
 
         return null;
     }
 
-}
+    public static void operation(CompileTimeContext ctx, AST.TokenGroup node) {
+        
+    }
 
-class U {
-    
-}
+    public static Object token(CompileTimeContext ctx, AST.Node node) {
+        switch (node.getTokenType()) {
+        case IDENTIFIER:
+            break;
+        case KEYWORD:
+            break;
+        case LITERAL_BOOLEAN:
+            break;
+        case LITERAL_CHAR:
+            break;
+        case LITERAL_NULL:
+            break;
+        case LITERAL_NUMBER:
+            break;
+        case LITERAL_STRING:
+            break;
+        case SPECIAL_CHARACTER:
+            break;
+        case SPECIAL_COMPOSITE:
+            break;
+        default:
+            break;
+        }
+        return null;
+    }
 
-class UReturn {
-    
-}
-
-class USection extends U {
-    LinkedList<Unit> children = new LinkedList<>();
 }

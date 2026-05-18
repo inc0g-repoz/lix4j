@@ -1,20 +1,20 @@
 package ctxfree.rule;
 
-import ctxfree.ast.AST2;
-import ctxfree.lex.Lexer2;
+import ctxfree.lex.AST;
+import ctxfree.lex.Lexer;
 
 public class RuleTokenLiteral extends RuleToken
 {
 
-    private final Lexer2.TokenType type;
+    private final Lexer.TokenType type;
 
-    RuleTokenLiteral(Lexer2.TokenType type)
+    RuleTokenLiteral(Lexer.TokenType type)
     {
         this.type = type;
     }
 
     @Override
-    boolean matchToken(AST2.Node token)
+    boolean matchToken(AST.Node token)
     {
         return type == token.getTokenType();
     }

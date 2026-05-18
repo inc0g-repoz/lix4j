@@ -5,23 +5,45 @@ import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.unit.exp.Operator;
 
-import ctxfree.ast.AST2;
-import ctxfree.lex.Lexer2;
+import ctxfree.lex.AST;
+import ctxfree.lex.Lexer;
 
 public class TokenHelper
 {
 
-    public static LinkedList<AST2.Node> readUntilLineBreaker(LinkedList<AST2.Node> flow)
+    public static LinkedList<AST.Node> readUntilLineBreaker(Iterator<AST.Node> iter)
     {
-        LinkedList<AST2.Node> out = new LinkedList<>();
-        AST2.Node next;
+        LinkedList<AST.Node> out = new LinkedList<>();
+        AST.Node next;
+
+        while (iter.hasNext())
+        {
+            next = iter.next();
+
+            if (!next.isGroup()
+                    && next.getTokenType() == Lexer.TokenType.SPECIAL_CHARACTER
+                    && next.getChar() == ';')
+            {
+                break;
+            }
+
+            out.add(next);
+        }
+
+        return out;
+    }
+
+    public static LinkedList<AST.Node> readUntilLineBreaker(LinkedList<AST.Node> flow)
+    {
+        LinkedList<AST.Node> out = new LinkedList<>();
+        AST.Node next;
 
         while (!flow.isEmpty())
         {
             next = flow.poll();
 
             if (!next.isGroup()
-                    && next.getTokenType() == Lexer2.TokenType.SPECIAL_CHARACTER
+                    && next.getTokenType() == Lexer.TokenType.SPECIAL_CHARACTER
                     && next.getChar() == ';')
             {
                 break;
@@ -34,19 +56,19 @@ public class TokenHelper
     }
 
     @SuppressWarnings("unchecked")
-    public static LinkedList<AST2.Node>[] splitOperands(LinkedList<AST2.Node> flow,
+    public static LinkedList<AST.Node>[] splitOperands(LinkedList<AST.Node> flow,
             Operator operator)
     {
-        LinkedList<LinkedList<AST2.Node>> out = new LinkedList<>();
-        LinkedList<AST2.Node> write = new LinkedList<>();
-        Iterator<AST2.Node> iter = flow.iterator();
-        AST2.Node next;
+        LinkedList<LinkedList<AST.Node>> out = new LinkedList<>();
+        LinkedList<AST.Node> write = new LinkedList<>();
+        Iterator<AST.Node> iter = flow.iterator();
+        AST.Node next;
 
         while (iter.hasNext())
         {
             next = iter.next();
 
-            if (next.isGroup() || !operator.isNameMatching((Lexer2.Token) next))
+            if (next.isGroup() || !operator.isNameMatching((Lexer.Token) next))
             {
                 write.add(next);
             }
@@ -62,7 +84,7 @@ public class TokenHelper
             out.add(write);
         }
 
-        LinkedList<AST2.Node>[] arr = new LinkedList[out.size()];
+        LinkedList<AST.Node>[] arr = new LinkedList[out.size()];
         out.toArray(arr);
         return arr;
     }

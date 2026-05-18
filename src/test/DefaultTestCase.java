@@ -24,9 +24,9 @@ import com.github.inc0grepoz.lix4j.id.Namespace;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
-import ctxfree.ast.AST2;
-import ctxfree.lex.Lexer2;
-import ctxfree.lex.Lexer2.Token;
+import ctxfree.lex.AST;
+import ctxfree.lex.Lexer;
+import ctxfree.lex.Lexer.Token;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -46,9 +46,9 @@ class DefaultTestCase {
         File file = new File(LOADER_DIRECTORY, "main.lix");
         try
         {
-            LinkedList<Lexer2.Token> tokens = Lexer2.lex(new FileReader(file));
-            System.out.println(String.join(" ", tokens.stream().map(Lexer2.Token::toString).collect(Collectors.toList())));
-            AST2.TokenGroup ast = ctxfree.ast.AST2.generate(tokens);
+            LinkedList<Lexer.Token> tokens = Lexer.lex(new FileReader(file));
+            System.out.println(String.join(" ", tokens.stream().map(Lexer.Token::toString).collect(Collectors.toList())));
+            AST.TokenGroup ast = ctxfree.lex.AST.generate(tokens);
             //System.out.println(ast.toString());
         }
         catch (Throwable t)

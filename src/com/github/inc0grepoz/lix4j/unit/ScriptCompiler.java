@@ -5,15 +5,15 @@ import java.util.LinkedList;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
 
-import ctxfree.ast.AST2;
+import ctxfree.lex.AST;
 
 public class ScriptCompiler
 {
 
     // Compiles, but doesn't enter or leave sections in the compile time varpool
-    public static UnitSection compileSection(CompileTimeContext ctx, AST2.Node node, UnitSection section)
+    public static UnitSection compileSection(CompileTimeContext ctx, AST.Node node, UnitSection section)
     {
-        LinkedList<AST2.Node> childs = node.getChildren();
+        LinkedList<AST.Node> childs = node.getChildren();
 
         while (!childs.isEmpty())
         {

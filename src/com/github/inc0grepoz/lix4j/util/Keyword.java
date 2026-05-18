@@ -8,7 +8,7 @@ public enum Keyword
     // Variables
     STATIC, VAR,
     // Conditional
-    ELSE, IF,
+    ELSE, IF, SWITCH,
     // Looping
     DO, FOR, WHILE,
     // Control flow of execution

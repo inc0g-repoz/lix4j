@@ -12,9 +12,7 @@ import com.github.inc0grepoz.lix4j.util.Keyword;
 import com.github.inc0grepoz.lix4j.util.PrimitiveConverter;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
 
-import ctxfree.ast.AST2;
-
-public class Lexer2
+public class Lexer
 {
 
     private static final String NUMERIC_SUFFIXES = "dflDFL";
@@ -468,7 +466,7 @@ public class Lexer2
      * 
      * @author inc0g-repoz
      */
-    public static class Token implements AST2.Node
+    public static class Token implements AST.Node
     {
 
         private final int line;
@@ -547,13 +545,13 @@ public class Lexer2
         }
 
         @Override
-        public AST2.GroupType getGroupType()
+        public AST.GroupType getGroupType()
         {
             throw new UnsupportedOperationException("Attempted to get a group type of a single token");
         }
 
         @Override
-        public LinkedList<AST2.Node> getChildren()
+        public LinkedList<AST.Node> getChildren()
         {
             throw new UnsupportedOperationException("Attempted to get children of a single token");
         }
@@ -583,25 +581,25 @@ public class Lexer2
             return parts.isEmpty() ? name : String.join("::", parts) + "::" + name;
         }
 
+        public Identifier toUnresolvedIdentifier(Namespace namespace, int data)
+        {
+            return Identifier.unresolved(parts, namespace, name, data);
+        }
+
+        public Identifier toUnresolvedIdentifier(Namespace namespace)
+        {
+            return Identifier.unresolved(parts, namespace, name);
+        }
+
         void add(String name)
         {
             parts.add(this.name);
             this.name = name;
         }
 
-        Identifier toUnresolvedIdentifier(Namespace namespace, int data)
-        {
-            return Identifier.unresolved(parts, namespace, name, data);
-        }
-
-        Identifier toUnresolvedIdentifier(Namespace namespace)
-        {
-            return Identifier.unresolved(parts, namespace, name);
-        }
-
     }
 
-    private Lexer2()
+    private Lexer()
     {
         throw new UnsupportedOperationException();
     }

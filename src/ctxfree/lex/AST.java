@@ -1,18 +1,17 @@
-package ctxfree.ast;
+package ctxfree.lex;
 
 import java.util.LinkedList;
 
 import com.github.inc0grepoz.lix4j.util.Keyword;
 
-import ctxfree.lex.Lexer2;
-import ctxfree.lex.Lexer2.LexedIdentifier;
+import ctxfree.lex.Lexer.LexedIdentifier;
 
 /**
  * Generates abstract syntax trees from lexer output.
  * 
  * @author inc0g-repoz
  */
-public class AST2
+public class AST
 {
 
     /**
@@ -22,7 +21,7 @@ public class AST2
      * @param input the lexer output
      * @return a root node of a generated abstract syntax tree
      */
-    public static TokenGroup generate(LinkedList<Lexer2.Token> input)
+    public static TokenGroup generate(LinkedList<Lexer.Token> input)
     {
         TokenGroup root = new TokenGroup(0, GroupType.ROOT);
         generateSection(root, input);
@@ -30,7 +29,7 @@ public class AST2
     }
 
     // Recursively writes a section of an AST
-    private static void generateSection(TokenGroup to, LinkedList<Lexer2.Token> in)
+    private static void generateSection(TokenGroup to, LinkedList<Lexer.Token> in)
     {
         char breaker;
 
@@ -44,9 +43,9 @@ public class AST2
 
         while (!in.isEmpty())
         {
-            Lexer2.Token tk = in.peek();
+            Lexer.Token tk = in.peek();
 
-            if (tk.getTokenType() == Lexer2.TokenType.SPECIAL_CHARACTER)
+            if (tk.getTokenType() == Lexer.TokenType.SPECIAL_CHARACTER)
             {
                 char ch = tk.getChar();
 
@@ -114,7 +113,7 @@ public class AST2
          * @throws UnsupportedOperationException
          *         if this node is a token group
          */
-        Lexer2.TokenType getTokenType();
+        Lexer.TokenType getTokenType();
 
         /**
          * Returns the group type of this node, if it's a group.
@@ -125,7 +124,7 @@ public class AST2
          */
         GroupType getGroupType();
 
-        LinkedList<AST2.Node> getChildren();
+        LinkedList<AST.Node> getChildren();
 
     }
 
@@ -203,7 +202,7 @@ public class AST2
         }
 
         @Override
-        public Lexer2.TokenType getTokenType()
+        public Lexer.TokenType getTokenType()
         {
             throw new UnsupportedOperationException("Attempted to get a token type of a token group");
         }
@@ -215,7 +214,7 @@ public class AST2
         }
 
         @Override
-        public LinkedList<AST2.Node> getChildren()
+        public LinkedList<AST.Node> getChildren()
         {
             return children;
         }
@@ -245,7 +244,7 @@ public class AST2
 
     }
 
-    private AST2()
+    private AST()
     {
         throw new UnsupportedOperationException();
     }
