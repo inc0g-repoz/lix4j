@@ -4,9 +4,12 @@ import java.util.ListIterator;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
+import com.github.inc0grepoz.lix4j.lookup.id.LexedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.Unit;
 import com.github.inc0grepoz.lix4j.unit.UnitFlowBreak;
+import com.github.inc0grepoz.lix4j.unit.UnitFlowContinue;
 import com.github.inc0grepoz.lix4j.unit.UnitSection;
+import com.github.inc0grepoz.lix4j.util.Keyword;
 
 import ctxfree.lex.AST;
 import ctxfree.lex.Lexer;
@@ -51,7 +54,7 @@ public class Compiler {
             case CATCH:
                 throw new SyntaxError("Every \"catch\" statement should have a \"try\" statement before");
             case CONTINUE:
-                break;
+                return new UnitFlowContinue(to);
             case DO:
                 break;
             case ELSE:
@@ -72,8 +75,26 @@ public class Compiler {
                 break;
             case RETURN:
                 break;
+
             case STATIC:
+                node = iter.next();
+                if (node.isGroup() || node.getTokenType() != Lexer.TokenType.KEYWORD) {
+                    throw new SyntaxError("Expected variable or function declaration: line " + node.getLine());
+                }
+
+                if (node.getKeyword() == Keyword.VAR) {
+                    node = iter.next();
+                    if (node.getTokenType() != Lexer.TokenType.IDENTIFIER) {
+                        throw new SyntaxError("Expected variable identifier: line " + node.getLine());
+                    }
+                    LexedIdentifier id = node.getLexedIdentifier();
+                }
+
+                if (node.getKeyword() == Keyword.FUNCTION) {
+                    
+                }
                 break;
+
             case SWITCH:
                 throw new SyntaxError("Switching is not supported");
             case TRUE:
@@ -86,7 +107,6 @@ public class Compiler {
                 break;
             default:
                 break;
-            
             }
         }
 

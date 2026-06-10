@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.util.PrimitiveConverter;
 import com.github.inc0grepoz.lix4j.util.Reflection;
@@ -156,7 +156,7 @@ class AccessorMethod extends AccessorNamed
 
             AccessorUnassigned unassigned = (AccessorUnassigned) paramArray[i];
             int paramCount = parameterTypes[i].getTypeParameters().length;
-            Identifier id = unassigned.getIdentifier().withData(paramCount);
+            ResolvedIdentifier id = unassigned.getIdentifier().withData(paramCount);
             UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id);
 
             if (fn == null)

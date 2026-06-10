@@ -2,8 +2,8 @@ package com.github.inc0grepoz.lix4j.ctx.pool;
 
 import java.util.ArrayDeque;
 
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Lookup;
+import com.github.inc0grepoz.lix4j.lookup.Lookup;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.value.AccessorUnassigned;
 
 /**
@@ -28,7 +28,7 @@ public class ExecutionVarpool extends Varpool<Object> implements Cloneable
     }
 
     @Override
-    public Object get(Identifier id)
+    public Object get(ResolvedIdentifier id)
     {
         Object o = super.get(id);
         return o == null ? new AccessorUnassigned(id) : o;

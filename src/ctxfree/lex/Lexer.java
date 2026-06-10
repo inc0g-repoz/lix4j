@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.id.LexedIdentifier;
 import com.github.inc0grepoz.lix4j.util.Keyword;
 import com.github.inc0grepoz.lix4j.util.PrimitiveConverter;
 import com.github.inc0grepoz.lix4j.util.TokenHelper;
@@ -560,41 +560,6 @@ public class Lexer
         public String toString()
         {
             return item == null ? type.name() : item.toString();
-        }
-
-    }
-
-    public static class LexedIdentifier
-    {
-
-        private final LinkedList<String> parts = new LinkedList<>();
-        private String name;
-
-        LexedIdentifier(String name)
-        {
-            this.name = name;
-        }
-
-        @Override
-        public String toString()
-        {
-            return parts.isEmpty() ? name : String.join("::", parts) + "::" + name;
-        }
-
-        public Identifier toUnresolvedIdentifier(Namespace namespace, int data)
-        {
-            return Identifier.unresolved(parts, namespace, name, data);
-        }
-
-        public Identifier toUnresolvedIdentifier(Namespace namespace)
-        {
-            return Identifier.unresolved(parts, namespace, name);
-        }
-
-        void add(String name)
-        {
-            parts.add(this.name);
-            this.name = name;
         }
 
     }

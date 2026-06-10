@@ -9,14 +9,12 @@ import java.util.List;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.ScriptCompiler;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 import com.github.inc0grepoz.lix4j.unit.UnitRoot;
 import com.github.inc0grepoz.lix4j.unit.exp.Operator;
-import com.github.inc0grepoz.lix4j.util.Lexer.Token;
-
 import ctxfree.lex.AST;
 import ctxfree.lex.Lexer;
 
@@ -82,7 +80,7 @@ public class Script
      * @param id the function identifier
      * @return a function
      */
-    public UnitFunction getFunction(Identifier id)
+    public UnitFunction getFunction(ResolvedIdentifier id)
     {
         return root.lookupFunction(id, globalNamespace);
     }
@@ -97,7 +95,7 @@ public class Script
      */
     public UnitFunction getFunction(String name, int paramCount)
     {
-        Identifier id = Identifier.resolved(globalNamespace, name, paramCount);
+        ResolvedIdentifier id = ResolvedIdentifier.resolved(globalNamespace, name, paramCount);
         return root.lookupFunction(id, globalNamespace);
     }
 

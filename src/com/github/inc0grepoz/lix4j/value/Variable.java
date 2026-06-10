@@ -1,15 +1,15 @@
 package com.github.inc0grepoz.lix4j.value;
 
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 
 public class Variable
 {
 
-    private final Identifier identifier;
+    private final ResolvedIdentifier identifier;
 
     private Object instance;
 
-    Variable(Identifier id)
+    Variable(ResolvedIdentifier id)
     {
         identifier = id;
         instance = new AccessorUnassigned(id);
@@ -21,7 +21,7 @@ public class Variable
         return identifier.toString();
     }
 
-    public Identifier getIdentifier()
+    public ResolvedIdentifier getIdentifier()
     {
         return identifier;
     }

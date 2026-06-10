@@ -1,6 +1,6 @@
 package com.github.inc0grepoz.lix4j.value;
 
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 
 /**
  * Represents an accessor for variables.
@@ -10,7 +10,7 @@ import com.github.inc0grepoz.lix4j.id.Identifier;
 public abstract class AccessorVariable extends AccessorNamespaced
 {
 
-    AccessorVariable(Identifier id)
+    AccessorVariable(ResolvedIdentifier id)
     {
         super(id);
     }

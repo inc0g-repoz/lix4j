@@ -5,8 +5,9 @@ import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Lookup;
+import com.github.inc0grepoz.lix4j.lookup.Lookup;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
+import com.github.inc0grepoz.lix4j.util.Maps;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
 /**
@@ -19,8 +20,6 @@ import com.github.inc0grepoz.lix4j.util.Predicates;
 @SuppressWarnings("unchecked")
 public abstract class Varpool<T>
 {
-
-    private static final Object NO_KEY = new Object();
 
     protected final ArrayDeque<Lookup<T>> stack;
 
@@ -42,9 +41,9 @@ public abstract class Varpool<T>
         return joiner.toString();
     }
 
-    public Entry<Identifier, T> lookup(CompileTimeContext ctx, Identifier id)
+    public Entry<ResolvedIdentifier, T> lookup(CompileTimeContext ctx, ResolvedIdentifier id)
     {
-        Entry<Identifier, T> entry;
+        Entry<ResolvedIdentifier, T> entry;
 
         for (Lookup<T> scope: stack)
         {
@@ -67,7 +66,7 @@ public abstract class Varpool<T>
      * @param value the variable value
      * @return the variable value
      */
-    public T set(Identifier id, T value)
+    public T set(ResolvedIdentifier id, T value)
     {
         if (stack.isEmpty())
         {
@@ -97,13 +96,13 @@ public abstract class Varpool<T>
      * @throws RuntimeException
      *         if no variable is mapped to the specified name
      */
-    public T get(Identifier id)
+    public T get(ResolvedIdentifier id)
     {
         Object o;
 
         for (Lookup<T> scope: stack)
         {
-            if ((o = scope.get(id, NO_KEY)) != NO_KEY)
+            if ((o = scope.get(id, Maps.NO_KEY)) != Maps.NO_KEY)
             {
                 return (T) o;
             }

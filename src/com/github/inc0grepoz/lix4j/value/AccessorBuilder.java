@@ -1,6 +1,6 @@
 package com.github.inc0grepoz.lix4j.value;
 
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 
 /**
  * Represents a builder of chained accessors.
@@ -78,7 +78,7 @@ public class AccessorBuilder
      * @param params     the precached parameters array
      * @return this builder instance
      */
-    public AccessorBuilder function(Identifier identifier, Accessor... params)
+    public AccessorBuilder function(ResolvedIdentifier identifier, Accessor... params)
     {
         return accessor(new AccessorFunction(identifier, params));
     }

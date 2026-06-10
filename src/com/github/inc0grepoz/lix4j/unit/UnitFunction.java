@@ -10,7 +10,7 @@ import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
 import com.github.inc0grepoz.lix4j.ctx.pool.ExecutionVarpool;
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.util.ControlFlow;
 import com.github.inc0grepoz.lix4j.util.Reflection;
 
@@ -53,7 +53,7 @@ public class UnitFunction extends UnitSection
             }
         }
 
-        Identifier id = Identifier.resolved(ctx.getNamespace(), name, paramNames.size());
+        ResolvedIdentifier id = ResolvedIdentifier.resolved(ctx.getNamespace(), name, paramNames.size());
         UnitFunction fn = ctx.getScript().getRoot().getFunctionAsChild(id);
 
         if (fn != null)
@@ -71,12 +71,12 @@ public class UnitFunction extends UnitSection
         return fn;
     }
 
-    final Identifier identifier;
+    final ResolvedIdentifier identifier;
     final List<String> paramNames;
     final UnitRoot root;
 
     protected UnitFunction(UnitSection parent, CompileTimeContext ctx,
-            Identifier identifier, List<String> paramNames)
+            ResolvedIdentifier identifier, List<String> paramNames)
     {
         super(parent, ctx);
         this.identifier = identifier;
@@ -87,7 +87,7 @@ public class UnitFunction extends UnitSection
     protected UnitFunction(UnitSection parent, CompileTimeContext ctx,
             String name, List<String> paramNames)
     {
-        this(parent, ctx, Identifier.resolved(ctx.getNamespace(), name,
+        this(parent, ctx, ResolvedIdentifier.resolved(ctx.getNamespace(), name,
                 paramNames.size()), paramNames);
     }
 
@@ -156,7 +156,7 @@ public class UnitFunction extends UnitSection
 
         for (int i = 0; i < params.length; i++)
         {
-            Identifier id = Identifier.resolved(identifier.getNamespace(), paramNames.get(i));
+            ResolvedIdentifier id = ResolvedIdentifier.resolved(identifier.getNamespace(), paramNames.get(i));
             pool.set(id, params[i]);
         }
 
@@ -171,7 +171,7 @@ public class UnitFunction extends UnitSection
      * 
      * @return the function identifier
      */
-    public Identifier getIdentifier()
+    public ResolvedIdentifier getIdentifier()
     {
         return identifier;
     }

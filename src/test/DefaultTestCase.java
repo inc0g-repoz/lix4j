@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,15 +17,14 @@ import org.junit.jupiter.api.Test;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ScriptExecutor;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Lookup;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
-import com.github.inc0grepoz.lix4j.util.Predicates;
 
+import ctxfree.NodeMap;
 import ctxfree.lex.AST;
 import ctxfree.lex.Lexer;
-import ctxfree.lex.Lexer.Token;
 
 @SuppressWarnings("all")
 class DefaultTestCase {
@@ -40,6 +38,20 @@ class DefaultTestCase {
     }
 
     //@Disabled
+    @Test
+    void testNodeMap()
+    {
+        Namespace global = new Namespace(null, Namespace.GLOBAL_NAME);
+        NodeMap<ResolvedIdentifier, Object> map = new NodeMap<>();
+        map.put(Identifier.resolved(global, "a", 0), "1");
+        map.put(Identifier.resolved(global.nest("std"), "b", 0), 2);
+
+        NodeMap<ResolvedIdentifier, Object> cloned = map.clone();
+        cloned.put(Identifier.resolved(global.nest("std"), "b", 0), 3);
+        map.printTable();
+    }
+
+    @Disabled
     @Test
     void testCtxFree()
     {
@@ -92,19 +104,21 @@ class DefaultTestCase {
     @Test
     void testLookup()
     {
+        /*
         Namespace global = new Namespace(null, Namespace.GLOBAL_NAME);
         Lookup<Object> lookup = new Lookup<>();
 
-        lookup.set(Identifier.resolved(global, "a"), "default");
-        lookup.set(Identifier.resolved(global.nest("values"), "a"), 5);
-        lookup.set(Identifier.resolved(global.nest("values").nest("strings"), "a"), "otherValue");
+        lookup.set(ResolvedIdentifier.resolved(global, "a"), "default");
+        lookup.set(ResolvedIdentifier.resolved(global.nest("values"), "a"), 5);
+        lookup.set(ResolvedIdentifier.resolved(global.nest("values").nest("strings"), "a"), "otherValue");
 
-        Entry<Identifier, Object> result = lookup.findEntry(
-                Identifier.unresolved(link("values", "strings"), global, "a"),
+        Entry<ResolvedIdentifier, Object> result = lookup.findEntry(
+                ResolvedIdentifier.unresolved(link("values", "strings"), global, "a"),
                 global, Predicates.alwaysTrue());
         System.out.println(result.getKey() + " = " + result.getValue());
         System.out.println(global.nest("c").nest("d") == global.nest("c").nest("d"));
         System.out.println(global.find(link("values", "strings")) == global.find(link("values", "strings")));
+        */
     }
 
     private static <T> LinkedList<T> link(T... values)

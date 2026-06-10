@@ -3,7 +3,7 @@ package com.github.inc0grepoz.lix4j.value;
 import java.util.StringJoiner;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.UnitFunction;
 
 class AccessorFunction extends AccessorNamespaced
@@ -13,7 +13,7 @@ class AccessorFunction extends AccessorNamespaced
 
     private UnitFunction cachedFunction;
 
-    AccessorFunction(Identifier identifier, Accessor[] params)
+    AccessorFunction(ResolvedIdentifier identifier, Accessor[] params)
     {
         super(identifier);
         this.params = params;

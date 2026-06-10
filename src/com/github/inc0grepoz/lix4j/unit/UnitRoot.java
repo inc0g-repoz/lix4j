@@ -6,9 +6,9 @@ import java.util.StringJoiner;
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Lookup;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Lookup;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.util.Predicates;
 
 public class UnitRoot extends UnitSection
@@ -32,7 +32,7 @@ public class UnitRoot extends UnitSection
         return joiner.toString();
     }
 
-    public UnitFunction getFunctionAsChild(Identifier id)
+    public UnitFunction getFunctionAsChild(ResolvedIdentifier id)
     {
         UnitFunction fn;
 
@@ -52,9 +52,9 @@ public class UnitRoot extends UnitSection
         return null;
     }
 
-    public UnitFunction lookupFunction(Identifier id, Namespace namespaceGlobal)
+    public UnitFunction lookupFunction(ResolvedIdentifier id, Namespace namespaceGlobal)
     {
-        Entry<Identifier, UnitFunction> result = functions.findEntry(id,
+        Entry<ResolvedIdentifier, UnitFunction> result = functions.findEntry(id,
                 namespaceGlobal, Predicates.alwaysTrue());
         return result == null ? null : result.getValue();
     }

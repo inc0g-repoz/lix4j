@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 import com.github.inc0grepoz.lix4j.unit.Modifier;
 import com.github.inc0grepoz.lix4j.value.AccessorVariable;
 import com.github.inc0grepoz.lix4j.value.AccessorVariableStack;
@@ -29,9 +29,9 @@ public class CompileTimeVarpool extends Varpool<AccessorVariable>
         super(new ArrayDeque<>());
     }
 
-    public AccessorVariable handleVariable(CompileTimeContext ctx, Set<Modifier> modifiers, Identifier id)
+    public AccessorVariable handleVariable(CompileTimeContext ctx, Set<Modifier> modifiers, ResolvedIdentifier id)
     {
-        Entry<Identifier, AccessorVariable> entry = lookup(ctx, id);
+        Entry<ResolvedIdentifier, AccessorVariable> entry = lookup(ctx, id);
         AccessorVariable xcsVar;
 
         // Existing variable

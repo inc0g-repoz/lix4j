@@ -1,4 +1,4 @@
-package com.github.inc0grepoz.lix4j.id;
+package com.github.inc0grepoz.lix4j.lookup;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,23 +8,25 @@ import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
+
 /**
  * A table for searching objects by identifiers with namespaces.
  * 
  * @param <T> the type of elements stored by a table
  */
 @SuppressWarnings("unchecked")
-public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
+public class Lookup<T> implements Cloneable, Iterable<Entry<ResolvedIdentifier, T>>
 {
 
-    private final Map<Identifier, T> identifiable;
+    private final Map<ResolvedIdentifier, T> identifiable;
 
     public Lookup()
     {
         identifiable = new HashMap<>();
     }
 
-    private Lookup(Map<Identifier, T> identifiable)
+    private Lookup(Map<ResolvedIdentifier, T> identifiable)
     {
         (this.identifiable = new HashMap<>()).putAll(identifiable);
     }
@@ -40,7 +42,7 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
      * @param predicate        the predicate to test values
      * @return a found entry or {@code null}
      */
-    public Entry<Identifier, T> findEntry(Identifier identifier, Namespace namespaceGlobal,
+    public Entry<ResolvedIdentifier, T> findEntry(ResolvedIdentifier identifier, Namespace namespaceGlobal,
             Predicate<T> predicate)
     {
         if (identifier.isResolved())
@@ -77,7 +79,7 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
             }
         }
 
-        Identifier idi;
+        ResolvedIdentifier idi;
 
         // Looking through namespaces starting from the bottom level
         // until the the top level is reached (global)
@@ -89,7 +91,7 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
             // If found the namespace, looking for an identifier
             if (n != null)
             {
-                for (Map.Entry<Identifier, T> entry: identifiable.entrySet())
+                for (Map.Entry<ResolvedIdentifier, T> entry: identifiable.entrySet())
                 {
                     idi = entry.getKey();
 
@@ -109,12 +111,12 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         return null; // Nothing found
     }
 
-    public boolean containsKey(Identifier id)
+    public boolean containsKey(ResolvedIdentifier id)
     {
         return identifiable.containsKey(id);
     }
 
-    public Object get(Identifier identifier, Object defaultValue)
+    public Object get(ResolvedIdentifier identifier, Object defaultValue)
     {
         Object rv = identifiable.get(identifier);
 
@@ -126,13 +128,13 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
         return defaultValue;
     }
 
-    public T set(Identifier identifier, T value)
+    public T set(ResolvedIdentifier identifier, T value)
     {
         identifiable.put(identifier, value);
         return value;
     }
 
-    public void forEach(BiConsumer<Identifier, T> action)
+    public void forEach(BiConsumer<ResolvedIdentifier, T> action)
     {
         identifiable.forEach(action);
     }
@@ -144,25 +146,25 @@ public class Lookup<T> implements Cloneable, Iterable<Entry<Identifier, T>>
     }
 
     @Override
-    public Iterator<Entry<Identifier, T>> iterator()
+    public Iterator<Entry<ResolvedIdentifier, T>> iterator()
     {
         return identifiable.entrySet().iterator();
     }
 
-    public static class LookupEntry<T> implements Entry<Identifier, T>
+    public static class LookupEntry<T> implements Entry<ResolvedIdentifier, T>
     {
 
-        private final Identifier key;
+        private final ResolvedIdentifier key;
         private final T value;
 
-        LookupEntry(Identifier key, T value)
+        LookupEntry(ResolvedIdentifier key, T value)
         {
             this.key = key;
             this.value = value;
         }
 
         @Override
-        public Identifier getKey()
+        public ResolvedIdentifier getKey()
         {
             return key;
         }

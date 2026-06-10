@@ -1,4 +1,4 @@
-package com.github.inc0grepoz.lix4j.id;
+package com.github.inc0grepoz.lix4j.lookup;
 
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -1,41 +1,28 @@
 package ctxfree.rule;
 
+import java.util.function.Consumer;
+
 import ctxfree.lex.AST;
 
-public abstract class Rule
+public interface Rule
 {
 
-    private Rule parent, next, alternative;
+    boolean test(AST.Node node);
 
-    public boolean match(AST.Node node)
+    default Rule and(Rule rule)
     {
-        return matchAlternative(node)
-             ? (next == null ? true : next.match(node))
-             : alternative == null ? false
-             : alternative.matchAlternative(node);
+        return (new RuleSetConjunctive(this)).and(rule);
     }
 
-    public Rule and(Rule rule)
+    default Rule or(Rule rule)
     {
-        next = rule;
-        next.parent = parent;
-        return next;
+        return (new RuleSetDisjunctive(this)).or(rule);
     }
 
-    public Rule or(Rule rule)
+    default Rule edit(Consumer<Rule> lambda)
     {
-        alternative = rule;
-        alternative.parent = parent;
-        return alternative;
+        lambda.accept(this);
+        return this;
     }
-
-    public Rule then()
-    {
-        return parent;
-    }
-
-    protected void executeMappedAction() {} // action mapping
-
-    abstract boolean matchAlternative(AST.Node node);
 
 }

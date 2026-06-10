@@ -2,9 +2,8 @@ package ctxfree.lex;
 
 import java.util.LinkedList;
 
+import com.github.inc0grepoz.lix4j.lookup.id.LexedIdentifier;
 import com.github.inc0grepoz.lix4j.util.Keyword;
-
-import ctxfree.lex.Lexer.LexedIdentifier;
 
 /**
  * Generates abstract syntax trees from lexer output.

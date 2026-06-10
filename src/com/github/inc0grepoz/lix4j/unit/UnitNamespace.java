@@ -6,7 +6,7 @@ import com.github.inc0grepoz.lix4j.ast.ASTNode;
 import com.github.inc0grepoz.lix4j.ast.NodeBreakerType;
 import com.github.inc0grepoz.lix4j.ctx.CompileTimeContext;
 import com.github.inc0grepoz.lix4j.exception.SyntaxError;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
 
 public class UnitNamespace extends Unit
 {

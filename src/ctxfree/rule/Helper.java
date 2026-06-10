@@ -14,22 +14,22 @@ public class Helper
 
     public static Rule bool()
     {
-        return new RuleTokenLiteral(Lexer.TokenType.LITERAL_BOOLEAN);
+        return new RuleTokenType(Lexer.TokenType.LITERAL_BOOLEAN);
     }
 
     public static Rule character()
     {
-        return new RuleTokenLiteral(Lexer.TokenType.LITERAL_CHAR);
+        return new RuleTokenType(Lexer.TokenType.LITERAL_CHAR);
     }
 
     public static Rule string()
     {
-        return new RuleTokenLiteral(Lexer.TokenType.LITERAL_STRING);
+        return new RuleTokenType(Lexer.TokenType.LITERAL_STRING);
     }
 
     public static Rule number()
     {
-        return new RuleTokenLiteral(Lexer.TokenType.LITERAL_NUMBER);
+        return new RuleTokenType(Lexer.TokenType.LITERAL_NUMBER);
     }
 
     public static Rule keyword(Keyword keyword)

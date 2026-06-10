@@ -2,7 +2,7 @@ package com.github.inc0grepoz.lix4j.ctx;
 
 import com.github.inc0grepoz.lix4j.Script;
 import com.github.inc0grepoz.lix4j.ctx.pool.CompileTimeVarpool;
-import com.github.inc0grepoz.lix4j.id.Namespace;
+import com.github.inc0grepoz.lix4j.lookup.Namespace;
 
 public class CompileTimeContext extends AbstractContext<CompileTimeVarpool>
 {

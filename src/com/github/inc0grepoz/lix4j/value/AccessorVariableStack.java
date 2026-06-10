@@ -1,7 +1,7 @@
 package com.github.inc0grepoz.lix4j.value;
 
 import com.github.inc0grepoz.lix4j.ctx.ExecutionContext;
-import com.github.inc0grepoz.lix4j.id.Identifier;
+import com.github.inc0grepoz.lix4j.lookup.id.ResolvedIdentifier;
 
 /**
  * Represents an accessor for variables stored in a
@@ -19,12 +19,12 @@ public class AccessorVariableStack extends AccessorVariable
      * @param id the variable identifier
      * @return a new {@code AccessorVariable}
      */
-    public static AccessorVariableStack of(Identifier id)
+    public static AccessorVariableStack of(ResolvedIdentifier id)
     {
         return new AccessorVariableStack(id);
     }
 
-    AccessorVariableStack(Identifier identifier)
+    AccessorVariableStack(ResolvedIdentifier identifier)
     {
         super(identifier);
     }
